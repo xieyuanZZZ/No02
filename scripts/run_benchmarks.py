@@ -1,4 +1,4 @@
-"""S5：完整二维离散执行对照实验（文档 §8、§9 S5、§10）。
+﻿"""S5：完整二维离散执行对照实验（文档 §8、§9 S5、§10）。
 
 流程：
   1. 构造任务集：4 类地图 × {2,4,6} 台 × 每格若干任务，起点/终点随机且 A* 可行；
@@ -98,6 +98,71 @@ def make_task(kind: str, n_agents: int, cfg, task_index: int, rng: np.random.Gen
     }
 
 
+def calibrate_risk_weights(
+    cfg, model, schedule, risk_model, device, calib_tasks, methods=("A3", "B3"),
+    lambdas=(0.05, 0.5, 2.0, 10.0, 25.0), ddim_steps: int = 20, logger=None,
+) -> tuple[dict, list[dict]]:
+    """在**独立验证任务**上为 A3 与 B3 分别选择风险权重（文档 §8.1）。
+
+    两者使用完全相同的候选网格与搜索预算，避免“只给某一方调参”的偏袒。
+    选择准则：在规划有效的任务上使平均硬风险最小；若并列，取等待更少的。
+    """
+    import copy as _copy
+
+    rows: list[dict] = []
+    best: dict[str, float] = {}
+    for method in methods:
+        candidates = []
+        for lam in lambdas:
+            cfg_i = _copy.deepcopy(cfg)
+            cfg_i["guidance"]["lambda_R"] = float(lam)
+            risks, waits, valids = [], [], []
+            for task in calib_tasks:
+                n = task["n_agents"]
+                start_m = task["starts"].to(torch.float32)
+                goal_m = task["goals"].to(torch.float32)
+                grid = task["world"].occupancy(torch.float32).unsqueeze(0).unsqueeze(0).expand(
+                    n, -1, -1, -1)
+                pause_p = torch.full((n,), float(cfg_i["execution"]["pause_probability"]),
+                                     dtype=torch.float32)
+                gen = torch.Generator(device="cpu").manual_seed(424242 + int(lam * 100))
+                x_init = torch.randn(n, int(cfg_i["trajectory"]["horizon"]), 2, generator=gen)
+                try:
+                    res = plan_with_method(
+                        method, model, schedule, risk_model, cfg_i, start_m, goal_m, grid,
+                        pause_p, task["world"].obstacles(), num_steps=ddim_steps,
+                        x_init=x_init, d_safe=risk_model.d_safe,
+                        time_steps=int(cfg_i["execution"]["horizon_steps"]),
+                        dt_s=float(cfg_i["trajectory"]["dt_s"]))
+                except Exception:  # noqa: BLE001
+                    continue
+                plan = plan_metrics(res.paths_m, res.wait, task["starts"].to(torch.float32),
+                                    task["goals"].to(torch.float32), task["world"],
+                                    float(cfg_i["trajectory"]["max_speed_mps"]),
+                                    float(cfg_i["trajectory"]["dt_s"]))
+                risks.append(res.final["hard_risk_sum"])
+                waits.append(res.final["wait_total"])
+                valids.append(1.0 if plan.valid else 0.0)
+            if not risks:
+                continue
+            row = {
+                "method": method, "lambda_R": float(lam),
+                "mean_hard_risk": float(np.mean(risks)),
+                "mean_wait": float(np.mean(waits)),
+                "plan_valid_rate": float(np.mean(valids)),
+            }
+            rows.append(row)
+            candidates.append(row)
+            if logger:
+                logger.info("[校准] %s λ_R=%.1f：硬风险 %.4f，等待 %.2f，有效 %.2f",
+                            method, lam, row["mean_hard_risk"], row["mean_wait"],
+                            row["plan_valid_rate"])
+        if candidates:
+            candidates.sort(key=lambda r: (r["mean_hard_risk"], r["mean_wait"]))
+            best[method] = candidates[0]["lambda_R"]
+    return best, rows
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="S5 对照实验")
     ap.add_argument("--config", default=str(ROOT / "configs" / "benchmark.yaml"))
@@ -106,6 +171,9 @@ def main() -> int:
     ap.add_argument("--methods", default=None, help="逗号分隔，如 B0,A3")
     ap.add_argument("--robot-counts", default=None, help="逗号分隔，如 2,4")
     ap.add_argument("--pause-probs", default=None, help="逗号分隔，如 0,0.1")
+    ap.add_argument("--calibrate", action="store_true",
+                    help="在独立验证任务上为 A3/B3 分别校准风险权重（文档 §8.1）")
+    ap.add_argument("--calib-tasks", type=int, default=3)
     args = ap.parse_args()
 
     cfg = load_config(args.config)
@@ -176,6 +244,39 @@ def main() -> int:
     logger.info("任务总数 %d", len(tasks))
 
     # ------------------------------------------------------------------
+    # 风险权重校准（A3 与 B3 独立选参，预算相同）
+    # ------------------------------------------------------------------
+    lambda_r = {m: float(cfg["guidance"]["lambda_R"]) for m in methods}
+    calib_rows: list[dict] = []
+    if args.calibrate and "A3" in methods and "B3" in methods:
+        log_section(logger, "1b. 风险权重校准（独立验证任务）")
+        calib_tasks = []
+        calib_rng = np.random.default_rng(int(cfg["seed"]) + 777)
+        cidx = 900_000
+        for kind in ("open", "dual_corridor", "bottleneck"):
+            made = 0
+            attempt = 0
+            while made < args.calib_tasks and attempt < args.calib_tasks * 8:
+                attempt += 1
+                cidx += 1
+                t = make_task(kind, 2, cfg, cidx, calib_rng)
+                if t is None:
+                    continue
+                calib_tasks.append(t)
+                made += 1
+        logger.info("校准任务数 %d", len(calib_tasks))
+        lambda_r, calib_rows = calibrate_risk_weights(
+            cfg, model, schedule, risk_model, torch.device("cpu"), calib_tasks,
+            methods=("A3", "B3"), lambdas=(0.05, 0.5, 2.0, 10.0, 25.0), ddim_steps=ddim_steps,
+            logger=logger,
+        )
+        logger.info("校准结果：%s", lambda_r)
+        for m, lam in list(lambda_r.items()):
+            if m == "B3":
+                lambda_r["B1"] = lam
+                lambda_r["B2"] = lam
+
+    # ------------------------------------------------------------------
     # 规划
     # ------------------------------------------------------------------
     log_section(logger, "2. 逐方法规划")
@@ -194,8 +295,10 @@ def main() -> int:
 
         for method in methods:
             t0 = time.time()
+            cfg_m = cfg
+            cfg_m["guidance"]["lambda_R"] = float(lambda_r.get(method, cfg["guidance"]["lambda_R"]))
             try:
-                res = plan_with_method(method, model, schedule, risk_model, cfg, start_m, goal_m,
+                res = plan_with_method(method, model, schedule, risk_model, cfg_m, start_m, goal_m,
                                        grid, pause_p, obstacles, num_steps=ddim_steps,
                                        generator=None, x_init=x_init.clone(), d_safe=d_safe,
                                        time_steps=t_steps, dt_s=dt_s)
@@ -529,8 +632,15 @@ def main() -> int:
 
 
 def attribute_failure_from(rec: dict, em) -> str:
-    if not rec["valid"]:
-        return rec["status"]
+    """按 §10.2 的失败归因口径分类。"""
+    if rec.get("status") == "error":
+        return "numeric_error"
+    if not rec.get("static_safe", True):
+        return "static_collision"
+    if not rec.get("speed_ok", True):
+        return "speed_violation"
+    if rec.get("endpoint_err_m", 0.0) > 1e-3:
+        return "endpoint_error"
     if em.unfinished_agent_rate > 0:
         return "unfinished"
     if em.collision_rate > 0:
