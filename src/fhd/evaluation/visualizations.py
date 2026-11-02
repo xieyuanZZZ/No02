@@ -257,6 +257,111 @@ def plot_timing_bar(names: list[str], values_ms: list[float], title: str = "计�
     return fig
 
 
+def plot_path_optimization(
+    world,
+    paths_init: torch.Tensor,
+    paths_opt: torch.Tensor,
+    wait_opt: torch.Tensor | None = None,
+    dt_s: float = 0.4,
+    d_safe: float = 0.35,
+    title: str = "风险梯度优化前后的几何轨迹",
+) -> plt.Figure:
+    """优化前后路径对比；在有主动等待的路点处标注等待时长。"""
+    fig, axes = plt.subplots(1, 2, figsize=(12.5, 5.6))
+    paths_init = paths_init.detach().cpu().numpy()
+    paths_opt = paths_opt.detach().cpu().numpy()
+    wait_np = wait_opt.detach().cpu().numpy() if wait_opt is not None else None
+
+    ax = axes[0]
+    draw_map(ax, world)
+    for i in range(paths_init.shape[0]):
+        ax.plot(paths_init[i, :, 0], paths_init[i, :, 1], "--",
+                color=AGENT_COLORS[i % len(AGENT_COLORS)], lw=1.4, alpha=0.75,
+                label=f"机器人 {i} 初始")
+    ax.set_title("优化前")
+    ax.legend(fontsize=8)
+
+    ax = axes[1]
+    draw_map(ax, world)
+    for i in range(paths_opt.shape[0]):
+        color = AGENT_COLORS[i % len(AGENT_COLORS)]
+        ax.plot(paths_opt[i, :, 0], paths_opt[i, :, 1], "-", color=color, lw=1.8,
+                label=f"机器人 {i} 优化后")
+        ax.plot(paths_opt[i, 0, 0], paths_opt[i, 0, 1], "o", color=color, ms=7, mec="black")
+        ax.plot(paths_opt[i, -1, 0], paths_opt[i, -1, 1], "s", color=color, ms=7, mec="black")
+        if wait_np is not None:
+            idx = np.where(wait_np[i] > 1e-6)[0]
+            for m in idx:
+                p = paths_opt[i, m]
+                ax.plot(p[0], p[1], "h", color=color, ms=4 + 3 * float(wait_np[i, m]),
+                        mec="black", zorder=7)
+                ax.annotate(f"{wait_np[i, m] * dt_s:.1f}s", p, textcoords="offset points",
+                            xytext=(5, 5), fontsize=7, color=color)
+    ax.set_title("优化后（六边形=主动等待点，数字=等待时长）")
+    ax.legend(fontsize=8)
+    fig.suptitle(f"{title}（d_safe={d_safe:.2f} m）", fontsize=12)
+    return fig
+
+
+def plot_risk_convergence(
+    histories: dict[str, list[dict]],
+    dt_s: float,
+    title: str = "风险与完成时间随优化步数的变化",
+) -> plt.Figure:
+    """多方法的收敛曲线：软风险、硬风险、等待总量、完成时间代价。"""
+    fig, axes = plt.subplots(2, 2, figsize=(12, 7.5))
+    keys = [("soft_risk_sum", "软风险 ΣR_soft"), ("hard_risk_sum", "硬风险 ΣR_hard"),
+            ("wait_total", "主动等待总量（时隙）"), ("finish_cost_s", "完成时间代价 J_finish [s]")]
+    for ax, (key, label) in zip(axes.ravel(), keys):
+        for name, hist in histories.items():
+            xs = [row["step"] for row in hist if key in row]
+            ys = [row[key] for row in hist if key in row]
+            ax.plot(xs, ys, lw=1.6, label=name)
+        ax.set_xlabel("优化步数")
+        ax.set_ylabel(label)
+        ax.grid(alpha=0.3)
+        ax.set_title(label, fontsize=10)
+    axes.ravel()[0].legend(fontsize=8)
+    fig.suptitle(title, fontsize=12)
+    return fig
+
+
+def plot_pareto(points: list[dict], title: str = "硬风险—完成时间 Pareto") -> plt.Figure:
+    """points: [{'method','hard_risk','mean_makespan_s','wait_total'}]"""
+    fig, ax = plt.subplots(figsize=(7, 5))
+    methods = sorted({p["method"] for p in points})
+    for idx, name in enumerate(methods):
+        sel = [p for p in points if p["method"] == name]
+        sel.sort(key=lambda r: r["mean_makespan_s"])
+        ax.plot([p["mean_makespan_s"] for p in sel], [p["hard_risk"] for p in sel], "o-",
+                color=AGENT_COLORS[idx % len(AGENT_COLORS)], label=name, ms=6)
+    ax.set_xlabel("平均完成时间（Monte Carlo） [s]")
+    ax.set_ylabel("硬 DP 首次碰撞风险之和")
+    ax.set_title(title)
+    ax.grid(alpha=0.3)
+    ax.legend(fontsize=8)
+    return fig
+
+
+def plot_progress_distribution(
+    pi_before: np.ndarray,
+    pi_after: np.ndarray,
+    dt_s: float,
+    title: str = "进度分布变化",
+) -> plt.Figure:
+    """两张热图：优化前后单机进度分布 π_i^t(m)。"""
+    fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.2), sharey=True)
+    for ax, data, name in zip(axes, [pi_before, pi_after], ["优化前", "优化后"]):
+        extent = [0, data.shape[0] * dt_s, 0, data.shape[1] - 1]
+        im = ax.imshow(data.T, origin="lower", aspect="auto", cmap="viridis", extent=extent)
+        ax.set_xlabel("执行时间 [s]")
+        ax.set_ylabel("进度 m")
+        ax.set_title(name)
+        fig.colorbar(im, ax=ax, fraction=0.046)
+    fig.suptitle(title, fontsize=12)
+    return fig
+
+
 def save_fig(fig: plt.Figure, path: str | Path) -> Path:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)

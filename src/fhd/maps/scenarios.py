@@ -189,8 +189,14 @@ def terminal_occupancy(cfg: Any, h: int | None = None, seed: int | None = None) 
 # --------------------------------------------------------------------------- #
 # 5) 双通路绕障
 # --------------------------------------------------------------------------- #
-def dual_corridor(cfg: Any, h: int | None = None, same_side: bool = False, seed: int | None = None) -> Scenario:
-    """中央大障碍，上下两条绕行通路。same_side=True 时两车都走同一侧（更危险）。"""
+def dual_corridor(
+    cfg: Any, h: int | None = None, same_side: bool = False, lateral: float = 0.5,
+    seed: int | None = None,
+) -> Scenario:
+    """中央大障碍，上下两条绕行通路。same_side=True 时两车都走同一侧（会相互追赶）。
+
+    lateral 保证两台机器人的起点不重合（必须满足初始圆盘互不碰撞）。
+    """
     h = h or int(cfg["trajectory"]["horizon"])
     seed = int(cfg["seed"]) if seed is None else seed
     world = _world_kind("dual_corridor", cfg, seed)
@@ -198,25 +204,27 @@ def dual_corridor(cfg: Any, h: int | None = None, same_side: bool = False, seed:
     cx = 0.5 * (rect[0] + rect[2])
     top_y = rect[3] + 1.0
     bottom_y = rect[1] - 1.0
-    y_first = top_y
-    y_second = top_y if same_side else bottom_y
+    y_a = top_y
+    y_b = top_y if same_side else bottom_y
+    y0 = 5.0 - lateral / 2
+    y1 = 5.0 + lateral / 2
     waypoints = [
-        [[0.6, 5.0], [1.0, 5.0], [cx - 1.2, y_first], [cx + 1.2, y_first], [9.4, 5.0]],
-        [[0.6, 5.0], [1.0, 5.0], [cx - 1.2, y_second], [cx + 1.2, y_second], [9.4, 5.0]],
+        [[0.6, y0], [1.3, y0], [cx - 1.2, y_a], [cx + 1.2, y_a], [9.4, y0]],
+        [[0.6, y1], [1.3, y1], [cx - 1.2, y_b], [cx + 1.2, y_b], [9.4, y1]],
     ]
     paths = _paths_from_waypoints(waypoints, h)
     starts = paths[:, 0, :].contiguous()
     goals = paths[:, -1, :].contiguous()
-    mask = _blank_mask(2, h, {0: list(range(2, 14)), 1: list(range(2, 14))})
+    mask = _blank_mask(2, h, {0: list(range(0, 16)), 1: list(range(0, 16))})
     return Scenario(
         name="dual_corridor",
-        description="中央大障碍，上下两条绕行通路；两条路径可能汇合于同一侧",
+        description="中央大障碍，上下两条绕行通路；same_side 时两条路径汇合于同一侧",
         world=world,
         starts=starts,
         goals=goals,
         paths=paths,
         wait_mask=mask,
-        meta={"same_side": same_side, "corridor_rect": rect.tolist()},
+        meta={"same_side": same_side, "lateral": lateral, "corridor_rect": rect.tolist()},
     )
 
 

@@ -1,4 +1,4 @@
-"""引导目标 L(Q,w)（文档 §7.1）与其中的各项代价。
+﻿"""引导目标 L(Q,w)（文档 §7.1）与其中的各项代价。
 
     L = λ_R ΣR_soft + λ_T J_finish + λ_S L_static + λ_K L_kinematic
         + λ_G L_geometry + λ_W ||w||_1
@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import torch
 
-from fhd.geometry.paths import path_segment_lengths
+from fhd.geometry.collisions import path_segment_lengths
 from fhd.geometry.sdf import sampled_static_penalty
 
 
