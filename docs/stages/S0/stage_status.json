@@ -1,0 +1,27 @@
+{
+  "stage": "S0_environment",
+  "run_id": "20261103_020310_s0_baseline_7ff859",
+  "status": "passed",
+  "started_at": "2026-11-03T02:03:10+08:00",
+  "finished_at": "2026-11-03T02:03:14+08:00",
+  "duration_s": 3.6,
+  "git_commit": "unknown",
+  "n_metrics": 88,
+  "tests": {
+    "passed": 12,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "all_passed": true,
+    "returncode": 0,
+    "selection": [
+      "tests/test_collision_continuous.py"
+    ],
+    "total_duration_s": 0.061,
+    "output_tail": "............                                                             [100%]"
+  },
+  "extra": {
+    "d_safe_m": 0.35
+  }
+}

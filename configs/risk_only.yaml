@@ -1,0 +1,31 @@
+# S1 / S2 配置：只验证风险 DP 与梯度优化，不训练任何网络
+# 继承 base.yaml，仅覆盖本阶段需要的项。
+extends: base.yaml
+
+seed: 20261103
+device: cpu          # S1/S2 必须在 CPU 上可完整跑通
+dtype: float64       # 正确性验证优先
+
+execution:
+  horizon_steps: 96
+  pause_probability: 0.10
+
+risk:
+  dtype_dp_validation: float64
+
+# S1 验证规模
+validation:
+  n_random_cases: 20
+  mc_samples: 10000
+  mc_chunk: 2000
+  lenient_mc_cases: 3        # 允许 p 很接近 0/1 的案例按置信区间放宽
+  grad_check_h: 1.0e-6
+
+# S2 手工案例与优化设置
+optimization:
+  steps: 300
+  lr_path: 0.02
+  lr_wait: 0.1
+  wait_mask_mode: manual_manual   # S1/S2 使用手动等待点
+  optimize_path: true
+  optimize_wait: true

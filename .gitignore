@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# 虚拟环境
+.venv/
+venv/
+
+# 数据与权重（本地完整保留，不入库）
+data/
+checkpoints/
+results/
+
+# 临时文件与日志
+*.log
+tmp/
+.DS_Store
+Thumbs.db

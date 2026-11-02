@@ -1,0 +1,96 @@
+# 基础配置：所有实验参数的唯一来源（文档 §2.1 + 已批复的补充默认值）
+# 任何修改都必须版本化：修改后必须重新生成对应数据，并在报告中记录。
+seed: 20261103
+device: auto            # auto | cuda | cpu
+dtype: float32          # 风险 DP 验证时另行使用 float64
+
+world:
+  width_m: 10.0
+  height_m: 10.0
+  grid_size: 64         # Diffusion 条件地图 / 可视化的占据栅格分辨率
+  robot_radius_m: 0.15
+  safety_margin_m: 0.05 # d_safe = 2*半径 + 该裕度 = 0.35 m
+  clearance_margin_m: 0.03  # 机器人中心与障碍物的额外净空
+
+trajectory:
+  horizon: 32           # H：每条几何路径的路点数
+  dt_s: 0.4             # 一个执行时隙的物理时间
+  max_speed_mps: 1.5    # 逐段硬约束：||q[m+1]-q[m]|| <= max_speed*dt = 0.6 m
+  max_accel_mps2: 2.0   # 仅供 S6 层 B 使用，层 A 不检查
+
+execution:
+  horizon_steps: 96     # T：随机执行的离散时间总步数
+  pause_probability: 0.10
+  independent_agents: true
+  start_progress: 0
+  terminal_occupancy: true
+
+risk:
+  soft_collision_temperature_m: 0.025   # epsilon：软碰撞 Logistic 温度（米）
+  soft_collision_kernel: logistic       # logistic | smoothstep（有限作用距离）
+  smoothstep_support_m: 0.05            # smoothstep 代理的有限作用距离（米）
+  probability_target: 0.05              # 仅作参考线与筛选阈值，不构成安全保证
+  hard_check: true
+  dtype_dp_validation: float64
+  dtype_training: float32
+  gate_beta: 0.25                       # beta：等待门槛温度（时隙）
+  gate_offset_c: 0.5                    # 批复 §11(b)：软门槛中心偏移，默认 0.5
+  eps_num: 1.0e-12
+
+wait:
+  max_wait_per_point: 4.0   # 单位：执行时隙（1 时隙 = 0.4 s）
+  max_total_wait: 8.0       # 单位：执行时隙
+  optimizer: adam
+  lr: 0.1
+
+guidance:
+  lambda_R: 1.0    # 首次碰撞软风险
+  lambda_T: 0.05   # 完成时间（秒）
+  lambda_S: 10.0   # 静态障碍 SDF 惩罚
+  lambda_K: 1.0    # 运动学/平滑
+  lambda_G: 0.5    # 几何正则（防拉长曲折）
+  lambda_W: 0.01   # ||w||_1
+  lambda_tail_s: 2.0  # 时域末端未完成概率惩罚（秒）
+  grad_clip_norm: 1.0
+  endpoint_grad_mask: true
+
+diffusion:
+  horizon: 32
+  training_steps: 40000
+  smoke_steps: 600
+  batch_size: 96
+  grad_accum_steps: 1
+  lr: 2.0e-4
+  weight_decay: 0.0
+  beta_schedule: cosine
+  prediction_type: epsilon
+  ddim_sampling_steps: 40
+  ema_decay: 0.999
+  unet_channels: [64, 128, 256]
+  map_feature_dim: 128
+  cond_feature_dim: 128
+  time_feature_dim: 128
+  checkpoint_every: 2000
+  val_every: 1000
+  sample_every: 2000
+
+dataset:
+  astar_resolution: 256
+  train_maps: 200
+  train_tasks_per_map: 100
+  val_maps: 40
+  val_tasks_per_map: 50
+  test_maps: 50
+  test_tasks_per_map: 50
+  max_attempts_per_task: 40
+  simplify_tolerance_m: 0.08
+  min_path_length_m: 3.0
+  min_start_goal_dist_m: 3.5
+
+benchmark:
+  scale: 0.2              # S5 预实验规模系数（1.0 表示文档完整规模）
+  tasks_per_cell: 5
+  robot_counts: [2, 4, 6]
+  pause_probabilities: [0.0, 0.05, 0.10, 0.20]
+  execution_repeats: 30
+  mc_samples_risk_validation: 10000
