@@ -42,7 +42,8 @@ def first_hit_dp(
     a_i: torch.Tensor,
     a_j: torch.Tensor,
     time_steps: int,
-) -> tuple[torch.Tensor, torch.Tensor]:
+    return_history: bool = False,
+) -> tuple[torch.Tensor, torch.Tensor] | tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """两机器人首次碰撞概率 DP。
 
     参数
@@ -50,11 +51,13 @@ def first_hit_dp(
     collision : [P,4,H,H]  四种动作的碰撞量（soft 为代理，hard 为 0/1）
     a_i, a_j  : [P,T,H]    各机器人前进概率（最后一列为 0，表示终点吸收）
     time_steps: T
+    return_history: 额外返回每个时刻的 F 场（detach），供可视化
 
     返回
     ----
     risks    : [P]   1 - sum F_T
     survival : [P,T+1]  每个时刻的存活概率质量（detach 后的诊断量）
+    history  : [P,T+1,H,H]（仅当 return_history=True）
     """
     p, _, h, _ = collision.shape
     dtype, device = collision.dtype, collision.device
@@ -63,6 +66,7 @@ def first_hit_dp(
     f[:, 0, 0] = 1.0
 
     survival = [f.sum(dim=(-2, -1))]
+    history = [f.detach().clone()] if return_history else None
 
     for t in range(time_steps):
         ai = a_i[:, t, :]  # [P,H]
@@ -82,9 +86,14 @@ def first_hit_dp(
 
         f = g00 + _shift_mass(g10) + _shift_n(g01) + _shift_mn(g11)
         survival.append(f.sum(dim=(-2, -1)))
+        if history is not None:
+            history.append(f.detach().clone())
 
     risks = 1.0 - f.sum(dim=(-2, -1))
-    return risks, torch.stack(survival, dim=-1)
+    survival_t = torch.stack(survival, dim=-1)
+    if history is not None:
+        return risks, survival_t, torch.stack(history, dim=1)
+    return risks, survival_t
 
 
 def first_hit_risk_single(

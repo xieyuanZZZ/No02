@@ -1,4 +1,4 @@
-"""N 机器人两两首次碰撞风险汇总（文档 §4.4），对外主入口 FirstHitRisk。
+﻿"""N 机器人两两首次碰撞风险汇总（文档 §4.4），对外主入口 FirstHitRisk。
 
 重要说明：
   * R_hard 只在 collision_mode="hard" 且 gate_mode="hard" 时才是**精确首次碰撞概率**；
@@ -70,6 +70,7 @@ class FirstHitRisk(nn.Module):
         dt_s: float | None = None,
         lambda_tail_s: float | None = None,
         return_diagnostics: bool = True,
+        return_history: bool = False,
     ) -> dict:
         """返回 pair_risks、pair_sum_risk、finish_cost、unfinished_prob、diagnostics。"""
         if paths.dim() != 3:
@@ -90,7 +91,7 @@ class FirstHitRisk(nn.Module):
         j_finish, unfinished = finish_cost(pi, dt_s=dt, lambda_tail_s=lam_tail)
 
         # 2) 两两首次碰撞风险
-        ii, jj = build_pair_index(n)
+        ii, jj = build_pair_index(n, device=paths.device)
         d_min, collision = pair_collision_tensors(
             paths,
             ii,
@@ -103,7 +104,13 @@ class FirstHitRisk(nn.Module):
         )
         a_i = a.index_select(0, ii) if ii.numel() else a[:0]
         a_j = a.index_select(0, jj) if jj.numel() else a[:0]
-        pair_risks, survival = first_hit_dp(collision, a_i, a_j, time_steps)
+        if return_history:
+            pair_risks, survival, history = first_hit_dp(
+                collision, a_i, a_j, time_steps, return_history=True
+            )
+        else:
+            pair_risks, survival = first_hit_dp(collision, a_i, a_j, time_steps)
+            history = None
 
         result = {
             "pair_risks": pair_risks,
@@ -125,6 +132,9 @@ class FirstHitRisk(nn.Module):
                     "gate_mode": gate_mode,
                     "is_exact_probability": collision_mode == "hard" and gate_mode == "hard",
                 }
+                if history is not None:
+                    result["diagnostics"]["history"] = history.detach()
+                    result["diagnostics"]["collision_tensor"] = collision.detach()
         return result
 
     # ------------------------------------------------------------------
@@ -134,7 +144,7 @@ class FirstHitRisk(nn.Module):
         collision_mode: str = "soft",
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """返回 (ii, jj, d_min, C)，供可视化图 2 使用。"""
-        ii, jj = build_pair_index(paths.shape[0])
+        ii, jj = build_pair_index(paths.shape[0], device=paths.device)
         d_min, c = pair_collision_tensors(
             paths,
             ii,
