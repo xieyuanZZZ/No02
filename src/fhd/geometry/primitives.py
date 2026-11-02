@@ -106,6 +106,41 @@ def point_obstacle_distance(points: torch.Tensor, obstacles: Obstacles) -> torch
     return torch.min(torch.cat(parts, dim=-1), dim=-1).values
 
 
+def point_rect_signed_distance(points: torch.Tensor, rects: torch.Tensor) -> torch.Tensor:
+    """点到轴对齐矩形的**有符号**距离：外部为正，内部为负（内部仍有非零梯度）。
+
+    标准 AABB SDF：outside = ||max(q,0)||，inside = min(max(qx,qy),0)，
+    其中 q = |p - center| - half。若只用无符号距离，矩形内部的梯度恒为 0，
+    轨迹一旦穿进障碍就再也推不出来（曾因此出现 -0.18 m 的深度穿透）。
+    """
+    points = as_tensor(points)
+    rects = as_tensor(rects, dtype=points.dtype)
+    if rects.numel() == 0:
+        return points.new_zeros(points.shape[:-1] + (0,))
+    lo = rects[..., :2]
+    hi = rects[..., 2:]
+    center = 0.5 * (lo + hi)
+    half = 0.5 * (hi - lo)
+    q = (points.unsqueeze(-2) - center).abs() - half
+    outside = safe_sqrt((torch.clamp(q, min=0.0) ** 2).sum(-1))
+    inside = torch.clamp(q.max(dim=-1).values, max=0.0)
+    return outside + inside
+
+
+def point_obstacle_signed_distance(points: torch.Tensor, obstacles: Obstacles) -> torch.Tensor:
+    """点到所有障碍物的最小**有符号**距离（内部为负）。无障碍时返回 +inf。"""
+    parts = []
+    if obstacles.circles.numel() > 0:
+        parts.append(point_circle_distance(points, obstacles.circles))
+    if obstacles.rects.numel() > 0:
+        parts.append(point_rect_signed_distance(points, obstacles.rects))
+    if not parts:
+        return torch.full(
+            points.shape[:-1], float("inf"), dtype=points.dtype, device=points.device
+        )
+    return torch.min(torch.cat(parts, dim=-1), dim=-1).values
+
+
 # --------------------------------------------------------------------------- #
 # 线段距离
 # --------------------------------------------------------------------------- #
@@ -164,7 +199,7 @@ def segment_rect_distance(
     a: torch.Tensor,
     b: torch.Tensor,
     rects: torch.Tensor,
-    iterations: int = 45,
+    iterations: int = 25,
 ) -> torch.Tensor:
     """线段到一组轴对齐矩形的最小距离。
 

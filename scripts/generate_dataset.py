@@ -1,4 +1,4 @@
-"""S3 前置：从零生成单机器人路径数据集（A* + 多样化扰动 + 连续几何复核）。
+﻿"""S3 前置：从零生成单机器人路径数据集（A* + 多样化扰动 + 连续几何复核）。
 
 生成规则（文档 §6.2）：
   1. 地图生成器创建矩形/圆形障碍（按机器人半径与净空膨胀）；
@@ -42,7 +42,7 @@ SPLIT_SEED_OFFSET = {"train": 0, "val": 10_000, "test": 20_000}
 def parse_args():
     p = argparse.ArgumentParser(description="生成单机器人轨迹数据集")
     p.add_argument("--config", default=str(ROOT / "configs" / "diffusion_train.yaml"))
-    p.add_argument("--split-size", choices=["smoke", "small", "medium", "full"], default="medium")
+    p.add_argument("--split-size", choices=["smoke", "small", "medium", "large", "full"], default="medium")
     p.add_argument("--vectors-per-task", type=int, default=2, help="每个任务生成多少条不同路径")
     p.add_argument("--out", default=str(ROOT / "data" / "dataset"))
     return p.parse_args()
@@ -169,6 +169,9 @@ def main() -> int:
     elif args.split_size == "medium":
         # 批复 §25：先用 5,000 / 500 数据完成流程验证，再扩大到 20,000 / 2,000
         sizes = {"train": (50, 50), "val": (10, 25), "test": (10, 25)}
+    elif args.split_size == "large":
+        # 扩大规模：100 张地图 × 100 任务 × 2 向量 ≈ 20,000 条训练轨迹
+        sizes = {"train": (100, 100), "val": (20, 25), "test": (20, 25)}
     else:
         sizes = {"train": (int(cfg["dataset"]["train_maps"]), int(cfg["dataset"]["train_tasks_per_map"])),
                  "val": (int(cfg["dataset"]["val_maps"]), int(cfg["dataset"]["val_tasks_per_map"])),

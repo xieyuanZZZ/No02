@@ -59,24 +59,34 @@ class FiLMResBlock(nn.Module):
 
 
 class MapEncoder(nn.Module):
-    """小型 CNN：64×64 占据栅格 -> map_feature_dim 维向量。"""
+    """小型 CNN：64×64 占据栅格 -> 空间特征 [B,C,8,8] + 全局嵌入 [B,embed_dim]。
 
-    def __init__(self, out_dim: int = 128, in_channels: int = 1):
+    注意：**不能只用全局平均池化**。全局池化会抹平障碍物的空间位置，
+    模型只能学到“这张图有多少障碍”，无法知道障碍在哪里，于是会在有墙的地方
+    画出穿墙直线。这里同时输出空间特征图，并在 U-Net 输入处按轨迹长度插值后
+    与轨迹通道拼接，使每个路点都能“看到”自己附近的障碍。
+    """
+
+    def __init__(self, out_dim: int = 128, spatial_channels: int = 16, in_channels: int = 1):
         super().__init__()
-        self.net = nn.Sequential(
+        self.spatial_channels = spatial_channels
+        self.body = nn.Sequential(
             nn.Conv2d(in_channels, 16, 5, stride=2, padding=2),   # 32
             nn.SiLU(),
             nn.Conv2d(16, 32, 5, stride=2, padding=2),            # 16
             nn.SiLU(),
-            nn.Conv2d(32, 64, 3, stride=2, padding=1),            # 8
+            nn.Conv2d(32, spatial_channels, 3, stride=2, padding=1),  # 8
             nn.SiLU(),
+        )
+        self.embed = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(),
-            nn.Linear(64, out_dim),
+            nn.Linear(spatial_channels, out_dim),
         )
 
-    def forward(self, grid: torch.Tensor) -> torch.Tensor:
-        return self.net(grid)
+    def forward(self, grid: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        feat = self.body(grid)
+        return feat, self.embed(feat)
 
 
 class ConditionalUNet1D(nn.Module):
@@ -90,20 +100,23 @@ class ConditionalUNet1D(nn.Module):
         cond_dim: int = 128,
         map_feature_dim: int = 128,
         grid_size: int = 64,
+        map_spatial_channels: int = 16,
     ):
         super().__init__()
         ch1, ch2, ch3 = [base_channels * m for m in mults]
         self.cond_dim = cond_dim
+        self.map_spatial_channels = map_spatial_channels
 
         self.time_emb = SinusoidalPosEmb(cond_dim)
         self.time_mlp = nn.Sequential(nn.Linear(cond_dim, cond_dim), nn.SiLU(), nn.Linear(cond_dim, cond_dim))
-        self.map_encoder = MapEncoder(map_feature_dim, in_channels=1)
+        self.map_encoder = MapEncoder(map_feature_dim, spatial_channels=map_spatial_channels,
+                                      in_channels=1)
         self.map_proj = nn.Linear(map_feature_dim, cond_dim)
         self.cond_mlp = nn.Sequential(
             nn.Linear(4, cond_dim), nn.SiLU(), nn.Linear(cond_dim, cond_dim)
         )
 
-        self.in_conv = nn.Conv1d(in_channels, ch1, 5, padding=2)
+        self.in_conv = nn.Conv1d(in_channels + map_spatial_channels, ch1, 5, padding=2)
 
         self.down1 = FiLMResBlock(ch1, ch1, cond_dim)
         self.down2 = FiLMResBlock(ch1, ch2, cond_dim)
@@ -129,13 +142,18 @@ class ConditionalUNet1D(nn.Module):
         grid: torch.Tensor,
     ) -> torch.Tensor:
         """x [B,H,2] -> eps [B,H,2]"""
+        map_spatial, map_embed = self.map_encoder(grid)
         cond = (
             self.time_mlp(self.time_emb(t))
-            + self.map_proj(self.map_encoder(grid))
+            + self.map_proj(map_embed)
             + self.cond_mlp(torch.cat([start, goal], dim=-1))
         )
 
-        h = x.transpose(1, 2)  # [B,2,H]
+        traj = x.transpose(1, 2)  # [B,2,H]
+        map_feat = F.interpolate(
+            map_spatial, size=(1, traj.shape[-1]), mode="nearest"
+        ).squeeze(2)  # [B,C,H]
+        h = torch.cat([traj, map_feat], dim=1)  # [B,2+C,H]
         h0 = self.in_conv(h)             # [B,ch1,H]
         d1 = self.down1(h0, cond)        # [B,ch1,H]
         p1 = self.pool1(d1)              # [B,ch1,H/2]

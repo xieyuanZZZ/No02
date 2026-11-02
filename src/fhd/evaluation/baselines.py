@@ -43,8 +43,8 @@ class MethodSpec:
 
 
 METHODS = {
-    "B0": MethodSpec("B0", "独立 Diffusion", "各自采样，不含机器人间风险引导",
-                     optimize_path=False, optimize_wait=False, risk_kind="none"),
+    "B0": MethodSpec("B0", "独立 Diffusion", "各自采样，只含静态/运动学约束引导，不含机器人间风险",
+                     optimize_path=True, optimize_wait=False, risk_kind="none"),
     "B1": MethodSpec("B1", "同步距离引导", "只惩罚同一名义步的两机器人距离",
                      optimize_path=True, optimize_wait=False, risk_kind="sync"),
     "B2": MethodSpec("B2", "固定时间窗引导", "对 |m-n|<=k 的危险状态施加约束（k=3）",
@@ -110,16 +110,12 @@ def build_objective(
             a = move_probabilities(tau, pause_p, time_steps, beta=beta, offset=offset,
                                    gate_mode="soft")
             pi = propagate_progress(a)
-            ii, jj = risk_model.pair_collision_tensor(paths_m, "soft")[0:2]
-            _, _, _, collision = risk_model.pair_collision_tensor(paths_m, "soft")
+            ii, jj, _, collision = risk_model.pair_collision_tensor(paths_m, "soft")
             total = paths_m.new_zeros(())
             for p in range(ii.numel()):
                 total = total + per_time_collision_risk(
                     pi[ii[p]], pi[jj[p]], collision[p], a[ii[p]], a[jj[p]], time_steps
                 )
-            finish = torch.zeros((), dtype=paths_m.dtype, device=paths_m.device)
-            for t in range(1):
-                pass
             return total, {}
         raise ValueError(f"未知风险类型: {kind}")
 

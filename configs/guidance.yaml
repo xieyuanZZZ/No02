@@ -1,5 +1,5 @@
-# S4/S5 使用的引导超参数（与 base.yaml 合并）
-extends: base.yaml
+﻿# S4/S5 使用的引导超参数（与 base.yaml 合并）
+extends: diffusion_train.yaml
 
 seed: 20261103
 device: cpu            # 引导阶段风险 DP 在 CPU 上更快（小张量 + 96 步串行）
@@ -20,7 +20,7 @@ guidance:
   lambda_tail_s: 2.0
   grad_clip_norm: 1.0
   guidance_step_x: 0.05
-  guidance_step_w: 0.10
+  guidance_step_w: 0.50
   endpoint_grad_mask: true
 
 benchmark:

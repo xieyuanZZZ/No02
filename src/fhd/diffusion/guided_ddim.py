@@ -1,4 +1,4 @@
-"""推理期风险引导的 DDIM 采样（文档 §7，S4 的核心接口）。
+﻿"""推理期风险引导的 DDIM 采样（文档 §7，S4 的核心接口）。
 
 流程（每个 DDIM 采样步）：
   1. 冻结去噪网络，前向得到 ε 与 x̂0（归一化空间）；
@@ -26,11 +26,12 @@ class GuidanceConfig:
     enabled: bool = True
     start_fraction: float = 0.25      # 前 25% 采样步不引导（批复 §20）
     step_size_x: float = 0.05         # 归一化坐标下的步长
-    step_size_w: float = 0.1          # 等待（时隙）步长
+    step_size_w: float = 0.5          # 等待（时隙）步长
     grad_clip_norm: float = 1.0
     max_wait_per_point: float = 4.0
     max_total_wait: float = 8.0
-    wait_mask_mode: str = "auto"      # auto | all | manual
+    # all | free_space | strict | manual
+    wait_mask_mode: str = "free_space"
     wait_mask: torch.Tensor | None = None
     hard_eval_every: int = 5
     mc_samples: int = 0
@@ -59,21 +60,36 @@ def auto_wait_mask(
     paths_m: torch.Tensor,
     d_safe: float,
     clearance_ok: torch.Tensor,
+    mode: str = "free_space",
     n_candidates: int = 3,
 ) -> torch.Tensor:
-    """自动等待点检测（批复 §22）：同时考虑静态障碍、其他机器人路径占用与持续等待风险。
+    """等待点检测（批复 §22）。
 
-    判定：候选点必须 ①处于自由空间（由 clearance_ok 给出）；②到其他机器人路径的
-    最小距离 >= d_safe（等待期间别人不会经过）；③优先选择更接近“冲突区”的点。
+    三种判据，按“越严格越保守”排列：
+
+    * ``strict``     ：静态自由空间 **且** 到其他机器人整条路径的最小距离 ≥ d_safe。
+      最安全，但在交叉/门口场景会把唯一有用的等待点全部排除（因为这些点就在冲突区旁边），
+      实测会让梯度引导无法产生任何等待。
+    * ``free_space``（默认）：静态自由空间内的所有路点，即文档 §3.3 所说
+      “放开所有处于安全自由空间内的等待点”。是否真的安全由风险项本身惩罚，
+      并在规划结束后用 `optim.evaluate.check_wait_safety` 独立复核。
+    * ``all``        ：不限制（消融用）。
     """
     n, h, _ = paths_m.shape
+    if mode == "all":
+        return torch.ones(n, h - 1, dtype=torch.bool, device=paths_m.device)
+
     mask = torch.zeros(n, h - 1, dtype=torch.bool, device=paths_m.device)
+    static_free = clearance_ok if clearance_ok is not None else torch.ones(
+        n, h, dtype=torch.bool, device=paths_m.device)
     for i in range(n):
-        scores = []
         for m in range(1, h - 2):
-            q = paths_m[i, m]
-            if clearance_ok is not None and not bool(clearance_ok[i, m]):
+            if not bool(static_free[i, m]):
                 continue
+            if mode == "free_space":
+                mask[i, m] = True
+                continue
+            q = paths_m[i, m]
             best = float("inf")
             for j in range(n):
                 if j == i:
@@ -83,13 +99,13 @@ def auto_wait_mask(
                 d = segment_point_distance(a, b, q.unsqueeze(0).expand(a.shape[0], 2))
                 best = min(best, float(d.min()))
             if best >= d_safe:
-                scores.append((best, m))
-        if not scores:
-            mask[i, :] = True
-            continue
-        scores.sort(key=lambda x: x[0])
-        for _, m in scores[:n_candidates]:
-            mask[i, m] = True
+                mask[i, m] = True
+    if not mask.any():
+        # 兜底：至少有可等待的路点，否则等待变量永远学不到东西
+        for i in range(n):
+            for m in range(1, h - 2):
+                if bool(static_free[i, m]):
+                    mask[i, m] = True
     return mask
 
 
@@ -177,8 +193,8 @@ def guided_ddim_sample(
                 weights = detail["weighted"]
             else:
                 loss, detail = objective_fn(x0_local, wait_local)
-                soft_risk_value = float(detail.get("soft_risk", torch.zeros(())))
-                finish_value = float(detail.get("finish_cost", torch.zeros(())))
+                soft_risk_value = float(detail.get("soft_risk", torch.zeros(())).detach())
+                finish_value = float(detail.get("finish_cost", torch.zeros(())).detach())
                 weights = detail.get("weighted", {})
             g_x, g_w = torch.autograd.grad(loss, (x0_local, wait_local), allow_unused=True)
             g_x = torch.zeros_like(x0_local) if g_x is None else g_x
@@ -211,7 +227,8 @@ def guided_ddim_sample(
                     clearance_ok = (sdf >= 0).reshape(n, h)
                 else:
                     clearance_ok = torch.ones(n, h, dtype=torch.bool)
-                wait_mask = auto_wait_mask(x0_m.detach(), d_safe, clearance_ok)
+                wait_mask = auto_wait_mask(x0_m.detach(), d_safe, clearance_ok,
+                                           mode=guide.wait_mask_mode)
             wait = project_wait_local(wait_local.detach() - guide.step_size_w * g_w,
                                       wait_mask, guide.max_wait_per_point, guide.max_total_wait)
             x0 = x0_m_new / scale - 1.0

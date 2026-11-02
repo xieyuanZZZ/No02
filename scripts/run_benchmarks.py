@@ -347,9 +347,6 @@ def main() -> int:
     paired = {}
     for base_method in ("B3", "B2", "B0"):
         a, c, cl = [], [], []
-        for r in exec_records:
-            if r["method"] == "A3" or r["method"] == base_method:
-                pass
         by_key = defaultdict(dict)
         for r in exec_records:
             by_key[(r["task"], r["pause_p"])][r["method"]] = r["safe_completion_rate"]

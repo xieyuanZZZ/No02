@@ -14,6 +14,7 @@ import torch
 from fhd.geometry.primitives import (
     Obstacles,
     point_obstacle_distance,
+    point_obstacle_signed_distance,
     safe_sqrt,
     segment_obstacle_distance,
 )
@@ -27,11 +28,11 @@ def analytic_sdf(
 ) -> torch.Tensor:
     """自由空间 SDF：>=0 表示该点放置机器人中心是安全的（已扣除膨胀量）。
 
-    points [..., 2] -> [...]
+    **有符号**：进入障碍物内部时为负，且内部梯度不为零，因此可以把深度穿透的
+    轨迹推出来。points [..., 2] -> [...]
     """
     inflate = robot_radius + clearance_margin
-    dist = point_obstacle_distance(points, obstacles)
-    return dist - inflate
+    return point_obstacle_signed_distance(points, obstacles) - inflate
 
 
 def segment_sdf_min(
@@ -86,11 +87,14 @@ def sampled_static_penalty(
     robot_radius: float,
     clearance_margin: float,
     samples_per_segment: int = 8,
-    margin_m: float = 0.0,
+    margin_m: float = 0.02,
 ) -> torch.Tensor:
     """可微的静态障碍惩罚 L_static（文档 §7.1）。
 
-    在每段上等距采样 samples_per_segment 个点，对 sdf < margin 的部分取平方惩罚。
+    在每段上等距采样，对 sdf < margin 的部分取平方惩罚，并把**最深的穿透**单独
+    计入（均值项会被大量安全点稀释，单点深度穿透的梯度会消失）。
+    margin_m 提供 2 cm 的额外排斥缓冲，使轨迹在真正碰撞之前就开始被推开。
+
     这是一个**优化代理**；最终是否静态安全由连续几何检查独立复核。
     paths [N,H,2] -> 标量
     """
@@ -105,7 +109,7 @@ def sampled_static_penalty(
     pts = a.unsqueeze(2) + frac.view(1, 1, -1, 1) * (b - a).unsqueeze(2)  # [N,H-1,S,2]
     sdf = analytic_sdf(pts.reshape(-1, 2), obstacles, robot_radius, clearance_margin)
     violation = torch.clamp(margin_m - sdf, min=0.0)
-    return (violation * violation).mean()
+    return (violation * violation).mean() + (violation.max() ** 2)
 
 
 def static_penalty_report(

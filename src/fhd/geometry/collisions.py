@@ -1,4 +1,4 @@
-"""连续碰撞检测：机器人之间的相对运动最小距离、软碰撞代理、静态障碍与速度检查。
+﻿"""连续碰撞检测：机器人之间的相对运动最小距离、软碰撞代理、静态障碍与速度检查。
 
 核心约定（文档 §4.1）：
     一个执行时隙内，机器人 i 从 q_{i,m} 线性移动到 q_{i,m+a}，a∈{0,1}；
@@ -131,7 +131,7 @@ def trajectory_obstacle_clearance(
     obstacles: Obstacles,
     robot_radius: float,
     clearance_margin: float,
-    rect_iterations: int = 45,
+    rect_iterations: int = 25,
 ) -> torch.Tensor:
     """轨迹逐段到障碍物的最小净空（已扣除 机器人半径+净空）。
 
