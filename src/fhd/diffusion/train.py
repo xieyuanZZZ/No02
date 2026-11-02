@@ -36,6 +36,7 @@ def build_model(cfg, device) -> ConditionalUNet1D:
         cond_dim=int(d["cond_feature_dim"]),
         map_feature_dim=int(d["map_feature_dim"]),
         grid_size=int(cfg["world"]["grid_size"]),
+        map_res=int(d.get("map_spatial_res", 8)),
     ).to(device)
     model.horizon = int(cfg["trajectory"]["horizon"])
     return model

@@ -1,4 +1,4 @@
-# S3：单机器人条件 Diffusion 的数据生成与训练配置
+﻿# S3：单机器人条件 Diffusion 的数据生成与训练配置
 extends: base.yaml
 
 seed: 20261103
@@ -32,6 +32,7 @@ diffusion:
   ema_decay: 0.999
   unet_channels: [64, 128, 256]
   map_feature_dim: 128
+  map_spatial_res: 16
   cond_feature_dim: 128
   time_feature_dim: 128
   ddim_sampling_steps: 40

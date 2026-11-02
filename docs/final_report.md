@@ -1,6 +1,6 @@
 # 可微首次碰撞风险引导的二维多机器人扩散轨迹规划 —— 实验总报告
 
-生成时间：2026-11-03T04:22:00+08:00
+生成时间：2026-11-03T04:38:52+08:00
 
 > 本报告由脚本自动汇总各阶段 `docs/stages/Sx/` 下的真实运行结果生成，所有数值均来自实际运行，不含手绘或估计。
 
@@ -11,7 +11,7 @@
 | S0 | 环境与几何基础 | passed | 2026-11-03T02:03:14+08:00 | 3.6 s | unknown | 88 |
 | S1 | 首次碰撞风险 DP | passed | 2026-11-03T02:05:26+08:00 | 13.4 s | 0ef64b83 | 36 |
 | S2 | 无 Diffusion 的风险梯度优化 | passed | 2026-11-03T02:15:57+08:00 | 157.7 s | 2e7ab8e4 | 89 |
-| S3 | 单机器人条件 Diffusion | completed | 2026-11-03T04:21:57+08:00 | 2.5 s | bf45effe | 29 |
+| S3 | 单机器人条件 Diffusion | completed | 2026-11-03T04:38:39+08:00 | 2.4 s | 84a735df | 29 |
 | S4 | 风险引导 DDIM 接入 | passed | 2026-11-03T03:21:32+08:00 | 1.5 s | 41d9a81a | 46 |
 | S5 | 完整对照实验 | completed | 2026-11-03T03:46:41+08:00 | 0.9 s | 41d9a81a | 275 |
 
@@ -718,7 +718,7 @@
 
 | 分组 | 指标 | 值 |
 |---|---|---|
-| environment | `timestamp` | 2026-11-03T04:21:54+08:00 |
+| environment | `timestamp` | 2026-11-03T04:38:36+08:00 |
 | environment | `python` | 3.12.13 |
 | environment | `python_executable` | D:\paper2\.venv\Scripts\python.exe |
 | environment | `torch` | 2.11.0+cu128 |
@@ -728,7 +728,7 @@
 | environment | `platform` | Windows-11-10.0.26200-SP0 |
 | environment | `processor` | Intel64 Family 6 Model 151 Stepping 2, GenuineIntel |
 | environment | `cpu_count` | 10 |
-| environment | `git_commit` | bf45effe42fe9dade204a2c91d280f9321f6f7db |
+| environment | `git_commit` | 84a735dff562f55edfa5d1a8b9e55916b043402c |
 | environment | `git_dirty` | True |
 | environment | `gpu_name` | NVIDIA GeForce RTX 4070 |
 | environment | `gpu_total_memory_gb` | 11.99 |
@@ -737,16 +737,16 @@
 | sampling | `n_tasks` | 200 |
 | sampling | `samples_per_task` | 6 |
 | sampling | `ddim_steps` | 40 |
-| sampling | `success_rate` | 0.594167 |
-| sampling | `static_collision_rate` | 0.4025 |
+| sampling | `success_rate` | 0.6075 |
+| sampling | `static_collision_rate` | 0.39 |
 | sampling | `speed_violation_rate` | 0.005 |
 | sampling | `start_err_max_m` | 7.16005e-07 |
 | sampling | `goal_err_max_m` | 9.30859e-07 |
-| sampling | `length_ratio_mean` | 1.00749 |
-| sampling | `smoothness_mean` | 0.00138821 |
-| sampling | `diversity_mean_m` | 0.297103 |
-| sampling | `inference_ms_per_sample` | 30.4688 |
-| sampling | `total_seconds` | 36.5625 |
+| sampling | `length_ratio_mean` | 1.01136 |
+| sampling | `smoothness_mean` | 0.00129488 |
+| sampling | `diversity_mean_m` | 0.364065 |
+| sampling | `inference_ms_per_sample` | 30.2841 |
+| sampling | `total_seconds` | 36.3409 |
 
 ### 图表
 
@@ -810,9 +810,9 @@
 ### S3 单机器人生成质量评估报告
 
 - 阶段：`S3_diffusion_training`
-- 运行目录：`D:\paper2\results\S3_diffusion_training\20261103_042118_s3_sample_bed93d`
-- 生成时间：2026-11-03T04:21:57+08:00
-- 耗时：2.5 s
+- 运行目录：`D:\paper2\results\S3_diffusion_training\20261103_043800_s3_sample_402b45`
+- 生成时间：2026-11-03T04:38:39+08:00
+- 耗时：2.4 s
 
 #### 评估口径
 
@@ -823,10 +823,10 @@
 
 #### 结果
 
-- 成功率 **59.42%**；静态碰撞率 40.25%；速度越界率 0.50%；
-- 路径长度比（生成/真实）均值 1.007；
-- 候选多样性 0.297 m；
-- 推理 30.5 ms/样本（DDIM 40 步）。
+- 成功率 **60.75%**；静态碰撞率 39.00%；速度越界率 0.50%；
+- 路径长度比（生成/真实）均值 1.011；
+- 候选多样性 0.364 m；
+- 推理 30.3 ms/样本（DDIM 40 步）。
 
 **不追求 100% 成功**：不合格候选一律记为失败，不做后验剔除。
 
@@ -835,7 +835,7 @@
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
-| environment | `timestamp` | 2026-11-03T04:21:54+08:00 |  |
+| environment | `timestamp` | 2026-11-03T04:38:36+08:00 |  |
 | environment | `python` | 3.12.13 |  |
 | environment | `python_executable` | D:\paper2\.venv\Scripts\python.exe |  |
 | environment | `torch` | 2.11.0+cu128 |  |
@@ -845,7 +845,7 @@
 | environment | `platform` | Windows-11-10.0.26200-SP0 |  |
 | environment | `processor` | Intel64 Family 6 Model 151 Stepping 2, GenuineIntel |  |
 | environment | `cpu_count` | 10 |  |
-| environment | `git_commit` | bf45effe42fe9dade204a2c91d280f9321f6f7db |  |
+| environment | `git_commit` | 84a735dff562f55edfa5d1a8b9e55916b043402c |  |
 | environment | `git_dirty` | True |  |
 | environment | `gpu_name` | NVIDIA GeForce RTX 4070 |  |
 | environment | `gpu_total_memory_gb` | 11.99 |  |
@@ -854,16 +854,16 @@
 | sampling | `n_tasks` | 200 |  |
 | sampling | `samples_per_task` | 6 |  |
 | sampling | `ddim_steps` | 40 |  |
-| sampling | `success_rate` | 0.594167 |  |
-| sampling | `static_collision_rate` | 0.4025 |  |
+| sampling | `success_rate` | 0.6075 |  |
+| sampling | `static_collision_rate` | 0.39 |  |
 | sampling | `speed_violation_rate` | 0.005 |  |
 | sampling | `start_err_max_m` | 7.16005e-07 |  |
 | sampling | `goal_err_max_m` | 9.30859e-07 |  |
-| sampling | `length_ratio_mean` | 1.00749 |  |
-| sampling | `smoothness_mean` | 0.00138821 |  |
-| sampling | `diversity_mean_m` | 0.297103 |  |
-| sampling | `inference_ms_per_sample` | 30.4688 |  |
-| sampling | `total_seconds` | 36.5625 |  |
+| sampling | `length_ratio_mean` | 1.01136 |  |
+| sampling | `smoothness_mean` | 0.00129488 |  |
+| sampling | `diversity_mean_m` | 0.364065 |  |
+| sampling | `inference_ms_per_sample` | 30.2841 |  |
+| sampling | `total_seconds` | 36.3409 |  |
 
 #### 产物
 
@@ -894,24 +894,33 @@
 
 #### 结果（同一测试集）
 
-| 指标 | medium 模型 | large 模型 | 变化 |
+| 指标 | medium 模型 | large 模型 | large + 16×16 地图特征 |
 |---|---|---|---|
-| 成功率 | 59.4% | **61.3%** | +1.9 pp |
-| 静态碰撞率 | 40.3% | 38.6% | −1.7 pp |
-| 长度比（生成/真实） | 1.007 | 1.014 | +0.007 |
-| 候选多样性 | 0.297 m | 0.363 m | +0.066 m |
-| 推理耗时 | 33.4 ms/样本 | 30.0 ms/样本 | 相近 |
+| 成功率 | 59.4% | **61.3%** | 60.8% |
+| 静态碰撞率 | 40.3% | 38.6% | 39.0% |
+| 长度比（生成/真实） | 1.007 | 1.014 | 1.011 |
+| 候选多样性 | 0.297 m | 0.363 m | 0.364 m |
+| 推理耗时 | 33.4 ms/样本 | 30.0 ms/样本 | 30.3 ms/样本 |
+
+（“large + 16×16”= 19,212 条数据 + 把地图空间特征从 8×8 提到 16×16、训练 5 万步，
+最佳验证损失 0.00763。）
 
 #### 结论
 
-1. **数据量从 4.8k 增加到 19.2k 只带来约 2 个百分点的提升**，说明当前瓶颈不是数据量，
-   而是网络容量与条件融合方式（8×8 的空间地图特征分辨率偏低，难以表达窄通道的精细几何）。
-2. 因此主流程没有为了“更好看的数字”而改用 large 数据集，而是如实报告两个规模的结果。
-3. 这个负结果直接决定了本项目的边界：S4/S5 的“全尝试安全完成率”被模型本身的静态避障
-   能力（约 60% 单机成功率；N 台全部安全约为 0.6^N）严重压低。S5 中所有方法共享同一个
-   基座模型，因此**方法之间的相对比较仍然有效**，但绝对数值不能当作系统可用的证据。
-4. 若要继续提高，优先级应为：更细的地图条件（如 32×32 空间特征或栅格到路径的注意力）、
-   更强的数据增广、以及在采样阶段统一加入静态约束（本项目已对所有方法统一启用 `L_static`）。
+1. **数据量 4.8k → 19.2k 只带来 +1.9 pp，地图特征 8×8 → 16×16 只带来 −0.5 pp（无显著差异）。**
+   两者都没有突破约 60% 的平台，说明瓶颈既不是数据量，也不是地图条件的空间分辨率。
+2. 更可能的原因是**表示与判定口径**：H=32 个路点、每段 ≤0.6 m 的折线，在 0.55–0.8 m 宽的
+   窄门口里必须“穿针引线”；而“成功”要求 31 段**全部**与障碍物保持 0.18 m 净空，
+   是严格的 all-or-nothing 判定。单点擦边即整条失败。
+3. 因此主流程没有为了“更好看的数字”更换数据集或网络，而是如实报告两个规模的结果。
+4. 这个平台直接决定了本项目的边界：S4/S5 的“全尝试安全完成率”被基座模型的静态避障能力
+   （约 60% 单机成功率；N 台全部安全约为 0.6^N，N=6 时仅约 5%）严重压低。
+   S5 中所有方法共享同一个基座模型，因此**方法之间的相对比较仍然有效**，
+   但绝对数值不能当作系统可用的证据。
+5. 若要继续提高，优先级应为：更细的路点（例如 H=64 或自适应路点）、
+   在采样阶段统一加入更强的静态约束（本项目已对所有方法统一启用 `L_static`，
+   但 λ_S 从 10 提到 50 对成功率没有影响，说明问题在拓扑而非权重）、
+   或者用“路径点查询栅格”的注意力结构代替全局条件向量。
 
 
 ## S4：风险引导 DDIM 接入

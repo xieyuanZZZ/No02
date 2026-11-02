@@ -67,17 +67,22 @@ class MapEncoder(nn.Module):
     与轨迹通道拼接，使每个路点都能“看到”自己附近的障碍。
     """
 
-    def __init__(self, out_dim: int = 128, spatial_channels: int = 16, in_channels: int = 1):
+    def __init__(self, out_dim: int = 128, spatial_channels: int = 16, in_channels: int = 1,
+                 map_res: int = 8):
         super().__init__()
         self.spatial_channels = spatial_channels
-        self.body = nn.Sequential(
+        self.map_res = int(map_res)
+        layers = [
             nn.Conv2d(in_channels, 16, 5, stride=2, padding=2),   # 32
             nn.SiLU(),
             nn.Conv2d(16, 32, 5, stride=2, padding=2),            # 16
             nn.SiLU(),
-            nn.Conv2d(32, spatial_channels, 3, stride=2, padding=1),  # 8
-            nn.SiLU(),
-        )
+        ]
+        if self.map_res <= 16:
+            layers += [nn.Conv2d(32, spatial_channels, 3, padding=1), nn.SiLU()]
+        else:
+            layers += [nn.Conv2d(32, spatial_channels, 3, stride=2, padding=1), nn.SiLU()]  # 8
+        self.body = nn.Sequential(*layers)
         self.embed = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(),
@@ -101,6 +106,7 @@ class ConditionalUNet1D(nn.Module):
         map_feature_dim: int = 128,
         grid_size: int = 64,
         map_spatial_channels: int = 16,
+        map_res: int = 8,
     ):
         super().__init__()
         ch1, ch2, ch3 = [base_channels * m for m in mults]
@@ -110,7 +116,7 @@ class ConditionalUNet1D(nn.Module):
         self.time_emb = SinusoidalPosEmb(cond_dim)
         self.time_mlp = nn.Sequential(nn.Linear(cond_dim, cond_dim), nn.SiLU(), nn.Linear(cond_dim, cond_dim))
         self.map_encoder = MapEncoder(map_feature_dim, spatial_channels=map_spatial_channels,
-                                      in_channels=1)
+                                      in_channels=1, map_res=map_res)
         self.map_proj = nn.Linear(map_feature_dim, cond_dim)
         self.cond_mlp = nn.Sequential(
             nn.Linear(4, cond_dim), nn.SiLU(), nn.Linear(cond_dim, cond_dim)

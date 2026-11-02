@@ -68,6 +68,7 @@ diffusion:
   val_every: 500
   sample_every: 1000
   num_train_timesteps: 1000
+  map_spatial_res: 16
   log_every: 10
   num_workers: 0
 dataset:
