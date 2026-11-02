@@ -1,7 +1,6 @@
 ﻿colorama==0.4.6
 contourpy==1.4.0
 cycler==0.12.1
--e file:///D:/paper2
 filelock==4.2.4
 fonttools==4.68.0
 fsspec==2026.9.0
