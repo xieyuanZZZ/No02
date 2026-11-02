@@ -1,4 +1,4 @@
-"""汇总各阶段结果，生成 docs/final_report.md 与仓库根目录的 RESULTS.md。
+﻿"""汇总各阶段结果，生成 docs/final_report.md 与仓库根目录的 RESULTS.md。
 
 用法：python scripts/make_report.py [--results results/<run_id>]
 """
@@ -26,6 +26,20 @@ STAGES = [
 ]
 
 
+def demote(text: str, levels: int = 2) -> str:
+    """把内嵌 markdown 的标题降级，避免破坏总报告的目录结构。"""
+    prefix = "#" * levels
+    out = []
+    in_code = False
+    for line in text.splitlines():
+        if line.strip().startswith("```"):
+            in_code = not in_code
+        if not in_code and line.startswith("#"):
+            line = prefix + line
+        out.append(line)
+    return "\n".join(out)
+
+
 def load_stage(key: str) -> dict:
     base = ROOT / "docs" / "stages" / key
     out = {"key": key, "exists": base.exists()}
@@ -43,6 +57,8 @@ def load_stage(key: str) -> dict:
             out["metrics"] = None
     plots = base / "plots"
     out["plots"] = sorted(p.name for p in plots.glob("*.png")) if plots.exists() else []
+    supplements = sorted(base.glob("supplement_*.md"))
+    out["supplements"] = [(p.name, p.read_text(encoding="utf-8")) for p in supplements]
     return out
 
 
@@ -105,27 +121,15 @@ def main() -> int:
             for png in st["plots"]:
                 lines.append(f"![{png}](stages/{key}/plots/{png})")
             lines.append("")
-        lines += ["### 阶段报告原文", "", st["report.md"], ""]
+        lines += ["### 阶段报告原文", "", demote(st["report.md"]), ""]
+        for name, text in st.get("supplements", []):
+            lines += [f"### 补充记录：{name}", "", demote(text), ""]
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
-    # RESULTS.md：只放结论与关键数字
-    results_lines = ["# RESULTS（自动生成）", "", "本文件由 `scripts/make_report.py` 从各阶段真实运行结果汇总。", "",
-                     "| 阶段 | 状态 | 关键结论 |", "|---|---|---|"]
-    for key, title, folder in STAGES:
-        st = stages[key]
-        if not st.get("exists") or "stage_status.json" not in st:
-            results_lines.append(f"| {key} {title} | 未运行 | - |")
-            continue
-        status = json.loads(st["stage_status.json"])
-        results_lines.append(f"| {key} {title} | {status.get('status', '?')} | "
-                             f"见 `docs/stages/{key}/report.md` |")
-    results_lines += ["", "## 详细结果", "", "完整内容见 [`docs/final_report.md`](docs/final_report.md)。", ""]
-    (ROOT / "RESULTS.md").write_text("\n".join(results_lines), encoding="utf-8")
-
-    print(f"已生成 {out_path} 与 RESULTS.md")
+    print(f"已生成 {out_path}（RESULTS.md 为人工维护的摘要，不自动覆盖）")
     return 0
 
 

@@ -1,4 +1,4 @@
-"""R8 梯度正确性：与中心差分对照（float64、远离硬边界、梯度非零处）。"""
+﻿"""R8 梯度正确性：与中心差分对照（float64、远离硬边界、梯度非零处）。"""
 
 from __future__ import annotations
 
@@ -47,7 +47,7 @@ def test_risk_is_nonzero_and_finite(setup):
     model = _model()
     value = _risk(paths, wait, p, 96, model)
     assert torch.isfinite(value)
-    assert 1e-3 < float(value) < 0.999, f"梯度测试需要非平凡风险值，实际 {float(value)}"
+    assert 1e-3 < float(value.detach()) < 0.999, f"梯度测试需要非平凡风险值，实际 {float(value.detach())}"
 
 
 def test_gradient_wrt_paths_matches_finite_difference(setup):

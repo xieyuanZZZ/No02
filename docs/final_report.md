@@ -1,6 +1,6 @@
 # 可微首次碰撞风险引导的二维多机器人扩散轨迹规划 —— 实验总报告
 
-生成时间：2026-11-03T03:46:48+08:00
+生成时间：2026-11-03T04:22:00+08:00
 
 > 本报告由脚本自动汇总各阶段 `docs/stages/Sx/` 下的真实运行结果生成，所有数值均来自实际运行，不含手绘或估计。
 
@@ -11,7 +11,7 @@
 | S0 | 环境与几何基础 | passed | 2026-11-03T02:03:14+08:00 | 3.6 s | unknown | 88 |
 | S1 | 首次碰撞风险 DP | passed | 2026-11-03T02:05:26+08:00 | 13.4 s | 0ef64b83 | 36 |
 | S2 | 无 Diffusion 的风险梯度优化 | passed | 2026-11-03T02:15:57+08:00 | 157.7 s | 2e7ab8e4 | 89 |
-| S3 | 单机器人条件 Diffusion | completed | 2026-11-03T03:20:51+08:00 | 2.6 s | 41d9a81a | 29 |
+| S3 | 单机器人条件 Diffusion | completed | 2026-11-03T04:21:57+08:00 | 2.5 s | bf45effe | 29 |
 | S4 | 风险引导 DDIM 接入 | passed | 2026-11-03T03:21:32+08:00 | 1.5 s | 41d9a81a | 46 |
 | S5 | 完整对照实验 | completed | 2026-11-03T03:46:41+08:00 | 0.9 s | 41d9a81a | 275 |
 
@@ -130,25 +130,25 @@
 
 ### 阶段报告原文
 
-# S0 环境与几何基础验证报告
+### S0 环境与几何基础验证报告
 
 - 阶段：`S0_environment`
 - 运行目录：`D:\paper2\results\S0_environment\20261103_020310_s0_baseline_7ff859`
 - 生成时间：2026-11-03T02:03:14+08:00
 - 耗时：3.6 s
 
-## 阶段目标
+#### 阶段目标
 
 建立新工程环境、静态地图生成器、机器人圆盘几何、任务/场景构造、轨迹连续碰撞检测，以及独立随机执行模拟器；并用单元测试固定正确性。
 
-## 关键实现决定
+#### 关键实现决定
 
 - 障碍物只用**连续几何**（轴对齐矩形 + 圆）描述，栅格仅用于可视化与网络条件输入；
 - 线段到矩形的距离用**逐矩形黄金分割**（单矩形距离对参数 u 是凸的，min 会破坏凸性，故不能合并求解）；
 - 机器人之间用相对运动闭式解求最小距离，并额外保留一套独立实现供交叉验证；
 - 执行模型为层 A：每时隙最多前进 1 个路点，时隙内线性插值，同步连续段碰撞判定。
 
-## 结论
+#### 结论
 
 - 4 类地图生成正常，占据率与 SDF 数值合理；
 - 7 个手工场景全部满足段长 <= v_max*dt = 0.60 m；
@@ -156,7 +156,7 @@
 - S0 通过，可进入 S1（首次碰撞风险 DP）。
 
 
-## 指标
+#### 指标
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
@@ -249,7 +249,7 @@
 | tests | `tests_passed` | 12 |  |
 | tests | `tests_failed` | 0 |  |
 
-## 产物
+#### 产物
 
 - `tables\map_open_rects.csv`
 - `tables\map_open_circles.csv`
@@ -274,7 +274,6 @@
 - `plots\execution_traces_crossing.png`
 - `tables\execution_collision_detail.csv`
 - `plots\execution_single_sample_detail.png`
-
 
 
 ## S1：首次碰撞风险 DP
@@ -332,18 +331,18 @@
 
 ### 阶段报告原文
 
-# S1 首次碰撞风险 DP 正确性报告
+### S1 首次碰撞风险 DP 正确性报告
 
 - 阶段：`S1_risk_dp`
 - 运行目录：`D:\paper2\results\S1_risk_dp\20261103_020513_s1_verify_f1e3d9`
 - 生成时间：2026-11-03T02:05:26+08:00
 - 耗时：13.4 s
 
-## 阶段目标
+#### 阶段目标
 
 在训练任何神经网络之前，先证明“随机执行进度传播 + 首次碰撞吸收”这套动态规划在数学上正确、可微、且与独立 Monte Carlo 一致（文档 §5.4 的第一道门槛）。
 
-## 方法要点
+#### 方法要点
 
 - 状态：F_t(m,n) 为“截至 t 未碰撞且联合进度为 (m,n)”的概率质量，共 H×H=32×32 个状态；
 - 每步枚举 4 种动作（00/10/01/11），用四种动作的连续运动段碰撞核吸收质量；
@@ -352,7 +351,7 @@
 - 硬门槛 a=(1-p)·1[t≥τ]，与执行模拟器使用完全相同的实数比较；
 - 全队语义：两两风险之和只是引导目标，不是全队至少碰撞一次的概率；全队碰撞率必须由联合 Monte Carlo 估计（本节给出并集上界对照）。
 
-## 测试与对照结果
+#### 测试与对照结果
 
 - R1–R10 单元测试：通过 0 项、失败 0 项、错误 0 项；
 - R7（20 个案例 × 10000 次 MC）：最大绝对误差 0.00674，二项检验不一致案例 0 个（α=0.001）；
@@ -360,7 +359,7 @@
 - 软/硬门槛带来的进度分布最大总变差距离 0.0584；
 - R8：梯度与中心差分的最大相对误差 3.53e-07。
 
-## 结论
+#### 结论
 
 - 首次碰撞概率 DP 在无碰撞时严格保持概率守恒，在必然碰撞时严格为 1，且只计第一次碰撞；
 - 硬 DP 与独立 Monte Carlo 在统计误差内一致（最大绝对误差 0.00674）；
@@ -368,7 +367,7 @@
 - S1 门槛通过，可进入 S2（不使用 Diffusion 的风险梯度优化）。
 
 
-## 指标
+#### 指标
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
@@ -409,7 +408,7 @@
 | multi | `n6_union_bound` | 1 |  |
 | multi | `n6_mc_team_collision_rate` | 1 |  |
 
-## 产物
+#### 产物
 
 - `tables\r7_dp_vs_mc.csv`
 - `plots\r7_dp_vs_mc.png`
@@ -422,7 +421,6 @@
 - `plots\joint_progress_grid.png`
 - `tables\gradient_finite_difference.csv`
 - `tables\timing.csv`
-
 
 
 ## S2：无 Diffusion 的风险梯度优化
@@ -541,18 +539,18 @@
 
 ### 阶段报告原文
 
-# S2 不使用 Diffusion 的风险梯度优化报告
+### S2 不使用 Diffusion 的风险梯度优化报告
 
 - 阶段：`S2_gradient_optimization`
 - 运行目录：`D:\paper2\results\S2_gradient_optimization\20261103_021319_s2_optimize_b67a27`
 - 生成时间：2026-11-03T02:15:57+08:00
 - 耗时：157.7 s
 
-## 阶段目标
+#### 阶段目标
 
 在不使用任何神经网络的前提下，验证“可微首次碰撞风险 → 梯度 → 轨迹与等待的有效修正”这条链条成立（文档 §9 S2）。
 
-## 优化设置
+#### 优化设置
 
 - 损失：λ_R ΣR_soft + λ_T J_finish + λ_S L_static + λ_K L_kinematic + λ_G L_geometry + λ_W ||w||₁；
 - λ 取值为批复 §23 的默认值（λ_R=1.0, λ_T=0.05, λ_S=10.0, λ_K=1.0, λ_G=0.5, λ_W=0.01）；
@@ -560,13 +558,13 @@
 - 端点固定、端点梯度屏蔽；步数 250，Adam 路径 lr=0.02、等待 lr=0.1；
 - 每 5000 次独立 Monte Carlo 复现用于验证真实碰撞率。
 
-## 各场景结果
+#### 各场景结果
 
 - **crossing**：硬风险 0.1788 → 只改路径 0.0000 / 只改等待 0.0204 / 联合 0.0000（降低 +0.1788）
 - **follow**：硬风险 0.4171 → 只改路径 0.0120 / 只改等待 0.0316 / 联合 0.0039（降低 +0.4133）
 - **narrow_gate**：硬风险 1.0000 → 只改路径 1.0000 / 只改等待 1.0000 / 联合 1.0000（降低 +0.0000）
 
-## 梯度饱和的诊断（窄门口）
+#### 梯度饱和的诊断（窄门口）
 
 窄门口场景的初始硬风险恰为 1.0：两车在单车宽的缺口内对向相遇，几乎所有执行轨迹都碰撞。此时首次碰撞 DP 的概率质量在很早期就被完全吸收，**软风险也随之饱和到 1**，对路径与等待的梯度趋近 0，优化停滞。这正是文档 §14 列出的“深度碰撞处梯度饱和”失败模式。
 
@@ -580,7 +578,7 @@
 
 把温度放宽到 ε=0.4 后，等待梯度范数从 4.672e-11 放大到 1.184e-03，但重新做 150 步等待优化后硬风险仍为 1.0000（等待 0.00 时隙）。**结论：单靠温度退火不足以逃离该饱和区**——本案例需要“让一车整体先通过”这种近似离散的决策，局部梯度无法表达。该负结果保留在案，作为 S5 失败归因与“是否引入辅助机制”的判断依据。
 
-## 结论
+#### 结论
 
 - 2/3 个几何案例在充分时间预算下把硬风险显著降低（>0.01）；
 - 软风险与硬风险、Monte Carlo 碰撞率同向下降，说明可微代理的优化方向可信；
@@ -590,7 +588,7 @@
 - 通过条件：满足（要求至少 2 个案例）。
 
 
-## 指标
+#### 指标
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
@@ -684,7 +682,7 @@
 | result | `narrow_gate/A3 联合优化/finish_cost_s` | 27.5556 |  |
 | verdict | `s2_improved_cases` | 2 |  |
 
-## 产物
+#### 产物
 
 - `tables\wait_safety_crossing_path.csv`
 - `tables\wait_safety_crossing_wait.csv`
@@ -712,7 +710,6 @@
 - `plots\pareto_crossing.png`
 
 
-
 ## S3：单机器人条件 Diffusion
 
 运行目录：`results/S3_diffusion_training/`（完整记录），归档：`docs/stages/S3/`。
@@ -721,7 +718,7 @@
 
 | 分组 | 指标 | 值 |
 |---|---|---|
-| environment | `timestamp` | 2026-11-03T03:20:48+08:00 |
+| environment | `timestamp` | 2026-11-03T04:21:54+08:00 |
 | environment | `python` | 3.12.13 |
 | environment | `python_executable` | D:\paper2\.venv\Scripts\python.exe |
 | environment | `torch` | 2.11.0+cu128 |
@@ -731,7 +728,7 @@
 | environment | `platform` | Windows-11-10.0.26200-SP0 |
 | environment | `processor` | Intel64 Family 6 Model 151 Stepping 2, GenuineIntel |
 | environment | `cpu_count` | 10 |
-| environment | `git_commit` | 41d9a81a58961779f75c107425a63a82c3171eae |
+| environment | `git_commit` | bf45effe42fe9dade204a2c91d280f9321f6f7db |
 | environment | `git_dirty` | True |
 | environment | `gpu_name` | NVIDIA GeForce RTX 4070 |
 | environment | `gpu_total_memory_gb` | 11.99 |
@@ -748,8 +745,8 @@
 | sampling | `length_ratio_mean` | 1.00749 |
 | sampling | `smoothness_mean` | 0.00138821 |
 | sampling | `diversity_mean_m` | 0.297103 |
-| sampling | `inference_ms_per_sample` | 33.3735 |
-| sampling | `total_seconds` | 40.0482 |
+| sampling | `inference_ms_per_sample` | 30.4688 |
+| sampling | `total_seconds` | 36.5625 |
 
 ### 图表
 
@@ -796,39 +793,49 @@
 ![sample_step038000.png](stages/S3/plots/sample_step038000.png)
 ![sample_step039000.png](stages/S3/plots/sample_step039000.png)
 ![sample_step040000.png](stages/S3/plots/sample_step040000.png)
+![sample_step041000.png](stages/S3/plots/sample_step041000.png)
+![sample_step042000.png](stages/S3/plots/sample_step042000.png)
+![sample_step043000.png](stages/S3/plots/sample_step043000.png)
+![sample_step044000.png](stages/S3/plots/sample_step044000.png)
+![sample_step045000.png](stages/S3/plots/sample_step045000.png)
+![sample_step046000.png](stages/S3/plots/sample_step046000.png)
+![sample_step047000.png](stages/S3/plots/sample_step047000.png)
+![sample_step048000.png](stages/S3/plots/sample_step048000.png)
+![sample_step049000.png](stages/S3/plots/sample_step049000.png)
+![sample_step050000.png](stages/S3/plots/sample_step050000.png)
 ![success_rate_hist.png](stages/S3/plots/success_rate_hist.png)
 
 ### 阶段报告原文
 
-# S3 单机器人生成质量评估报告
+### S3 单机器人生成质量评估报告
 
 - 阶段：`S3_diffusion_training`
-- 运行目录：`D:\paper2\results\S3_diffusion_training\20261103_032008_s3_sample_0b5ace`
-- 生成时间：2026-11-03T03:20:51+08:00
-- 耗时：2.6 s
+- 运行目录：`D:\paper2\results\S3_diffusion_training\20261103_042118_s3_sample_bed93d`
+- 生成时间：2026-11-03T04:21:57+08:00
+- 耗时：2.5 s
 
-## 评估口径
+#### 评估口径
 
 - 从 `test` 划分中均匀取 200 个任务，每个任务采样 6 条候选；
 - “成功”定义：静态障碍连续几何无碰撞 **且** 每段长度 ≤ v_max·Δt=0.60 m；
 - 起终点由采样器强制固定，误差应接近 0；
 - 多样性 = 同一任务 k 条候选的平均两两点距。
 
-## 结果
+#### 结果
 
 - 成功率 **59.42%**；静态碰撞率 40.25%；速度越界率 0.50%；
 - 路径长度比（生成/真实）均值 1.007；
 - 候选多样性 0.297 m；
-- 推理 33.4 ms/样本（DDIM 40 步）。
+- 推理 30.5 ms/样本（DDIM 40 步）。
 
 **不追求 100% 成功**：不合格候选一律记为失败，不做后验剔除。
 
 
-## 指标
+#### 指标
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
-| environment | `timestamp` | 2026-11-03T03:20:48+08:00 |  |
+| environment | `timestamp` | 2026-11-03T04:21:54+08:00 |  |
 | environment | `python` | 3.12.13 |  |
 | environment | `python_executable` | D:\paper2\.venv\Scripts\python.exe |  |
 | environment | `torch` | 2.11.0+cu128 |  |
@@ -838,7 +845,7 @@
 | environment | `platform` | Windows-11-10.0.26200-SP0 |  |
 | environment | `processor` | Intel64 Family 6 Model 151 Stepping 2, GenuineIntel |  |
 | environment | `cpu_count` | 10 |  |
-| environment | `git_commit` | 41d9a81a58961779f75c107425a63a82c3171eae |  |
+| environment | `git_commit` | bf45effe42fe9dade204a2c91d280f9321f6f7db |  |
 | environment | `git_dirty` | True |  |
 | environment | `gpu_name` | NVIDIA GeForce RTX 4070 |  |
 | environment | `gpu_total_memory_gb` | 11.99 |  |
@@ -855,15 +862,56 @@
 | sampling | `length_ratio_mean` | 1.00749 |  |
 | sampling | `smoothness_mean` | 0.00138821 |  |
 | sampling | `diversity_mean_m` | 0.297103 |  |
-| sampling | `inference_ms_per_sample` | 33.3735 |  |
-| sampling | `total_seconds` | 40.0482 |  |
+| sampling | `inference_ms_per_sample` | 30.4688 |  |
+| sampling | `total_seconds` | 36.5625 |  |
 
-## 产物
+#### 产物
 
 - `tables\single_robot_samples.csv`
 - `plots\generated_samples_grid.png`
 - `plots\success_rate_hist.png`
 
+### 补充记录：supplement_data_scaling.md
+
+### 补充实验：数据规模对单机器人生成质量的影响
+
+> 本文件是 S3 的补充记录。主流程使用 `medium` 规模（4,819 条训练轨迹）训练的模型，
+> 这里报告在同一测试集上把训练数据扩大到 19,212 条后的结果，用于判断瓶颈在哪里。
+
+#### 设置
+
+| 项 | medium（主流程） | large（补充） |
+|---|---|---|
+| 训练地图数 | 50 | 100 |
+| 训练轨迹数 | 4,819 | 19,212 |
+| 验证 / 测试 | 473 / 489（10 / 10 张地图） | 950 / 958（20 / 20 张地图） |
+| 训练步数 | 40,000 | 50,000 |
+| 最佳验证损失 | 0.01066 | 0.00875 |
+| 网络结构 | 地图空间特征 8×8 + FiLM 1D U-Net（2.23 M 参数） | 同左 |
+
+评估口径完全一致：`data/dataset` 的 **test** 划分，均匀取 200 个任务，每个任务 6 条候选，
+40 步 DDIM；“成功”= 静态连续几何无碰撞 **且** 每段长度 ≤ 0.6 m。
+
+#### 结果（同一测试集）
+
+| 指标 | medium 模型 | large 模型 | 变化 |
+|---|---|---|---|
+| 成功率 | 59.4% | **61.3%** | +1.9 pp |
+| 静态碰撞率 | 40.3% | 38.6% | −1.7 pp |
+| 长度比（生成/真实） | 1.007 | 1.014 | +0.007 |
+| 候选多样性 | 0.297 m | 0.363 m | +0.066 m |
+| 推理耗时 | 33.4 ms/样本 | 30.0 ms/样本 | 相近 |
+
+#### 结论
+
+1. **数据量从 4.8k 增加到 19.2k 只带来约 2 个百分点的提升**，说明当前瓶颈不是数据量，
+   而是网络容量与条件融合方式（8×8 的空间地图特征分辨率偏低，难以表达窄通道的精细几何）。
+2. 因此主流程没有为了“更好看的数字”而改用 large 数据集，而是如实报告两个规模的结果。
+3. 这个负结果直接决定了本项目的边界：S4/S5 的“全尝试安全完成率”被模型本身的静态避障
+   能力（约 60% 单机成功率；N 台全部安全约为 0.6^N）严重压低。S5 中所有方法共享同一个
+   基座模型，因此**方法之间的相对比较仍然有效**，但绝对数值不能当作系统可用的证据。
+4. 若要继续提高，优先级应为：更细的地图条件（如 32×32 空间特征或栅格到路径的注意力）、
+   更强的数据增广、以及在采样阶段统一加入静态约束（本项目已对所有方法统一启用 `L_static`）。
 
 
 ## S4：风险引导 DDIM 接入
@@ -930,18 +978,18 @@
 
 ### 阶段报告原文
 
-# S4 风险引导 DDIM 演示与验证报告
+### S4 风险引导 DDIM 演示与验证报告
 
 - 阶段：`S4_guided_diffusion`
 - 运行目录：`D:\paper2\results\S4_guided_diffusion\20261103_032125_s4_demo_2fb7e4`
 - 生成时间：2026-11-03T03:21:32+08:00
 - 耗时：1.5 s
 
-## 阶段目标
+#### 阶段目标
 
 把首次碰撞风险模块接到**推理阶段**的每一步 DDIM 预测上：网络参数冻结，风险梯度只修正当前的干净轨迹预测 Q̂0 与等待变量 w（文档 §7.3）。
 
-## 验证结果
+#### 验证结果
 
 | 检查项 | 结果 |
 |---|---|
@@ -957,14 +1005,14 @@
 - A3（引导）：硬风险 0.0049，MC 碰撞率 0.0040，主动等待 2.61 时隙；
 - 规划耗时：B0 1.0s，A3 2.8s（40 步 DDIM）。
 
-## 结论
+#### 结论
 
 - 引导通路在结构上正确（零引导严格等价、参数冻结、端点不变）；
 - 引导显著降低了硬风险与实测碰撞率；
 - 与 S2 的手工案例一致：风险梯度既可以修改几何，也可以产生主动等待。
 
 
-## 指标
+#### 指标
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
@@ -1015,14 +1063,13 @@
 | verification | `check/静态安全` | True |  |
 | verification | `check/速度约束` | True |  |
 
-## 产物
+#### 产物
 
 - `tables\a3_guidance_trace.csv`
 - `plots\guidance_trajectory.png`
 - `plots\plan_B0.png`
 - `plots\plan_A3.png`
 - `plots\geometry_evolution.png`
-
 
 
 ## S5：完整对照实验
@@ -1318,14 +1365,14 @@
 
 ### 阶段报告原文
 
-# S5 完整对照实验报告
+### S5 完整对照实验报告
 
 - 阶段：`S5_evaluation`
 - 运行目录：`D:\paper2\results\S5_evaluation\20261103_033410_s5_benchmark_a98f98`
 - 生成时间：2026-11-03T03:46:41+08:00
 - 耗时：0.9 s
 
-## 实验设计
+#### 实验设计
 
 - 任务：36 个（4 类地图 × [2, 4, 6] 台），每格 3 个；
 - 方法：B0, B1, B2, B3, A1, A2, A3（共享同一 Diffusion 权重、同一噪声、20 步 DDIM、相同引导预算）；
@@ -1333,7 +1380,7 @@
 - 成功口径：规划有效 + 执行中全部到达 + 执行全程无碰撞（失败规划计 0）；
 - 置信区间：以任务为簇的 bootstrap（2000 次重采样）。
 
-## 结果
+#### 结果
 
 | 方法 | 规划成功率 | 平均耗时 [s] | 平均等待 | 平均硬风险 |
 |---|---|---|---|---|
@@ -1345,7 +1392,7 @@
 | A2 首次碰撞 + 只改等待 | 0.306 | 2.59 | 3.87 | 0.6765 |
 | A3 首次碰撞 + 联合 | 0.306 | 2.50 | 3.83 | 0.5611 |
 
-## 执行结果（p=0.2）
+#### 执行结果（p=0.2）
 
 | 方法 | 安全完成率 | 95% 区间 | 碰撞率 | makespan [s] |
 |---|---|---|---|---|
@@ -1357,19 +1404,19 @@
 | A2 | 0.211 | [0.188, 0.236] | 0.469 | 17.13 |
 | A3 | 0.216 | [0.192, 0.241] | 0.432 | 17.13 |
 
-## 关键检验（G2：首次碰撞吸收是否不可替代）
+#### 关键检验（G2：首次碰撞吸收是否不可替代）
 
 - A3 vs B3（逐时刻期望风险）：安全完成率差 -0.0366，95% 区间 [-0.0963, -0.0002]，显著；
 - A3 安全完成率 0.216，B3 0.237（p=0.2）。
 
-## 结论与局限
+#### 结论与局限
 
 - 本报告为**预实验规模**（配置 `benchmark.scale`），不可当作完整规模的最终结论；
 - 若 A3 与 B3 差异不显著，则“首次碰撞吸收”的独立贡献尚未被证明（G2 未达成）；
 - 所有失败均按 §10.2 口径计入分母，未做后验剔除。
 
 
-## 指标
+#### 指标
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
@@ -1649,7 +1696,7 @@
 | execution/p0.2 | `A3/p0.2/makespan_mean_s` | 17.1285 |  |
 | execution/p0.2 | `A3/p0.2/makespan_p90_s` | 18.3356 |  |
 
-## 产物
+#### 产物
 
 - `tables\plans.csv`
 - `tables\executions.csv`
@@ -1657,4 +1704,3 @@
 - `plots\plan_time_and_makespan.png`
 - `plots\safety_efficiency_scatter.png`
 - `plots\failure_attribution.png`
-
