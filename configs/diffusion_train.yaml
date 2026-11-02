@@ -1,0 +1,52 @@
+# S3：单机器人条件 Diffusion 的数据生成与训练配置
+extends: base.yaml
+
+seed: 20261103
+device: auto
+dtype: float32
+
+dataset:
+  astar_resolution: 256
+  train_maps: 200
+  train_tasks_per_map: 100
+  val_maps: 40
+  val_tasks_per_map: 50
+  test_maps: 50
+  test_tasks_per_map: 50
+  vectors_per_task: 2
+  min_path_length_m: 3.0
+  min_start_goal_dist_m: 3.5
+  simplify_tolerance_m: 0.08
+
+diffusion:
+  horizon: 32
+  num_train_timesteps: 1000
+  beta_schedule: cosine
+  prediction_type: epsilon
+  training_steps: 40000
+  smoke_steps: 600
+  batch_size: 96
+  grad_accum_steps: 1
+  lr: 2.0e-4
+  weight_decay: 0.0
+  ema_decay: 0.999
+  unet_channels: [64, 128, 256]
+  map_feature_dim: 128
+  cond_feature_dim: 128
+  time_feature_dim: 128
+  ddim_sampling_steps: 40
+  checkpoint_every: 2000
+  val_every: 500
+  sample_every: 1000
+  log_every: 10
+  num_workers: 0
+
+evaluation:
+  n_tasks: 500
+  samples_per_task: 8
+  static_check_samples: 8
+
+sampling:
+  batch_size: 64
+  guidance_start_fraction: 0.25
+  guidance_updates_per_step: 1

@@ -1,0 +1,21 @@
+"""S5 评测配置：4 类地图 × 2/4/6 台 × 多暂停强度 × 全套方法。"""
+
+extends: guidance.yaml
+
+benchmark:
+  scale: 0.2              # 先做 1/5 规模预实验（批复 §29）
+  tasks_per_cell: 3
+  robot_counts: [2, 4, 6]
+  pause_probabilities: [0.0, 0.05, 0.10, 0.20]
+  execution_repeats: 30
+  methods: [B0, B1, B2, B3, A1, A2, A3]
+  ddim_steps: 20
+  n_bootstrap: 2000
+  map_kinds: [open, dual_corridor, narrow_gate, bottleneck]
+
+execution:
+  horizon_steps: 96
+
+evaluation:
+  hard_check: true
+  save_failure_traces: true
