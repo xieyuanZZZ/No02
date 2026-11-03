@@ -534,3 +534,110 @@ MPD `EnvSimple2D-RobotPointMass2D` 的预训练权重（在 `data_public.tar.gz`
 **替代方案**：用官方 MPD 代码 + 我已抽出的官方 EnvSimple2D 数据集（20000 条轨迹），
 在这台 4070 上自己训一个 point-mass 模型。这是"官方代码 + 官方数据 + 自训权重"，
 必须明确标注**不是**官方预训练权重，不能称为完整复现。
+
+---
+
+## 13. 官方 MPD 复现结果（2026-11-03，已在真实运行）
+
+### 13.1 环境最终状态
+
+| 项 | 状态 |
+|---|---|
+| 官方仓库 | commit `3676cbf`，三个子模块固定 |
+| Python / torch | 3.8.19 / 2.0.0+cu118，GPU 可用 |
+| 官方 2D 数据集 | EnvSimple2D，20000 条轨迹，79 MB |
+| 官方 2D 权重 | `ema_model_current_state_dict.pth`，4.23 MB |
+| 权重 SHA256 | `6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0` |
+| 配置 SHA256 | `feacba13cab69d3ac002748a0741f54dcd1ddd59661d72d9956c3ea9e6ebd641` |
+
+已解决的环境问题（逐个记录）：
+
+| # | 问题 | 解决 |
+|---|---|---|
+| 1 | 子模块用 SSH URL | `.gitmodules` 改 HTTPS 后重新 init |
+| 2 | conda 频道 ToS | `-c conda-forge --override-channels` |
+| 3 | WSL 无 pip、apt 卡死 | 改装 Miniconda |
+| 4 | Isaac Gym 需要 NVIDIA 登录 | 2D 路径上纯 import 依赖；写了三处 shim（`isaacgym`、`deps/isaacgym`、`pb_ompl`），调用即报错 |
+| 5 | `cv2/moviepy/imageio` 缺失 | pip 安装 |
+| 6 | **`libnvrtc.so` 找不到**（cuDNN 加载失败） | 装 `nvidia-cuda-nvrtc-cu11==11.8.89` 并建 `libnvrtc.so` 软链 |
+| 7 | 官方脚本无条件构造 `GenerateDataOMPL`（需 OMPL 编译） | 用官方库类写薄驱动（见 13.2），**算法完全用官方实现** |
+| 8 | 归档解压体积过大（trajectories 37 GB 未完成） | 只解压 `data_trained_models`（1.1 GB，6.5 分钟） |
+
+### 13.2 关于驱动方式（必须如实说明）
+
+官方入口 `scripts/inference/inference.py` 会**无条件**实例化
+`EvaluationSamplesGenerator`，其内部 `GenerateDataOMPL → PbOMPLRobot` 需要
+OMPL 的 Python 绑定（CMake 编译，官方 setup.sh 里要 `make update_bindings` + 多轮 `make`）。
+本机没有该绑定，且与权重无关。
+
+因此改用 `mpd_extension/run_mpd_2d.py` 薄驱动，**与官方脚本一致的部分**：
+
+* 同一份 `config_EnvSimple2D-RobotPointMass2D_00.yaml`；
+* 同一个 `get_planning_task_and_dataset`（官方环境 + 官方数据集 + 归一化统计）；
+* 同一个 `GenerativeOptimizationPlanner`、同一个 `CostGuideManagerParametricTrajectory`；
+* 同一个 `plan_trajectory`（同样的 DDIM 15 步、4 次 guide、`max_perturb_x=0.15`）。
+
+**不同的部分**：起终点取自官方数据集（而不是 pybullet+OMPL 随机采样）；
+跳过 pybullet / Isaac Gym 可视化；不使用 rrtconnect 基线。
+
+### 13.3 官方原始 2D 案例（30 任务 × 8 候选）
+
+| 指标 | A: Diffusion Prior | B: MPD（SDF 引导） |
+|---|---:|---:|
+| 有效任务数 | 28 / 30 | 30 / 30 |
+| 单条轨迹静态无碰撞率 | **1.000** | **1.000** |
+| TaskSuccess@8 | 1.000 | 1.000 |
+| 最小净空均值 | 0.0360 | **0.0391** |
+| 路径长度均值 | 1.494 | 1.551 |
+| 单任务总耗时 | **0.134 s** | 0.374 s |
+| 其中 Diffusion | 0.134 s | 0.154 s |
+| 其中 Guide | 0 | **0.220 s** |
+| 耗时 P95 | 0.164 s | 0.462 s |
+
+结论：**官方 2D 模型可正常加载、DDIM 采样正常、SDF 引导正常、能出轨迹、能计时。**
+两个配置在官方环境里都已经接近满分（该模型就是在这个环境上训练的），
+所以真正的信息量在下面的迁移测试。
+
+### 13.4 迁移到 No02 三类场景（30 任务 = 每类 10 个，8 候选）
+
+保持：世界几何（10×10 m 线性映射到官方 [-1,1]²，比例 0.2）、机器人半径与安全距离同比例缩放、
+S1 测试集原样的起终点、每任务 8 条候选、连续几何碰撞检查。
+
+| 场景 | A: 先验 | B: MPD（SDF） | 差值 |
+|---|---:|---:|---:|
+| 开放交叉 | 1.000 | 1.000 | 0 |
+| 单障碍绕行 | 0.213 | **0.538** | **+0.325** |
+| 单瓶颈通行 | 0.025 | 0.013 | −0.012 |
+| **总体** | 0.413 | **0.517** | **+0.104** |
+| TaskSuccess@8 | 0.467 | **0.600** | +0.133 |
+| 单任务总耗时 | 0.149 s | 0.370 s | +0.221 s |
+| 其中 Guide | 0 | 0.163 s | — |
+
+**三点必须写清楚**：
+
+1. **SDF 引导确实起作用**：单障碍场景从 0.213 提到 0.538，这是官方几何代价在
+   训练分布之外仍然有效的直接证据；
+2. **瓶颈场景反而略降**：官方 SDF 代价是「各障碍物 SDF 的截断求和」，
+   对 0.55–0.68 m 的窄门（缩放后仅 0.11–0.14）无法表达"必须从门里过"这一约束，
+   引导可能把轨迹推向墙；
+3. **这不是完全公平的对照**：官方模型只在 EnvSimple2D 的 15 个圆上训练过，
+   我们的矩形墙、窄门对它是分布外。**迁移性能下降是预期内的**，
+   任何「MPD 不如某方法」的结论都不能建立在这一次迁移上。
+
+### 13.5 产物
+
+```
+D:\mpd_official\
+  mpd_weights_manifest.json          权重/配置 SHA256
+  results_mpd/diffusion_prior/       官方环境 A 结果 + metrics.json
+  results_mpd/mpd/                   官方环境 B 结果 + metrics.json
+  results_mpd/scenes_diffusion_prior/ 三场景 A + 每任务轨迹 npz
+  results_mpd/scenes_mpd/             三场景 B + 每任务轨迹 npz
+  mpd_extension/run_mpd_2d.py         官方环境驱动
+  mpd_extension/run_mpd_scenes.py     三场景驱动
+  mpd_extension/plot_scenes.py        出图
+  mpd_extension/first_hit_guide.py    进度风险引导（已符号自检）
+D:\paper2\docs\mpd_figures\
+  mpd_scenes_AB.png                   A/B 轨迹对比（三类场景）
+  mpd_scenes_AB_bar.png               A/B 安全率柱状图
+```

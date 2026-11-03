@@ -1,0 +1,33 @@
+{
+  "model_dir": "/home/xuan/Projects/MotionPlanningDiffusion/mpd-splines/data_trained_models/launch_train_diffusion_models-v04_2024-09-17_21-44-17/generative_model_class___GaussianDiffusionModel/dataset_subdir___EnvSimple2D-RobotPointMass2D-joint_joint-one-RRTConnect/dataset_file_merged___dataset_merged_doubled.hdf5/context_ee_goal_pose___False/unet_input_dim___32/unet_dim_mults_option___0/context_q_out_dim___32/context_ee_goal_pose_out_dim___32/context_combined_out_dim___32/bspline_num_control_points_desired___18/parametric_trajectory_class___ParametricTrajectoryBspline/0",
+  "planner_alg": "diffusion_prior",
+  "model_selection": "bspline",
+  "diffusion_sampling_method": "ddim",
+  "n_trajectory_samples": 100,
+  "ddim": {
+    "t_start_guide_steps_fraction": 0.3,
+    "ddim_sampling_timesteps": 15,
+    "ddim_eta": 0.5,
+    "ddim_skip_type": "quadratic",
+    "ddim_scale_grad_prior": 0.25,
+    "n_guide_steps": 4,
+    "guide_lr": 1.0,
+    "max_perturb_x": 0.15,
+    "clip_grad": true,
+    "clip_grad_rule": "value",
+    "max_grad_norm": 1.0,
+    "max_grad_value": 1.0
+  },
+  "args.yaml": {
+    "size_mb": 0.0,
+    "sha256": "feacba13cab69d3ac002748a0741f54dcd1ddd59661d72d9956c3ea9e6ebd641"
+  },
+  "ema_model_current_state_dict.pth": {
+    "size_mb": 4.23,
+    "sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+  },
+  "model_current_state_dict.pth": {
+    "size_mb": 4.23,
+    "sha256": "e7001ef91d2edf92be45c21651d9dafdc772fb067b0ab28e4c3043cf431f7710"
+  }
+}
