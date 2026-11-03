@@ -40,3 +40,7 @@ tmp/
 .DS_Store
 Thumbs.db
 *.tmp
+
+# pytest ÁÙÊ±Ä¿Â¼
+pytest-of-*/
+.pytest_tmp/
