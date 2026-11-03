@@ -1,4 +1,4 @@
-# First-Hit Risk-Guided Diffusion for 2D Multi-Robot Trajectory Planning
+﻿# First-Hit Risk-Guided Diffusion for 2D Multi-Robot Trajectory Planning
 # 可微首次碰撞风险引导的二维多机器人扩散轨迹规划
 
 [中文](#中文) | [English](#english)
@@ -55,6 +55,8 @@ uv pip install --python .venv\Scripts\python.exe -e ".[dev]"
 .\.venv\Scripts\python.exe scripts/run_s0.py
 .\.venv\Scripts\python.exe scripts/verify_risk.py
 ```
+
+可视化图集见 [docs/VISUALIZATIONS.md](docs/VISUALIZATIONS.md)（含场景仿真、时空图、动画 GIF）。
 
 完整流程见 [REPRODUCE.md](REPRODUCE.md)，方法细节见 [METHOD.md](METHOD.md)，
 实验结果见 [RESULTS.md](RESULTS.md) 与 [docs/final_report.md](docs/final_report.md)。
