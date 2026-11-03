@@ -1,0 +1,91 @@
+{
+  "stage": "S6_multi_agent",
+  "run_id": "20261103_185038_revised_s6_n2_47414f",
+  "status": "completed",
+  "started_at": "2026-11-03T18:52:37+08:00",
+  "finished_at": "2026-11-03T18:52:37+08:00",
+  "duration_s": 0.1,
+  "git_commit": "a75050cbf265616cecb769b79034e64f66a9e1bd",
+  "n_metrics": 56,
+  "tests": {},
+  "extra": {
+    "summary": {
+      "B0": {
+        "n": 12,
+        "plan_valid_rate": 0.75,
+        "hard_risk_mean": 0.7568554790847432,
+        "hard_risk_ci": {
+          "mean": 0.7568554790847432,
+          "lo": 0.5994492552712644,
+          "hi": 0.888175457339455,
+          "n": 12,
+          "n_clusters": 12
+        },
+        "safe_completion_mean": 0.2520833333333333,
+        "collision_rate_mean": 0.7479166666666667,
+        "all_arrived_rate": 1.0,
+        "makespan_steps": 35.576666666666675,
+        "path_length_mean": 7.478752825304681,
+        "wait_total_mean": 0.0,
+        "elapsed_s_mean": 0.30315959453582764
+      },
+      "B1": {
+        "n": 12,
+        "plan_valid_rate": 0.8333333333333334,
+        "hard_risk_mean": 0.7207674394635921,
+        "hard_risk_ci": {
+          "mean": 0.7207674394635921,
+          "lo": 0.549269679653738,
+          "hi": 0.8704412800489264,
+          "n": 12,
+          "n_clusters": 12
+        },
+        "safe_completion_mean": 0.28166666666666673,
+        "collision_rate_mean": 0.7183333333333334,
+        "all_arrived_rate": 1.0,
+        "makespan_steps": 35.576666666666675,
+        "path_length_mean": 7.497028725462097,
+        "wait_total_mean": 0.0,
+        "elapsed_s_mean": 2.126165270805359
+      },
+      "B2": {
+        "n": 12,
+        "plan_valid_rate": 0.75,
+        "hard_risk_mean": 0.7546178368965578,
+        "hard_risk_ci": {
+          "mean": 0.7546178368965578,
+          "lo": 0.5974712113466999,
+          "hi": 0.8871875359373338,
+          "n": 12,
+          "n_clusters": 12
+        },
+        "safe_completion_mean": 0.25333333333333335,
+        "collision_rate_mean": 0.7466666666666666,
+        "all_arrived_rate": 1.0,
+        "makespan_steps": 35.576666666666675,
+        "path_length_mean": 7.485022007171087,
+        "wait_total_mean": 0.0,
+        "elapsed_s_mean": 4.734089116255443
+      },
+      "B3": {
+        "n": 12,
+        "plan_valid_rate": 0.75,
+        "hard_risk_mean": 0.4772423635892172,
+        "hard_risk_ci": {
+          "mean": 0.4772423635892172,
+          "lo": 0.2299605173473346,
+          "hi": 0.7384011102284985,
+          "n": 12,
+          "n_clusters": 12
+        },
+        "safe_completion_mean": 0.5233333333333333,
+        "collision_rate_mean": 0.4766666666666666,
+        "all_arrived_rate": 1.0,
+        "makespan_steps": 37.517500000000005,
+        "path_length_mean": 7.485022007171087,
+        "wait_total_mean": 2.5789247040362473,
+        "elapsed_s_mean": 7.219196081161499
+      }
+    }
+  }
+}

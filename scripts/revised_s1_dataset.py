@@ -45,12 +45,16 @@ import matplotlib  # noqa: E402
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+
+from fhd.evaluation.visualizations import _setup_fonts  # noqa: E402
+
+_setup_fonts()
 from matplotlib.patches import Circle as MplCircle  # noqa: E402
 from matplotlib.patches import Rectangle as MplRect  # noqa: E402
 
 SPLIT_SEED = {"train": 100_000, "val": 200_000, "test": 300_000}
 SPLIT_MAPS = {"train": 100, "val": 20, "test": 20}
-TASKS_PER_MAP = 30
+TASKS_PER_MAP = 24
 VARIANTS = 2
 
 
@@ -81,7 +85,7 @@ def sample_task(world, kind: str, rng: np.random.Generator) -> tuple[np.ndarray,
             horizontal = bool(world.meta.get("horizontal", True))
             ccx, ccy = world.meta.get("center", [cx, cy])
             r = rng.uniform(3.2, 4.2)
-            off = rng.uniform(-1.2, 1.2)
+            off = rng.uniform(-0.8, 0.8)
             if horizontal:  # 通道沿 x，机器人沿 y 穿过
                 s = np.array([ccx + off, ccy - r])
                 g = np.array([ccx - off, ccy + r])

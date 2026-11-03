@@ -1,15 +1,14 @@
 {
-  "stage": "S2_gradient_optimization",
-  "run_id": "20261103_021319_s2_optimize_b67a27",
-  "status": "passed",
-  "started_at": "2026-11-03T02:13:19+08:00",
-  "finished_at": "2026-11-03T02:15:57+08:00",
-  "duration_s": 157.7,
-  "git_commit": "2e7ab8e48deb11813426729fd69699685512c375",
-  "n_metrics": 89,
+  "stage": "S2_map_resolution",
+  "run_id": "20261103_175222_s2_ablation_b7febf",
+  "status": "completed",
+  "started_at": "2026-11-03T18:09:41+08:00",
+  "finished_at": "2026-11-03T18:09:41+08:00",
+  "duration_s": 0.2,
+  "git_commit": "a75050cbf265616cecb769b79034e64f66a9e1bd",
+  "n_metrics": 49,
   "tests": {},
   "extra": {
-    "improved_cases": 2,
-    "d_safe_m": 0.35
+    "best": "B"
   }
 }

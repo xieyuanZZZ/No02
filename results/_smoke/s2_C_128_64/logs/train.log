@@ -1,0 +1,2 @@
+15:24:47 | INFO    | fhd.s3.train | 开始训练：目标 20 步，batch=96，累积=1，参数=2224434
+15:24:48 | INFO    | fhd.s3.train | step     20 | 验证 loss 0.18085

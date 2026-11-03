@@ -1,10 +1,10 @@
 seed: 20261103
-device: cpu
+device: auto
 dtype: float32
 world:
   width_m: 10.0
   height_m: 10.0
-  grid_size: 64
+  grid_size: 128
   robot_radius_m: 0.15
   safety_margin_m: 0.05
   clearance_margin_m: 0.03
@@ -45,11 +45,9 @@ guidance:
   lambda_tail_s: 2.0
   grad_clip_norm: 1.0
   endpoint_grad_mask: true
-  guidance_step_x: 0.05
-  guidance_step_w: 0.5
 diffusion:
   horizon: 32
-  training_steps: 40000
+  training_steps: 8000
   smoke_steps: 600
   batch_size: 96
   grad_accum_steps: 1
@@ -70,10 +68,11 @@ diffusion:
   val_every: 500
   sample_every: 1000
   num_train_timesteps: 1000
+  map_spatial_res: 32
   log_every: 10
   num_workers: 0
-  guidance_start_fraction: 0.25
-  guidance_updates_per_step: 1
+  map_input_res: 128
+  map_conditioning: grid_sample
 dataset:
   astar_resolution: 256
   train_maps: 200
@@ -101,16 +100,6 @@ benchmark:
   - 0.2
   execution_repeats: 30
   mc_samples_risk_validation: 10000
-  methods:
-  - B0
-  - B1
-  - B2
-  - B3
-  - A1
-  - A2
-  - A3
-  ddim_steps: 20
-  risk_weight_tuning: false
 evaluation:
   n_tasks: 500
   samples_per_task: 8
@@ -119,4 +108,4 @@ sampling:
   batch_size: 64
   guidance_start_fraction: 0.25
   guidance_updates_per_step: 1
-_config_path: D:\paper2\configs\guidance.yaml
+_config_path: D:\paper2\configs\s2_B_128_32.yaml

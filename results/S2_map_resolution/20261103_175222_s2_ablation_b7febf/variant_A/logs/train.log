@@ -1,0 +1,57 @@
+17:52:23 | INFO    | fhd.s3.train | 开始训练：目标 8000 步，batch=96，累积=1，参数=2233682
+17:52:47 | INFO    | fhd.s3.train | step   1000 | loss 0.01763 | grad 0.514 | 3957.7 样本/s
+17:52:47 | INFO    | fhd.s3.train | step   1000 | 验证 loss 0.01975
+17:53:11 | INFO    | fhd.s3.train | step   2000 | loss 0.01412 | grad 0.406 | 3968.7 样本/s
+17:53:11 | INFO    | fhd.s3.train | step   2000 | 验证 loss 0.01558
+17:53:35 | INFO    | fhd.s3.train | step   3000 | loss 0.01360 | grad 0.439 | 3991.0 样本/s
+17:53:35 | INFO    | fhd.s3.train | step   3000 | 验证 loss 0.01621
+17:53:58 | INFO    | fhd.s3.train | step   4000 | loss 0.01102 | grad 0.209 | 4019.5 样本/s
+17:53:58 | INFO    | fhd.s3.train | step   4000 | 验证 loss 0.01479
+17:53:59 | INFO    | fhd.s3.train | 已保存采样图：sample_step004000.png
+17:54:23 | INFO    | fhd.s3.train | step   5000 | loss 0.01122 | grad 0.380 | 4010.4 样本/s
+17:54:23 | INFO    | fhd.s3.train | step   5000 | 验证 loss 0.01228
+17:54:46 | INFO    | fhd.s3.train | step   6000 | loss 0.01017 | grad 0.600 | 4009.9 样本/s
+17:54:47 | INFO    | fhd.s3.train | step   6000 | 验证 loss 0.00999
+17:55:10 | INFO    | fhd.s3.train | step   7000 | loss 0.00948 | grad 0.256 | 4014.0 样本/s
+17:55:10 | INFO    | fhd.s3.train | step   7000 | 验证 loss 0.01050
+17:55:34 | INFO    | fhd.s3.train | step   8000 | loss 0.00880 | grad 0.266 | 4027.3 样本/s
+17:55:34 | INFO    | fhd.s3.train | step   8000 | 验证 loss 0.00758
+17:55:34 | INFO    | fhd.s3.train | 已保存采样图：sample_step008000.png
+17:55:46 | INFO    | fhd.s3.train | 开始训练：目标 8000 步，batch=96，累积=1，参数=2233682
+17:56:35 | INFO    | fhd.s3.train | step   1000 | loss 0.01804 | grad 0.466 | 1933.9 样本/s
+17:56:35 | INFO    | fhd.s3.train | step   1000 | 验证 loss 0.01916
+17:57:25 | INFO    | fhd.s3.train | step   2000 | loss 0.01371 | grad 0.351 | 1925.6 样本/s
+17:57:25 | INFO    | fhd.s3.train | step   2000 | 验证 loss 0.01492
+17:58:15 | INFO    | fhd.s3.train | step   3000 | loss 0.01365 | grad 0.476 | 1924.5 样本/s
+17:58:15 | INFO    | fhd.s3.train | step   3000 | 验证 loss 0.01625
+17:59:05 | INFO    | fhd.s3.train | step   4000 | loss 0.01102 | grad 0.198 | 1922.5 样本/s
+17:59:06 | INFO    | fhd.s3.train | step   4000 | 验证 loss 0.01482
+17:59:06 | INFO    | fhd.s3.train | 已保存采样图：sample_step004000.png
+17:59:56 | INFO    | fhd.s3.train | step   5000 | loss 0.01116 | grad 0.390 | 1913.4 样本/s
+17:59:57 | INFO    | fhd.s3.train | step   5000 | 验证 loss 0.01227
+18:00:47 | INFO    | fhd.s3.train | step   6000 | loss 0.01014 | grad 0.602 | 1912.3 样本/s
+18:00:47 | INFO    | fhd.s3.train | step   6000 | 验证 loss 0.01006
+18:01:37 | INFO    | fhd.s3.train | step   7000 | loss 0.00944 | grad 0.364 | 1910.8 样本/s
+18:01:37 | INFO    | fhd.s3.train | step   7000 | 验证 loss 0.01021
+18:02:28 | INFO    | fhd.s3.train | step   8000 | loss 0.00891 | grad 0.235 | 1910.4 样本/s
+18:02:28 | INFO    | fhd.s3.train | step   8000 | 验证 loss 0.00752
+18:02:28 | INFO    | fhd.s3.train | 已保存采样图：sample_step008000.png
+18:02:40 | INFO    | fhd.s3.train | 开始训练：目标 8000 步，batch=96，累积=1，参数=2224434
+18:03:32 | INFO    | fhd.s3.train | step   1000 | loss 0.01728 | grad 0.529 | 1858.9 样本/s
+18:03:32 | INFO    | fhd.s3.train | step   1000 | 验证 loss 0.01964
+18:04:24 | INFO    | fhd.s3.train | step   2000 | loss 0.01314 | grad 0.715 | 1844.8 样本/s
+18:04:24 | INFO    | fhd.s3.train | step   2000 | 验证 loss 0.01497
+18:05:15 | INFO    | fhd.s3.train | step   3000 | loss 0.01338 | grad 0.477 | 1859.5 样本/s
+18:05:15 | INFO    | fhd.s3.train | step   3000 | 验证 loss 0.01502
+18:06:06 | INFO    | fhd.s3.train | step   4000 | loss 0.01114 | grad 0.344 | 1861.6 样本/s
+18:06:06 | INFO    | fhd.s3.train | step   4000 | 验证 loss 0.01227
+18:06:07 | INFO    | fhd.s3.train | 已保存采样图：sample_step004000.png
+18:06:57 | INFO    | fhd.s3.train | step   5000 | loss 0.01148 | grad 0.453 | 1863.6 样本/s
+18:06:58 | INFO    | fhd.s3.train | step   5000 | 验证 loss 0.01364
+18:07:48 | INFO    | fhd.s3.train | step   6000 | loss 0.01025 | grad 0.416 | 1870.7 样本/s
+18:07:48 | INFO    | fhd.s3.train | step   6000 | 验证 loss 0.01146
+18:08:38 | INFO    | fhd.s3.train | step   7000 | loss 0.00939 | grad 0.491 | 1874.7 样本/s
+18:08:38 | INFO    | fhd.s3.train | step   7000 | 验证 loss 0.01088
+18:09:29 | INFO    | fhd.s3.train | step   8000 | loss 0.00880 | grad 0.345 | 1876.9 样本/s
+18:09:29 | INFO    | fhd.s3.train | step   8000 | 验证 loss 0.00843
+18:09:30 | INFO    | fhd.s3.train | 已保存采样图：sample_step008000.png

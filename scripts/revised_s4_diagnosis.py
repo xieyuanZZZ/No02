@@ -38,7 +38,7 @@ from fhd.evaluation.reporting import StageReport  # noqa: E402
 from fhd.evaluation.visualizations import AGENT_COLORS, draw_map  # noqa: E402
 from fhd.geometry.collisions import trajectory_is_static_safe  # noqa: E402
 from fhd.geometry.paths import path_length  # noqa: E402
-from fhd.maps.scenarios import build_scenario  # noqa: E402
+from fhd.data.dataset import TrajectoryDataset  # noqa: E402
 from fhd.risk.multi_pair import FirstHitRisk  # noqa: E402
 from fhd.risk.objectives import guidance_loss  # noqa: E402
 from fhd.utils.config import load_config  # noqa: E402
@@ -107,7 +107,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="S4 几何引导诊断（修正版 F0.5）")
     ap.add_argument("--config", default=str(ROOT / "configs" / "diffusion_train.yaml"))
     ap.add_argument("--ckpt", required=True)
-    ap.add_argument("--scenario", default="crossing")
+    ap.add_argument("--data", default=str(ROOT / "data" / "revised_s1"))
+    ap.add_argument("--agents", type=int, default=2)
     ap.add_argument("--num-steps", type=int, default=40)
     ap.add_argument("--step-size", type=float, default=0.2)
     ap.add_argument("--seed", type=int, default=20261103)
@@ -135,23 +136,40 @@ def main() -> int:
     dt_s, t_steps = float(cfg["trajectory"]["dt_s"]), int(cfg["execution"]["horizon_steps"])
     h = int(cfg["trajectory"]["horizon"])
 
-    sc = build_scenario(args.scenario, cfg)
-    n = sc.n_agents
+    import sys as _sys
+    _sys.path.insert(0, str(ROOT / "scripts"))
+    from revised_s5_noise import build_tasks
+
+    res = int(cfg["diffusion"].get("map_input_res", cfg["world"]["grid_size"]))
+    ds = TrajectoryDataset(Path(args.data), "test", grid_size=res,
+                           robot_radius_m=float(cfg["world"]["robot_radius_m"]),
+                           clearance_margin_m=float(cfg["world"]["clearance_margin_m"]),
+                           width_m=float(cfg["world"]["width_m"]),
+                           height_m=float(cfg["world"]["height_m"]))
+    tasks = [t for t in build_tasks(ds, 40, args.agents)
+             if t["kind"] == "open_crossing"]
+    if not tasks:
+        raise SystemExit("没有开放交叉的两机器人任务")
+    task = tasks[0]
+    sc_world = ds.maps[task["map_index"]]
+    n = args.agents
     scale = torch.tensor([float(cfg["world"]["width_m"]) / 2.0,
                           float(cfg["world"]["height_m"]) / 2.0], dtype=torch.float32)
-    start_m, goal_m = sc.starts.float(), sc.goals.float()
+    start_m, goal_m = task["starts"].float(), task["goals"].float()
     start_n, goal_n = start_m / scale - 1.0, goal_m / scale - 1.0
-    grid = sc.world.occupancy(torch.float32).unsqueeze(0).unsqueeze(0).expand(n, -1, -1, -1)
+    grid = sc_world.occupancy(torch.float32, grid_size=res).unsqueeze(0).unsqueeze(0).expand(
+        n, -1, -1, -1)
     pause_p = torch.full((n,), float(cfg["execution"]["pause_probability"]), dtype=torch.float32)
     x_init = torch.randn(n, h, 2, generator=torch.Generator().manual_seed(args.seed))
-    obstacles = sc.world.obstacles()
+    obstacles = sc_world.obstacles()
 
     def eval_final(paths_m, wait):
         with torch.no_grad():
             hard = risk_model(paths_m, wait, pause_p, t_steps, collision_mode="hard",
                               gate_mode="hard", return_diagnostics=False)
-            safe, clr = trajectory_is_static_safe(paths_m, obstacles, sc.world.robot_radius_m,
-                                                  sc.world.clearance_margin_m)
+            safe, clr = trajectory_is_static_safe(paths_m, obstacles,
+                                                  sc_world.robot_radius_m,
+                                                  sc_world.clearance_margin_m)
         return {"hard_risk": float(hard["pair_sum_risk"]), "static_safe": bool(safe.all()),
                 "min_clearance_m": float(clr.min()),
                 "path_length_m": float(torch.as_tensor(path_length(paths_m)).mean())}
@@ -166,13 +184,15 @@ def main() -> int:
     # ---------------- 2) B1：每步都引导（原方法） ----------------
     def make_guide(step_size):
         def guide_fn(x0_norm, i, t):
-            x0_m = (x0_norm.detach() + 1.0) * scale
-            x0_local = x0_m.clone().requires_grad_(True)
-            wait_local = wait0.clone().requires_grad_(True)
-            risk = risk_model(x0_local, wait_local, pause_p, t_steps, collision_mode="soft",
-                              gate_mode="soft", return_diagnostics=False)
-            loss, detail = guidance_loss(x0_local, wait_local, risk, cfg, obstacles=obstacles)
-            (g,) = torch.autograd.grad(loss, x0_local)
+            # 外层是 no_grad（DDIM 前向不需要图），这里显式开梯度建局部图
+            with torch.enable_grad():
+                x0_m = (x0_norm.detach() + 1.0) * scale
+                x0_local = x0_m.clone().requires_grad_(True)
+                wait_local = wait0.clone().requires_grad_(True)
+                risk = risk_model(x0_local, wait_local, pause_p, t_steps, collision_mode="soft",
+                                  gate_mode="soft", return_diagnostics=False)
+                loss, detail = guidance_loss(x0_local, wait_local, risk, cfg, obstacles=obstacles)
+                (g,) = torch.autograd.grad(loss, x0_local)
             g[:, 0, :] = 0.0
             g[:, -1, :] = 0.0
             norm = g.reshape(n, -1).norm(dim=-1).clamp(min=1e-12)
@@ -275,7 +295,7 @@ def main() -> int:
     plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(6.6, 6.2))
-    draw_map(ax, sc.world)
+    draw_map(ax, sc_world)
     for i in range(n):
         p0 = final_b0.detach().numpy()[i]
         p1 = final_b1.detach().numpy()[i]
@@ -299,6 +319,7 @@ def main() -> int:
     report.metric("step_size", args.step_size, group="setup")
     report.metric("b0_hard_risk", eval_final(final_b0, wait0)["hard_risk"], group="final")
     report.metric("b1_hard_risk", eval_final(final_b1, wait0)["hard_risk"], group="final")
+    report.metric("task_id", task["task_id"], group="setup")
     report.metric("b1_final_disp_rms_m", rms(x0_b1, x0_b0), group="final")
     report.metric("max_immediate_rms_m", max(r["immediate_rms_m"] for r in rows_single),
                   group="single")

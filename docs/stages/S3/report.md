@@ -1,29 +1,40 @@
-# S3 单机器人条件 Diffusion 训练报告
+# S3 单机器人 Diffusion 训练报告
 
-- 阶段：`S3_diffusion_training`
-- 运行目录：`D:\paper2\results\S3_diffusion_training\20261103_124832_s3_train_d6b02d`
-- 生成时间：2026-11-03T12:57:51+08:00
+- 阶段：`S3_single_agent`
+- 运行目录：`D:\paper2\results\S3_single_agent\20261103_181019_revised_s3_3acd5f`
+- 生成时间：2026-11-03T18:36:49+08:00
 - 耗时：0.1 s
 
-## 训练设置
+## 训练
 
-- 去噪网络：条件 1D U-Net（通道 [64, 128, 256]，FiLM 条件注入），参数约 2.22 M；
-- 调度：cosine，T=1000，预测量 ε；
-- 优化器 AdamW，lr=0.0002，batch=96，梯度累积 1，EMA decay=0.999；
-- 训练样本 4819 条，验证样本 473 条。
+- 配置：`configs/s2_B_128_32.yaml`（地图输入 128，特征 32，条件 grid_sample）
+- 数据：`data/revised_s1`（S1 三类简单场景）
+- 步数：**27000**（CLI 覆盖值已写回配置快照）
+- best val loss：0.00648；训练用时 0 s
+- 曲线：`plots/s3_train_curves.png`（train/val loss + 梯度范数）
 
-## 说明
+## 评估（按地图类型分别统计）
 
-- 训练过程中的 loss/梯度范数/吞吐逐步写入 `train_log.csv`（断点续训会追加）；
-- 每 `sample_every` 步用 EMA 权重做一次 DDIM 采样并出图，便于观察是否在学习；
-- 检查点：`latest.pt`（可续训）、`best.pt`（验证损失最低）、`step_XXXXXX.pt`。
+| 地图类型 | 任务数 | 单条有效率 | Task Success@8 | 静态安全率 | 速度通过率 | 长度比 | 净空 [m] | 推理 [s/条] |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 开放交叉 | 25 | 0.960 | 0.960 | 0.960 | 1.000 | 1.001 | inf | 0.025 |
+| 单障碍绕行 | 25 | 0.295 | 0.760 | 0.295 | 1.000 | 0.990 | -0.380 | 0.023 |
+| 单瓶颈通行 | 25 | 0.995 | 1.000 | 0.995 | 1.000 | 1.001 | 0.069 | 0.023 |
+
+## 验收判定
+
+- 简单场景（开放交叉 + 单障碍绕行）是否同时达到 95% 有效率：**否**
+- 总体单条有效率 0.750（任务级 95% CI [0.670, 0.830]）
+- 是否满足进入 S4 的条件：**否，需先解决基础模型问题**
+
+瓶颈场景单独统计，不用它掩盖基础模型是否具备正常规划能力（方案 §5.3）。
 
 
 ## 指标
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
-| environment | `timestamp` | 2026-11-03T12:57:50+08:00 |  |
+| environment | `timestamp` | 2026-11-03T18:36:49+08:00 |  |
 | environment | `python` | 3.12.13 |  |
 | environment | `python_executable` | D:\paper2\.venv\Scripts\python.exe |  |
 | environment | `torch` | 2.11.0+cu128 |  |
@@ -33,55 +44,29 @@
 | environment | `platform` | Windows-11-10.0.26200-SP0 |  |
 | environment | `processor` | Intel64 Family 6 Model 151 Stepping 2, GenuineIntel |  |
 | environment | `cpu_count` | 10 |  |
-| environment | `git_commit` | 1abeef873790ce10ddce85b48bdb2382be3c0aae |  |
+| environment | `git_commit` | a75050cbf265616cecb769b79034e64f66a9e1bd |  |
 | environment | `git_dirty` | True |  |
 | environment | `gpu_name` | NVIDIA GeForce RTX 4070 |  |
 | environment | `gpu_total_memory_gb` | 11.99 |  |
 | environment | `gpu_index` | 0 |  |
 | environment | `gpu_capability` | 8.9 |  |
-| train | `steps_completed` | 30000 |  |
-| train | `best_val_loss` | 0.00962619 |  |
-| train | `train_seconds` | 557.7 |  |
-| train | `batch_size` | 96 |  |
-| train | `grad_accum` | 1 |  |
-| data | `n_train_samples` | 4819 |  |
-| data | `n_val_samples` | 473 |  |
-| data | `train/tasks_attempted` | 2604 |  |
-| data | `train/tasks_reachable` | 2500 |  |
-| data | `train/vectors_generated` | 4819 |  |
-| data | `train/discarded_unreachable` | 341 |  |
-| data | `train/discarded_too_close` | 0 |  |
-| data | `train/discarded_speed` | 48 |  |
-| data | `train/discarded_static` | 0 |  |
-| data | `train/discarded_length` | 0 |  |
-| data | `train/diversity_mean_m` | 0.144219 |  |
-| data | `train/n_maps_used` | 50 |  |
-| data | `train/n_paths` | 4819 |  |
-| data | `train/elapsed_s` | 947.9 |  |
-| data | `val/tasks_attempted` | 261 |  |
-| data | `val/tasks_reachable` | 250 |  |
-| data | `val/vectors_generated` | 473 |  |
-| data | `val/discarded_unreachable` | 33 |  |
-| data | `val/discarded_too_close` | 0 |  |
-| data | `val/discarded_speed` | 16 |  |
-| data | `val/discarded_static` | 0 |  |
-| data | `val/discarded_length` | 0 |  |
-| data | `val/diversity_mean_m` | 0.150499 |  |
-| data | `val/n_maps_used` | 10 |  |
-| data | `val/n_paths` | 473 |  |
-| data | `val/elapsed_s` | 89.8 |  |
-| data | `test/tasks_attempted` | 256 |  |
-| data | `test/tasks_reachable` | 250 |  |
-| data | `test/vectors_generated` | 489 |  |
-| data | `test/discarded_unreachable` | 20 |  |
-| data | `test/discarded_too_close` | 0 |  |
-| data | `test/discarded_speed` | 3 |  |
-| data | `test/discarded_static` | 0 |  |
-| data | `test/discarded_length` | 0 |  |
-| data | `test/diversity_mean_m` | 0.116782 |  |
-| data | `test/n_maps_used` | 10 |  |
-| data | `test/n_paths` | 489 |  |
-| data | `test/elapsed_s` | 81.4 |  |
+| train | `train_steps` | 27000 |  |
+| train | `best_val` | 0.0064839 |  |
+| train | `train_seconds` | 0 |  |
+| model | `map_input_res` | 128 |  |
+| model | `map_spatial_res` | 32 |  |
+| eval | `success_rate` | 0.75 |  |
+| eval | `success_ci_lo` | 0.67 |  |
+| eval | `success_ci_hi` | 0.83 |  |
+| eval | `task_success_at_k` | 0.906667 |  |
+| by_kind | `open_crossing/success_rate` | 0.96 |  |
+| by_kind | `open_crossing/task_success` | 0.96 |  |
+| by_kind | `single_obstacle/success_rate` | 0.295 |  |
+| by_kind | `single_obstacle/task_success` | 0.76 |  |
+| by_kind | `bottleneck_channel/success_rate` | 0.995 |  |
+| by_kind | `bottleneck_channel/task_success` | 1 |  |
 
 ## 产物
 
+- `tables\s3_per_task.csv`
+- `tables\s3_train_log.csv`

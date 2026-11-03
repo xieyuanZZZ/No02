@@ -1,0 +1,175 @@
+{
+  "data": "data/revised_s1",
+  "steps": 8000,
+  "samples": 8,
+  "per_kind": 20,
+  "checkpoints": {
+    "A": "D:\\paper2\\results\\S2_map_resolution\\20261103_175222_s2_ablation_b7febf\\variant_A\\checkpoints\\best.pt",
+    "B": "D:\\paper2\\results\\S2_map_resolution\\20261103_175222_s2_ablation_b7febf\\variant_B\\checkpoints\\best.pt",
+    "C": "D:\\paper2\\results\\S2_map_resolution\\20261103_175222_s2_ablation_b7febf\\variant_C\\checkpoints\\best.pt"
+  },
+  "results": {
+    "A": {
+      "tag": "A",
+      "n_tasks": 60,
+      "success_rate": 0.6729166666666667,
+      "task_success_at_8": 0.9333333333333333,
+      "ci": {
+        "mean": 0.6729166666666667,
+        "lo": 0.5708333333333333,
+        "hi": 0.7688020833333331,
+        "n": 60,
+        "n_clusters": 60
+      },
+      "static_safe_rate": 0.6729166666666667,
+      "speed_ok_rate": 1.0,
+      "length_ratio": 0.9949485967556636,
+      "by_kind": {
+        "open_crossing": {
+          "n_tasks": 20,
+          "success_rate": 0.925,
+          "task_success_at_8": 1.0,
+          "static_safe_rate": 0.925,
+          "speed_ok_rate": 1.0,
+          "min_clearance_m": Infinity,
+          "length_ratio": 1.0067768454551698
+        },
+        "single_obstacle": {
+          "n_tasks": 20,
+          "success_rate": 0.16875,
+          "task_success_at_8": 0.8,
+          "static_safe_rate": 0.16875,
+          "speed_ok_rate": 1.0,
+          "min_clearance_m": -0.4198323629796505,
+          "length_ratio": 0.972573247551918
+        },
+        "bottleneck_channel": {
+          "n_tasks": 20,
+          "success_rate": 0.925,
+          "task_success_at_8": 1.0,
+          "static_safe_rate": 0.925,
+          "speed_ok_rate": 1.0,
+          "min_clearance_m": -0.007573576271533966,
+          "length_ratio": 1.005495697259903
+        }
+      },
+      "in_res": 64,
+      "feat_res": 16,
+      "train": {
+        "step": 8000,
+        "best_val": 0.007577648665755987,
+        "elapsed_s": 191.3,
+        "wall_time_s": 191.3
+      },
+      "ckpt": "D:\\paper2\\results\\S2_map_resolution\\20261103_175222_s2_ablation_b7febf\\variant_A\\checkpoints\\best.pt"
+    },
+    "B": {
+      "tag": "B",
+      "n_tasks": 60,
+      "success_rate": 0.675,
+      "task_success_at_8": 0.9333333333333333,
+      "ci": {
+        "mean": 0.675,
+        "lo": 0.5770833333333333,
+        "hi": 0.7729166666666667,
+        "n": 60,
+        "n_clusters": 60
+      },
+      "static_safe_rate": 0.675,
+      "speed_ok_rate": 1.0,
+      "length_ratio": 0.996790490547816,
+      "by_kind": {
+        "open_crossing": {
+          "n_tasks": 20,
+          "success_rate": 0.9375,
+          "task_success_at_8": 1.0,
+          "static_safe_rate": 0.9375,
+          "speed_ok_rate": 1.0,
+          "min_clearance_m": Infinity,
+          "length_ratio": 1.007930338382721
+        },
+        "single_obstacle": {
+          "n_tasks": 20,
+          "success_rate": 0.18125,
+          "task_success_at_8": 0.8,
+          "static_safe_rate": 0.18125,
+          "speed_ok_rate": 1.0,
+          "min_clearance_m": -0.4380107752978802,
+          "length_ratio": 0.9758565127849579
+        },
+        "bottleneck_channel": {
+          "n_tasks": 20,
+          "success_rate": 0.90625,
+          "task_success_at_8": 1.0,
+          "static_safe_rate": 0.90625,
+          "speed_ok_rate": 1.0,
+          "min_clearance_m": -0.02409784123301506,
+          "length_ratio": 1.0065846204757691
+        }
+      },
+      "in_res": 128,
+      "feat_res": 32,
+      "train": {
+        "step": 8000,
+        "best_val": 0.007522578025236726,
+        "elapsed_s": 402.7,
+        "wall_time_s": 402.7
+      },
+      "ckpt": "D:\\paper2\\results\\S2_map_resolution\\20261103_175222_s2_ablation_b7febf\\variant_B\\checkpoints\\best.pt"
+    },
+    "C": {
+      "tag": "C",
+      "n_tasks": 60,
+      "success_rate": 0.6583333333333333,
+      "task_success_at_8": 0.8333333333333334,
+      "ci": {
+        "mean": 0.6583333333333333,
+        "lo": 0.55625,
+        "hi": 0.7541666666666667,
+        "n": 60,
+        "n_clusters": 60
+      },
+      "static_safe_rate": 0.6645833333333333,
+      "speed_ok_rate": 0.9916666666666667,
+      "length_ratio": 0.9962667723496755,
+      "by_kind": {
+        "open_crossing": {
+          "n_tasks": 20,
+          "success_rate": 0.88125,
+          "task_success_at_8": 0.9,
+          "static_safe_rate": 0.9,
+          "speed_ok_rate": 0.98125,
+          "min_clearance_m": Infinity,
+          "length_ratio": 1.0076232850551605
+        },
+        "single_obstacle": {
+          "n_tasks": 20,
+          "success_rate": 0.19375,
+          "task_success_at_8": 0.6,
+          "static_safe_rate": 0.19375,
+          "speed_ok_rate": 0.99375,
+          "min_clearance_m": -0.3911105774343014,
+          "length_ratio": 0.9777452051639557
+        },
+        "bottleneck_channel": {
+          "n_tasks": 20,
+          "success_rate": 0.9,
+          "task_success_at_8": 1.0,
+          "static_safe_rate": 0.9,
+          "speed_ok_rate": 1.0,
+          "min_clearance_m": -0.028843701258301734,
+          "length_ratio": 1.0034318268299103
+        }
+      },
+      "in_res": 128,
+      "feat_res": 64,
+      "train": {
+        "step": 8000,
+        "best_val": 0.0084276482462883,
+        "elapsed_s": 409.9,
+        "wall_time_s": 409.9
+      },
+      "ckpt": "D:\\paper2\\results\\S2_map_resolution\\20261103_175222_s2_ablation_b7febf\\variant_C\\checkpoints\\best.pt"
+    }
+  }
+}

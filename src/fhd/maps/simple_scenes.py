@@ -88,28 +88,33 @@ def single_obstacle(cfg, seed: int) -> WorldMap:
 def bottleneck_channel(cfg, seed: int) -> WorldMap:
     """C：单瓶颈通行。两道墙形成共享通道。
 
-    通道净宽 g 取 0.45–0.62 m：
-      * 单机通过所需净空 = 2*(r+clearance) = 0.36 m  -> 能过；
-      * 两机并排所需 = 2*d_safe + 2*clearance = 0.76 m -> 不能并排。
+    通道净宽 g 取 0.55–0.68 m：
+      * 单机通过所需净空 = 2*(r+clearance) = 0.36 m  -> 能过（并留出折线拟合余量）；
+      * 两机并排：通道内中心可达范围只有 g−0.36 ≤ 0.32 m，小于 d_safe=0.35 -> 不能并排。
     通道两侧留出大量等待空间。
     """
     m = _base("bottleneck_channel", cfg, seed)
     rng = np.random.default_rng(seed)
-    g = float(rng.uniform(0.45, 0.62))
+    g = float(rng.uniform(0.55, 0.68))
     wall_t = 0.25
     horizontal = bool(rng.random() < 0.5)
     cx = m.width_m / 2 + float(rng.uniform(-0.5, 0.5))
     cy = m.height_m / 2 + float(rng.uniform(-0.5, 0.5))
+    # 设计：一道贯穿全图的隔墙，中间留一个只容单车通过的缺口（门）。
+    #   * 缺口净宽 g = 0.55–0.68 m，单机需要 0.36 m -> 能过；
+    #   * 两机并排：缺口内中心可达范围只有 g−0.36 ≤ 0.32 m < d_safe=0.35 -> 不能并排；
+    #   * 隔墙贴到地图边界，缺口是**唯一**通路，A* 无法绕行。
     if horizontal:
-        # 通道沿 x 方向通行，两道墙分别位于 y 的上下
+        # 隔墙是水平墙（沿 x 铺开），机器人在 y 方向穿过缺口
         rects = [
-            [cx - 2.5, cy + g / 2, cx + 2.5, cy + g / 2 + wall_t],
-            [cx - 2.5, cy - g / 2 - wall_t, cx + 2.5, cy - g / 2],
+            [0.0, cy - wall_t / 2, cx - g / 2, cy + wall_t / 2],
+            [cx + g / 2, cy - wall_t / 2, m.width_m, cy + wall_t / 2],
         ]
     else:
+        # 隔墙是垂直墙（沿 y 铺开），机器人在 x 方向穿过缺口
         rects = [
-            [cx + g / 2, cy - 2.5, cx + g / 2 + wall_t, cy + 2.5],
-            [cx - g / 2 - wall_t, cy - 2.5, cx - g / 2, cy + 2.5],
+            [cx - wall_t / 2, 0.0, cx + wall_t / 2, cy - g / 2],
+            [cx - wall_t / 2, cy + g / 2, cx + wall_t / 2, m.height_m],
         ]
     m.rects = np.asarray(rects, dtype=np.float64).reshape(-1, 4)
     m.circles = np.zeros((0, 3))

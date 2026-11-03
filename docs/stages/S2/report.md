@@ -1,57 +1,45 @@
-# S2 不使用 Diffusion 的风险梯度优化报告
+# S2 地图分辨率消融报告
 
-- 阶段：`S2_gradient_optimization`
-- 运行目录：`D:\paper2\results\S2_gradient_optimization\20261103_021319_s2_optimize_b67a27`
-- 生成时间：2026-11-03T02:15:57+08:00
-- 耗时：157.7 s
+- 阶段：`S2_map_resolution`
+- 运行目录：`D:\paper2\results\S2_map_resolution\20261103_175222_s2_ablation_b7febf`
+- 生成时间：2026-11-03T18:09:41+08:00
+- 耗时：0.2 s
 
-## 阶段目标
+## 设置
 
-在不使用任何神经网络的前提下，验证“可微首次碰撞风险 → 梯度 → 轨迹与等待的有效修正”这条链条成立（文档 §9 S2）。
+- 数据：`data/revised_s1`（S1 重建的三类简单场景，按地图划分 train/val/test）
+- 每组地图输入 `in_res` 从**连续几何重新栅格化**（不是把 64 插值成 128）
+- 网络结构固定为「两个全分辨率卷积 + n 次 stride-2 下采样」，通道预算相同
+- 每组训练 8000 步，同种子、同 batch；评估用同一批任务与同一噪声
+- 成功率 = 静态连续几何安全 **且** 每段 ≤0.6 m
 
-## 优化设置
+## 总体结果
 
-- 损失：λ_R ΣR_soft + λ_T J_finish + λ_S L_static + λ_K L_kinematic + λ_G L_geometry + λ_W ||w||₁；
-- λ 取值为批复 §23 的默认值（λ_R=1.0, λ_T=0.05, λ_S=10.0, λ_K=1.0, λ_G=0.5, λ_W=0.01）；
-- 等待投影：0≤w≤4.0 时隙/点，Σw≤8.0 时隙/机器人；
-- 端点固定、端点梯度屏蔽；步数 250，Adam 路径 lr=0.02、等待 lr=0.1；
-- 每 5000 次独立 Monte Carlo 复现用于验证真实碰撞率。
+| 编号 | 地图输入 | CNN 特征 | 训练步数 | 有效率 | 95% CI | TaskSuccess@8 | 静态安全率 | 长度比 |
+|---|---:|---:|---:|---:|---|---:|---:|---:|
+| B | 128 | 32 | 8000 | 0.675 | [0.577, 0.773] | 0.933 | 0.675 | 0.997 |
+| A | 64 | 16 | 8000 | 0.673 | [0.571, 0.769] | 0.933 | 0.673 | 0.995 |
+| C | 128 | 64 | 8000 | 0.658 | [0.556, 0.754] | 0.833 | 0.665 | 0.996 |
 
-## 各场景结果
+## 按地图类型
 
-- **crossing**：硬风险 0.1788 → 只改路径 0.0000 / 只改等待 0.0204 / 联合 0.0000（降低 +0.1788）
-- **follow**：硬风险 0.4171 → 只改路径 0.0120 / 只改等待 0.0316 / 联合 0.0039（降低 +0.4133）
-- **narrow_gate**：硬风险 1.0000 → 只改路径 1.0000 / 只改等待 1.0000 / 联合 1.0000（降低 +0.0000）
-
-## 梯度饱和的诊断（窄门口）
-
-窄门口场景的初始硬风险恰为 1.0：两车在单车宽的缺口内对向相遇，几乎所有执行轨迹都碰撞。此时首次碰撞 DP 的概率质量在很早期就被完全吸收，**软风险也随之饱和到 1**，对路径与等待的梯度趋近 0，优化停滞。这正是文档 §14 列出的“深度碰撞处梯度饱和”失败模式。
-
-| ε [m] | 软风险 | 等待梯度范数 | 路径梯度范数 |
-|---|---|---|---|
-| 0.025 | 1.0000 | 4.672e-11 | 3.877e-08 |
-| 0.050 | 1.0000 | 5.260e-07 | 1.819e-04 |
-| 0.100 | 0.9983 | 6.174e-05 | 6.792e-03 |
-| 0.200 | 0.9860 | 5.916e-04 | 2.917e-02 |
-| 0.400 | 0.9777 | 1.184e-03 | 3.439e-02 |
-
-把温度放宽到 ε=0.4 后，等待梯度范数从 4.672e-11 放大到 1.184e-03，但重新做 150 步等待优化后硬风险仍为 1.0000（等待 0.00 时隙）。**结论：单靠温度退火不足以逃离该饱和区**——本案例需要“让一车整体先通过”这种近似离散的决策，局部梯度无法表达。该负结果保留在案，作为 S5 失败归因与“是否引入辅助机制”的判断依据。
+| 编号 | 开放交叉 | 单障碍绕行 | 单瓶颈通行 |
+|---|---:|---:|---:|
+| B | 0.938 | 0.181 | 0.906 |
+| A | 0.925 | 0.169 | 0.925 |
+| C | 0.881 | 0.194 | 0.900 |
 
 ## 结论
 
-- 2/3 个几何案例在充分时间预算下把硬风险显著降低（>0.01）；
-- 软风险与硬风险、Monte Carlo 碰撞率同向下降，说明可微代理的优化方向可信；
-- 只改路径（A1）在几何上仍有余量时最强；只改等待（A2）能只靠时间错峰降低风险，代价是完成时间上升；联合（A3）在两者都可用时取得最低风险；
-- 等待只出现在安全位置（见 `wait_safety_*.csv`），未出现“无限等待”作弊：等待总量受总预算约束，且 J_finish 随等待单调上升；
-- 初始风险恰为 1 的饱和案例（窄门口）无法仅靠局部梯度逃出，已作为失败模式记录；
-- 通过条件：满足（要求至少 2 个案例）。
+- 最优配置：**B**（128→32），有效率 0.675
+- 这是 8000 步的快速筛选结果，**不作为最终结论**；选定架构后由 S3 用完整预算重训
 
 
 ## 指标
 
 | 分组 | 指标 | 值 | 备注 |
 |---|---|---|---|
-| environment | `timestamp` | 2026-11-03T02:13:19+08:00 |  |
+| environment | `timestamp` | 2026-11-03T18:09:41+08:00 |  |
 | environment | `python` | 3.12.13 |  |
 | environment | `python_executable` | D:\paper2\.venv\Scripts\python.exe |  |
 | environment | `torch` | 2.11.0+cu128 |  |
@@ -61,109 +49,46 @@
 | environment | `platform` | Windows-11-10.0.26200-SP0 |  |
 | environment | `processor` | Intel64 Family 6 Model 151 Stepping 2, GenuineIntel |  |
 | environment | `cpu_count` | 10 |  |
-| environment | `git_commit` | 2e7ab8e48deb11813426729fd69699685512c375 |  |
+| environment | `git_commit` | a75050cbf265616cecb769b79034e64f66a9e1bd |  |
 | environment | `git_dirty` | True |  |
 | environment | `gpu_name` | NVIDIA GeForce RTX 4070 |  |
 | environment | `gpu_total_memory_gb` | 11.99 |  |
 | environment | `gpu_index` | 0 |  |
 | environment | `gpu_capability` | 8.9 |  |
-| baseline | `crossing/baseline/hard_risk_sum` | 0.178811 |  |
-| baseline | `crossing/baseline/hard_risk_max` | 0.178811 |  |
-| baseline | `crossing/baseline/soft_risk_sum` | 0.188288 |  |
-| baseline | `crossing/baseline/finish_cost_s` | 27.5556 |  |
-| baseline | `crossing/baseline/unfinished_prob` | -2.22045e-16 |  |
-| baseline | `crossing/baseline/wait_total` | 0 |  |
-| baseline | `crossing/baseline/mc_collision_rate` | 0.177 |  |
-| baseline | `crossing/baseline/mc_makespan_s` | 14.1894 |  |
-| baseline | `crossing/baseline/mc_completion_rate` | 1 |  |
-| wait_safety | `crossing/A1 只改路径/dangerous_wait_points` | 0 |  |
-| result | `crossing/A1 只改路径/hard_risk` | 3.49978e-06 |  |
-| result | `crossing/A1 只改路径/mc_collision_rate` | 0 |  |
-| result | `crossing/A1 只改路径/wait_total` | 0 |  |
-| result | `crossing/A1 只改路径/finish_cost_s` | 27.5556 |  |
-| wait_safety | `crossing/A2 只改等待/dangerous_wait_points` | 0 |  |
-| result | `crossing/A2 只改等待/hard_risk` | 0.0203879 |  |
-| result | `crossing/A2 只改等待/mc_collision_rate` | 0.0222 |  |
-| result | `crossing/A2 只改等待/wait_total` | 2.94104 |  |
-| result | `crossing/A2 只改等待/finish_cost_s` | 28.3327 |  |
-| wait_safety | `crossing/A3 联合优化/dangerous_wait_points` | 0 |  |
-| result | `crossing/A3 联合优化/hard_risk` | 2.14921e-06 |  |
-| result | `crossing/A3 联合优化/mc_collision_rate` | 0 |  |
-| result | `crossing/A3 联合优化/wait_total` | 0 |  |
-| result | `crossing/A3 联合优化/finish_cost_s` | 27.5556 |  |
-| baseline | `follow/baseline/hard_risk_sum` | 0.417137 |  |
-| baseline | `follow/baseline/hard_risk_max` | 0.417137 |  |
-| baseline | `follow/baseline/soft_risk_sum` | 0.42083 |  |
-| baseline | `follow/baseline/finish_cost_s` | 27.5556 |  |
-| baseline | `follow/baseline/unfinished_prob` | -2.22045e-16 |  |
-| baseline | `follow/baseline/wait_total` | 0 |  |
-| baseline | `follow/baseline/mc_collision_rate` | 0.4186 |  |
-| baseline | `follow/baseline/mc_makespan_s` | 14.1894 |  |
-| baseline | `follow/baseline/mc_completion_rate` | 1 |  |
-| wait_safety | `follow/A1 只改路径/dangerous_wait_points` | 0 |  |
-| result | `follow/A1 只改路径/hard_risk` | 0.011992 |  |
-| result | `follow/A1 只改路径/mc_collision_rate` | 0.011 |  |
-| result | `follow/A1 只改路径/wait_total` | 0 |  |
-| result | `follow/A1 只改路径/finish_cost_s` | 27.5556 |  |
-| wait_safety | `follow/A2 只改等待/dangerous_wait_points` | 1 |  |
-| result | `follow/A2 只改等待/hard_risk` | 0.0315554 |  |
-| result | `follow/A2 只改等待/mc_collision_rate` | 0.0302 |  |
-| result | `follow/A2 只改等待/wait_total` | 3.70122 |  |
-| result | `follow/A2 只改等待/finish_cost_s` | 29.072 |  |
-| wait_safety | `follow/A3 联合优化/dangerous_wait_points` | 0 |  |
-| result | `follow/A3 联合优化/hard_risk` | 0.00387222 |  |
-| result | `follow/A3 联合优化/mc_collision_rate` | 0.0046 |  |
-| result | `follow/A3 联合优化/wait_total` | 0 |  |
-| result | `follow/A3 联合优化/finish_cost_s` | 27.5556 |  |
-| baseline | `narrow_gate/baseline/hard_risk_sum` | 1 |  |
-| baseline | `narrow_gate/baseline/hard_risk_max` | 1 |  |
-| baseline | `narrow_gate/baseline/soft_risk_sum` | 1 |  |
-| baseline | `narrow_gate/baseline/finish_cost_s` | 27.5556 |  |
-| baseline | `narrow_gate/baseline/unfinished_prob` | -2.22045e-16 |  |
-| baseline | `narrow_gate/baseline/wait_total` | 0 |  |
-| baseline | `narrow_gate/baseline/mc_collision_rate` | 1 |  |
-| baseline | `narrow_gate/baseline/mc_makespan_s` | 14.1894 |  |
-| baseline | `narrow_gate/baseline/mc_completion_rate` | 1 |  |
-| wait_safety | `narrow_gate/A1 只改路径/dangerous_wait_points` | 0 |  |
-| result | `narrow_gate/A1 只改路径/hard_risk` | 1 |  |
-| result | `narrow_gate/A1 只改路径/mc_collision_rate` | 1 |  |
-| result | `narrow_gate/A1 只改路径/wait_total` | 0 |  |
-| result | `narrow_gate/A1 只改路径/finish_cost_s` | 27.5556 |  |
-| wait_safety | `narrow_gate/A2 只改等待/dangerous_wait_points` | 0 |  |
-| result | `narrow_gate/A2 只改等待/hard_risk` | 1 |  |
-| result | `narrow_gate/A2 只改等待/mc_collision_rate` | 1 |  |
-| result | `narrow_gate/A2 只改等待/wait_total` | 0 |  |
-| result | `narrow_gate/A2 只改等待/finish_cost_s` | 27.5556 |  |
-| wait_safety | `narrow_gate/A3 联合优化/dangerous_wait_points` | 0 |  |
-| result | `narrow_gate/A3 联合优化/hard_risk` | 1 |  |
-| result | `narrow_gate/A3 联合优化/mc_collision_rate` | 1 |  |
-| result | `narrow_gate/A3 联合优化/wait_total` | 0 |  |
-| result | `narrow_gate/A3 联合优化/finish_cost_s` | 27.5556 |  |
-| verdict | `s2_improved_cases` | 2 |  |
+| ablation | `A/in_res` | 64 |  |
+| ablation | `A/feat_res` | 16 |  |
+| ablation | `A/success_rate` | 0.672917 |  |
+| ablation | `A/success_ci_lo` | 0.570833 |  |
+| ablation | `A/success_ci_hi` | 0.768802 |  |
+| ablation | `A/task_success_at_8` | 0.933333 |  |
+| ablation | `A/static_safe_rate` | 0.672917 |  |
+| ablation | `A/best_val` | 0.00757765 |  |
+| by_kind | `A/open_crossing/success_rate` | 0.925 |  |
+| by_kind | `A/single_obstacle/success_rate` | 0.16875 |  |
+| by_kind | `A/bottleneck_channel/success_rate` | 0.925 |  |
+| ablation | `B/in_res` | 128 |  |
+| ablation | `B/feat_res` | 32 |  |
+| ablation | `B/success_rate` | 0.675 |  |
+| ablation | `B/success_ci_lo` | 0.577083 |  |
+| ablation | `B/success_ci_hi` | 0.772917 |  |
+| ablation | `B/task_success_at_8` | 0.933333 |  |
+| ablation | `B/static_safe_rate` | 0.675 |  |
+| ablation | `B/best_val` | 0.00752258 |  |
+| by_kind | `B/open_crossing/success_rate` | 0.9375 |  |
+| by_kind | `B/single_obstacle/success_rate` | 0.18125 |  |
+| by_kind | `B/bottleneck_channel/success_rate` | 0.90625 |  |
+| ablation | `C/in_res` | 128 |  |
+| ablation | `C/feat_res` | 64 |  |
+| ablation | `C/success_rate` | 0.658333 |  |
+| ablation | `C/success_ci_lo` | 0.55625 |  |
+| ablation | `C/success_ci_hi` | 0.754167 |  |
+| ablation | `C/task_success_at_8` | 0.833333 |  |
+| ablation | `C/static_safe_rate` | 0.664583 |  |
+| ablation | `C/best_val` | 0.00842765 |  |
+| by_kind | `C/open_crossing/success_rate` | 0.88125 |  |
+| by_kind | `C/single_obstacle/success_rate` | 0.19375 |  |
+| by_kind | `C/bottleneck_channel/success_rate` | 0.9 |  |
 
 ## 产物
 
-- `tables\wait_safety_crossing_path.csv`
-- `tables\wait_safety_crossing_wait.csv`
-- `tables\wait_safety_crossing_joint.csv`
-- `plots\crossing_joint_paths.png`
-- `plots\crossing_progress_distribution.png`
-- `plots\crossing_convergence.png`
-- `tables\wait_safety_follow_path.csv`
-- `tables\wait_safety_follow_wait.csv`
-- `tables\wait_safety_follow_joint.csv`
-- `plots\follow_joint_paths.png`
-- `plots\follow_progress_distribution.png`
-- `plots\follow_convergence.png`
-- `tables\wait_safety_narrow_gate_path.csv`
-- `tables\wait_safety_narrow_gate_wait.csv`
-- `tables\wait_safety_narrow_gate_joint.csv`
-- `plots\narrow_gate_joint_paths.png`
-- `plots\narrow_gate_progress_distribution.png`
-- `plots\narrow_gate_convergence.png`
-- `tables\optimization_traces.csv`
-- `tables\pareto_points.csv`
-- `tables\pareto_lambda_T.csv`
-- `tables\saturation_diagnosis.csv`
-- `tables\saturation_rescue.csv`
-- `plots\pareto_crossing.png`
+- `tables\s2_per_task.csv`

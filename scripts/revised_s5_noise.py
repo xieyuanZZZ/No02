@@ -259,11 +259,11 @@ def main() -> int:
     log_section(logger, "B. B0 / B1 / B2 / 随机扰动 对照")
     opt_cfg = NoiseOptConfig(steps=args.iters, lr=args.lr, trust_radius=args.trust_radius,
                              ddim_steps=args.ddim_steps,
-                             lambda_R=float(cfg["guidance"]["lambda_R"]),
-                             lambda_T=float(cfg["guidance"]["lambda_T"]),
-                             lambda_S=float(cfg["guidance"]["lambda_S"]),
-                             lambda_K=float(cfg["guidance"]["lambda_K"]),
-                             lambda_G=float(cfg["guidance"]["lambda_G"]))
+                             lambda_R=float(cfg["guidance"].get("lambda_R", 1.0)),
+                             lambda_T=float(cfg["guidance"].get("lambda_T", 0.05)),
+                             lambda_S=float(cfg["guidance"].get("lambda_S", 10.0)),
+                             lambda_K=float(cfg["guidance"].get("lambda_K", 1.0)),
+                             lambda_G=float(cfg["guidance"].get("lambda_G", 0.5)))
     rows = []
     t_start = time.time()
     for ti, t in enumerate(tasks):
@@ -288,7 +288,7 @@ def main() -> int:
 
         # B1（原方法：逐步引导，关闭等待）
         t0 = time.time()
-        g = GuidanceConfig(enabled=True, start_fraction=float(cfg["diffusion"]["guidance_start_fraction"]),
+        g = GuidanceConfig(enabled=True, start_fraction=float(cfg["diffusion"].get("guidance_start_fraction", 0.25)),
                            step_size_x=0.2, step_size_w=0.0, grad_clip_norm=1.0,
                            max_wait_per_point=0.0, max_total_wait=0.0,
                            wait_mask_mode="all", optimize_wait=False, optimize_path=True,
