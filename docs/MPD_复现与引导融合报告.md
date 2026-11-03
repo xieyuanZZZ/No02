@@ -21,14 +21,15 @@
 | `mpd.inference.inference` | ✅ import 通过 |
 | Isaac Gym Preview 4 | ❌ **无法获取**（NVIDIA 登录墙）→ import-only shim |
 | `pb_ompl`（OMPL 绑定） | ❌ 未编译（py3.8 无 conda 预编译包）→ import-only shim |
-| 官方 `data_public.tar.gz`（22.5 GB） | 🔄 下载中（gdown 被配额拦，改用 `drive.usercontent` 直链 + 断点续传） |
-| 官方 2D 预训练模型推理 | ⏳ 等权 weight 下载完成 |
-| 三场景迁移测试 | ⏳ 未开始 |
-| 进度风险引导接入 | ⏳ 设计方案已写（§5），待环境就绪后实施 |
+| 官方 `data_public.tar.gz`（22.5 GB） | ⚠️ **Google Drive 配额耗尽**（需等最长 24 h） |
+| 官方 2D **数据集** | ✅ 已从已下载的 3.5 GB 前缀中抽出（79 MB hdf5，20000 条轨迹） |
+| 官方 2D **预训练权重** | ❌ 在压缩包后段的 `data_trained_models/`，前缀够不到 |
+| 官方 2D 预训练模型推理 | ⏳ 等权重 |
+| 三场景迁移测试 | ⏳ 已写好适配器，等权重 |
+| 进度风险引导接入 | ◐ 已实现并通过符号自检，等权重 |
 
-**一句话**：**目前还不能宣称"复现成功"**——官方推理尚未真正跑起来，原因是预训练权重仍在下载；
-环境层面的两个缺口（Isaac Gym、pb_ompl）已确认是 **2D 路径上的 import-only 依赖**，
-用带报错兜底的 shim 绕过，并在此明确标注。
+**一句话**：**目前还不能宣称"复现成功"**——官方推理尚未真正跑起来，唯一卡点是预训练权重；
+环境、2D 环境适配、引导接口与符号约定都已跑通并验证。
 
 ---
 
@@ -402,3 +403,72 @@ L(cp - ε·guide)= 1.066212e-01   ← 上升
 | `run_guide_test.sh` | 跑首碰引导的接口 + 符号 + 饱和测试 |
 
 `shims/` 下是 `isaacgym` 与 `pb_ompl` 两个 import-only 占位实现（调用即报错）。
+
+---
+
+## 9. 数据下载的实际情况（2026-11-03 记录）
+
+| 尝试 | 结果 |
+|---|---|
+| `gdown --fuzzy` | 首次成功解析并开始下载 22.5 GB，随后报 `Too many users have viewed or downloaded this file` |
+| `gdown --continue` | 同一配额错误，**无法续传** |
+| `curl` 到 `drive.usercontent.google.com` | 可下载，但**不支持 Range**（`curl: (33) HTTP server doesn't seem to support byte ranges`），断流后无法续传 |
+| 已下载前缀 | **3.44 GB / 22.5 GB**（约 15%） |
+
+Google 的提示原文：
+
+> Too many users have viewed or downloaded this file recently. ...
+> it may take up to 24 hours to be able to view or download the file.
+
+**已从 3.44 GB 前缀中成功抽取的部分（gzip 流式特性）**：
+
+```
+data_public/data_trajectories/EnvSimple2D-RobotPointMass2D-joint_joint-one-RRTConnect/
+    dataset_merged_doubled.hdf5                     79 MB   (20000 条轨迹, 256 点/条, task_id)
+    dataset_merged_doubled_reload-...-bspline....pickle   6.3 MB
+    dataset_merged_doubled_reload-...-waypoints....pickle 6.3 MB
+    args.yaml                                       638 B
+```
+
+`args.yaml` 关键信息：`bspline_degree=5`、`bspline_num_control_points=30`、
+`num_trajectories_generated=10000`、`interpolate_num=256`、`planner=RRTConnect`、`robot_id=RobotPointMass2D`。
+
+**缺的是 `data_public/data_trained_models/` 段**——按 tar 顺序它在 `data_trajectories/` 之后，
+需要后续约 19 GB 才能到达。
+
+---
+
+## 10. 拿到 tarball 之后的一键流程
+
+把 `data_public.tar.gz` 放到 `D:\mpd_official\` 或任意路径后，依次执行：
+
+```bash
+# 1) 解压到 WSL
+mkdir -p ~/mpd_data && cd ~/mpd_data
+tar -xzf /mnt/d/mpd_official/data_public.tar.gz
+ln -sfn ~/mpd_data/data_public/data_trajectories   /mnt/d/mpd_official/data_trajectories
+ln -sfn ~/mpd_data/data_public/data_trained_models /mnt/d/mpd_official/data_trained_models
+
+# 2) 记录权重 SHA256（交付要求）
+find /mnt/d/mpd_official/data_trained_models -name '*.pt' -exec sha256sum {} \; > weights_sha256.txt
+
+# 3) 改官方 2D 配置里的三处路径（指向实际解压位置）并启用 MPD
+#    scripts/inference/cfgs/config_EnvSimple2D-RobotPointMass2D_00.yaml
+#    model_dir_ddpm_bspline / model_dir_cvae_bspline / model_dir_ddpm_waypoints
+#    planner_alg: 'diffusion_prior'  ->  'mpd'
+
+# 4) 跑官方原始 2D 案例（A: prior, B: mpd）
+bash /mnt/d/mpd_official/wsl_setup/run_official_2d.sh prior
+bash /mnt/d/mpd_official/wsl_setup/run_official_2d.sh mpd
+```
+
+`run_official_2d.sh` 尚待编写（要等权重就位后按官方 `scripts/inference/inference.py` 的 CLI 参数确定）。
+
+---
+
+## 11. 当前阻塞点（需要你决定）
+
+1. **预训练权重**：Google Drive 配额耗尽，需等最长 24 小时，或你直接把 `data_public.tar.gz`
+   （或只把 `data_public/data_trained_models/` 目录打成小包）放到 `D:\mpd_official\`。
+2. **Isaac Gym**：官方 tarball 需要 NVIDIA 开发者账号。我已证明 2D 路径不需要它的功能，
+   只用 shim 满足 import；如果你要求 100% 官方环境，需要你提供 tarball。
