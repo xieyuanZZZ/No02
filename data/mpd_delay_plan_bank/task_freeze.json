@@ -1,0 +1,68 @@
+{
+  "screen_seed": 20261104,
+  "reference_p": 0.1,
+  "rule": {
+    "insensitive": "<0.02",
+    "light": "0.02-0.2",
+    "high": ">=0.2"
+  },
+  "groups": {
+    "insensitive": [
+      "open_crossing_300000_pair02_11",
+      "open_crossing_300000_pair02_21",
+      "open_crossing_300000_pair11_21",
+      "open_crossing_300000_pair18_21",
+      "open_crossing_300003_pair11_22",
+      "open_crossing_300003_pair17_22",
+      "open_crossing_300006_pair03_18",
+      "open_crossing_300006_pair17_18",
+      "open_crossing_300009_pair02_13",
+      "open_crossing_300012_pair03_18",
+      "open_crossing_300012_pair03_22",
+      "open_crossing_300012_pair18_22",
+      "open_crossing_300015_pair03_15",
+      "open_crossing_300015_pair03_18"
+    ],
+    "light": [
+      "open_crossing_300000_pair02_18",
+      "open_crossing_300003_pair02_22",
+      "open_crossing_300006_pair03_07",
+      "open_crossing_300006_pair07_17",
+      "open_crossing_300009_pair02_04",
+      "open_crossing_300009_pair02_07",
+      "open_crossing_300009_pair04_13"
+    ],
+    "high": [
+      "open_crossing_300000_pair11_18",
+      "open_crossing_300006_pair07_18",
+      "open_crossing_300009_pair07_13"
+    ]
+  },
+  "all_tasks": [
+    "open_crossing_300000_pair02_11",
+    "open_crossing_300000_pair02_18",
+    "open_crossing_300000_pair02_21",
+    "open_crossing_300000_pair11_18",
+    "open_crossing_300000_pair11_21",
+    "open_crossing_300000_pair18_21",
+    "open_crossing_300003_pair02_22",
+    "open_crossing_300003_pair11_22",
+    "open_crossing_300003_pair17_22",
+    "open_crossing_300006_pair03_07",
+    "open_crossing_300006_pair03_18",
+    "open_crossing_300006_pair07_17",
+    "open_crossing_300006_pair07_18",
+    "open_crossing_300006_pair17_18",
+    "open_crossing_300009_pair02_04",
+    "open_crossing_300009_pair02_07",
+    "open_crossing_300009_pair02_13",
+    "open_crossing_300009_pair04_13",
+    "open_crossing_300009_pair07_13",
+    "open_crossing_300012_pair03_18",
+    "open_crossing_300012_pair03_22",
+    "open_crossing_300012_pair18_22",
+    "open_crossing_300015_pair03_15",
+    "open_crossing_300015_pair03_18"
+  ],
+  "note": "分组仅用筛选种子；正式评测必须使用独立评测种子"
+}

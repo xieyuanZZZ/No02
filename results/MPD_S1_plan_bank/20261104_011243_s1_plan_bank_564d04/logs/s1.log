@@ -1,0 +1,9 @@
+01:12:43 | INFO    | fhd.mpd_s1 | ==============================================================================
+01:12:43 | INFO    | fhd.mpd_s1 | 阶段一：构建冻结的有效轨迹库
+01:12:43 | INFO    | fhd.mpd_s1 | ==============================================================================
+01:12:43 | INFO    | fhd.mpd_s1 | v_max=1.50 dt=0.40 H=32 T=96 d_safe=0.350 stagger=3
+01:12:43 | INFO    | fhd.mpd_s1 | 候选条目 56（原始候选总数 448）
+01:12:43 | INFO    | fhd.mpd_s1 | 候选审计：448 条，通过 369 条（82.4%）
+01:12:44 | INFO    | fhd.mpd_s1 | 联合任务：尝试 33 对，入库 24 个（p=0 无碰撞且全部到达）
+01:12:45 | INFO    | fhd.mpd_s1 | 从落盘数据重放：24/24 一致
+01:12:45 | INFO    | fhd.mpd_s1 | 覆盖统计：{"n_robot_tasks_requested": 56, "n_raw_candidates": 448, "n_official_valid": 440, "n_pass_all_checks": 369, "pass_rate_of_raw": 0.8236607142857143, "pass_rate_of_official_valid": 0.8386363636363636, "reject_reason_counts": {"static": 79}, "n_joint_pairs_attempted": 33, "n_joint_tasks": 24, "joint_success_rate": 0.7272727272727273}

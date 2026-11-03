@@ -1,0 +1,18 @@
+{
+  "plan_bank_sha256": "3c0c4303fceb8a16598ed0101570cb2dd3aaa0e317788d9c67f662812f365d13",
+  "trajs_sha256": "50b287d67c59139eb72862660b9769c1c495dff25b25f75cb394b5a985b6cbf6",
+  "coverage": {
+    "n_robot_tasks_requested": 56,
+    "n_raw_candidates": 448,
+    "n_official_valid": 440,
+    "n_pass_all_checks": 369,
+    "pass_rate_of_raw": 0.8236607142857143,
+    "pass_rate_of_official_valid": 0.8386363636363636,
+    "reject_reason_counts": {
+      "static": 79
+    },
+    "n_joint_pairs_attempted": 33,
+    "n_joint_tasks": 24,
+    "joint_success_rate": 0.7272727272727273
+  }
+}
