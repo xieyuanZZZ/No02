@@ -1,0 +1,20 @@
+{
+  "stage": "S0_baseline",
+  "status": "completed",
+  "git_commit": "ea842416331801e7f7710d4dc7f7d52fb3cc47c7",
+  "n_runs": 53,
+  "n_checkpoints": 154,
+  "tests": {
+    "passed": 79,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "all_passed": true,
+    "returncode": 0,
+    "selection": [
+      "tests"
+    ],
+    "total_duration_s": 6.962
+  }
+}

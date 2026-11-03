@@ -25,13 +25,15 @@ class SinusoidalPosEmb(nn.Module):
         super().__init__()
         self.dim = dim
 
-    def forward(self, t: torch.Tensor) -> torch.Tensor:
+    def forward(self, t: torch.Tensor, dtype: torch.dtype | None = None) -> torch.Tensor:
+        """dtype 缺省 float32；父模块传入 x.dtype 以便支持 float64 / AMP。"""
+        dtype = dtype or torch.float32
         device = t.device
         half = self.dim // 2
         freqs = torch.exp(
-            -math.log(10000) * torch.arange(half, device=device, dtype=torch.float32) / (half - 1)
+            -math.log(10000) * torch.arange(half, device=device, dtype=dtype) / (half - 1)
         )
-        args = t.float().unsqueeze(-1) * freqs.unsqueeze(0)
+        args = t.to(dtype).unsqueeze(-1) * freqs.unsqueeze(0)
         return torch.cat([torch.sin(args), torch.cos(args)], dim=-1)
 
 
@@ -59,30 +61,42 @@ class FiLMResBlock(nn.Module):
 
 
 class MapEncoder(nn.Module):
-    """小型 CNN：64×64 占据栅格 -> 空间特征 [B,C,Hf,Wf] + 全局嵌入 [B,embed_dim]。
+    """小型 CNN：占据栅格 -> 空间特征 [B,C,out_res,out_res] + 全局嵌入 [B,embed_dim]。
 
     **空间特征必须保留二维结构**：后续用 `grid_sample` 按每个路点的
     归一化二维坐标去查询局部地图特征。绝不能把二维特征压成 (1,H)——
     那会把 y 方向的信息整体丢掉，使路点位置与障碍位置失去对应关系。
+
+    分辨率（S2 消融）：
+      * `in_res`  —— 输入栅格边长（64 或 128，**从连续几何重新栅格化**，不是插值放大）
+      * `out_res` —— 输出特征图边长（16/32/64）
+      * 下采样次数 = log2(in_res / out_res)，全部用 stride-2 卷积，不用池化
+    结构固定为「两个全分辨率卷积 + n 次下采样」，保证不同分辨率的对比只改变
+    空间尺度，不改变通道预算与深度。
     """
 
     def __init__(self, out_dim: int = 128, spatial_channels: int = 16, in_channels: int = 1,
-                 map_res: int = 8):
+                 map_res: int = 8, in_res: int = 64, hidden: tuple[int, int] = (16, 32)):
         super().__init__()
         self.spatial_channels = spatial_channels
         self.map_res = int(map_res)
+        self.in_res = int(in_res)
+        if self.in_res % self.map_res != 0:
+            raise ValueError(f"in_res={self.in_res} 不能被 map_res={self.map_res} 整除")
+        ratio = self.in_res // self.map_res
+        n_down = int(round(math.log2(ratio)))
+        if 2 ** n_down != ratio:
+            raise ValueError(f"in_res/map_res 必须是 2 的幂，实际 {ratio}")
+        h0, h1 = hidden
         layers = [
-            nn.Conv2d(in_channels, 16, 5, stride=2, padding=2),   # 32
+            nn.Conv2d(in_channels, h0, 5, padding=2),
             nn.SiLU(),
-            nn.Conv2d(16, 32, 5, stride=2, padding=2),            # 16
+            nn.Conv2d(h0, h1, 5, padding=2),
             nn.SiLU(),
         ]
-        if self.map_res >= 16:
-            # 64 -> 32 -> 16，再保持 16x16
-            layers += [nn.Conv2d(32, spatial_channels, 3, padding=1), nn.SiLU()]
-        else:
-            # 64 -> 32 -> 16 -> 8
-            layers += [nn.Conv2d(32, spatial_channels, 3, stride=2, padding=1), nn.SiLU()]
+        for _ in range(n_down):
+            layers += [nn.Conv2d(h1, h1, 3, stride=2, padding=1), nn.SiLU()]
+        layers += [nn.Conv2d(h1, spatial_channels, 3, padding=1), nn.SiLU()]
         self.body = nn.Sequential(*layers)
         self.embed = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
@@ -146,7 +160,7 @@ class ConditionalUNet1D(nn.Module):
         self.time_emb = SinusoidalPosEmb(cond_dim)
         self.time_mlp = nn.Sequential(nn.Linear(cond_dim, cond_dim), nn.SiLU(), nn.Linear(cond_dim, cond_dim))
         self.map_encoder = MapEncoder(map_feature_dim, spatial_channels=map_spatial_channels,
-                                      in_channels=1, map_res=map_res)
+                                      in_channels=1, map_res=map_res, in_res=grid_size)
         self.map_proj = nn.Linear(map_feature_dim, cond_dim)
         self.cond_mlp = nn.Sequential(
             nn.Linear(4, cond_dim), nn.SiLU(), nn.Linear(cond_dim, cond_dim)
@@ -180,7 +194,7 @@ class ConditionalUNet1D(nn.Module):
         """x [B,H,2] -> eps [B,H,2]"""
         map_spatial, map_embed = self.map_encoder(grid)
         cond = (
-            self.time_mlp(self.time_emb(t))
+            self.time_mlp(self.time_emb(t, dtype=x.dtype))
             + self.map_proj(map_embed)
             + self.cond_mlp(torch.cat([start, goal], dim=-1))
         )

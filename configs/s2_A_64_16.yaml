@@ -1,0 +1,11 @@
+﻿# S2 分辨率消融 A：地图输入 64x64 -> CNN 特征 16x16
+extends: diffusion_train.yaml
+world:
+  grid_size: 64
+diffusion:
+  map_input_res: 64
+  map_spatial_res: 16
+  map_conditioning: grid_sample
+  training_steps: 8000
+dataset:
+  astar_resolution: 256

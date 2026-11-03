@@ -48,19 +48,23 @@ class WorldMap:
         )
 
     # --- 栅格与 SDF -----------------------------------------------------
-    def sdf_grid(self, dtype: torch.dtype = torch.float32) -> torch.Tensor:
+    def sdf_grid(self, dtype: torch.dtype = torch.float32,
+                 grid_size: int | None = None) -> torch.Tensor:
+        """栅格 SDF。grid_size 可覆盖默认分辨率（S2 需要 128×128）。"""
         sdf = raster_sdf(
             self.obstacles(torch.float64),
             self.width_m,
             self.height_m,
-            self.grid_size,
+            int(grid_size or self.grid_size),
             self.robot_radius_m,
             self.clearance_margin_m,
         )
         return sdf.to(dtype)
 
-    def occupancy(self, dtype: torch.dtype = torch.float32) -> torch.Tensor:
-        return (self.sdf_grid(dtype) < 0).to(dtype)
+    def occupancy(self, dtype: torch.dtype = torch.float32,
+                  grid_size: int | None = None) -> torch.Tensor:
+        """膨胀后的占据栅格。grid_size 可覆盖默认分辨率。"""
+        return (self.sdf_grid(dtype, grid_size) < 0).to(dtype)
 
     # --- 自由空间查询 ---------------------------------------------------
     def sdf(self, points: np.ndarray | torch.Tensor) -> np.ndarray:

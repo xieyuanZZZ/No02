@@ -35,7 +35,7 @@ def build_model(cfg, device) -> ConditionalUNet1D:
                int(d["unet_channels"][2]) // int(d["unet_channels"][0])),
         cond_dim=int(d["cond_feature_dim"]),
         map_feature_dim=int(d["map_feature_dim"]),
-        grid_size=int(cfg["world"]["grid_size"]),
+        grid_size=int(d.get("map_input_res", cfg["world"]["grid_size"])),
         map_res=int(d.get("map_spatial_res", 8)),
         map_conditioning=str(d.get("map_conditioning", "grid_sample")),
     ).to(device)
@@ -51,16 +51,17 @@ class Trainer:
         self.logger = get_logger("fhd.s3.train", self.run_dir / "logs" / "train.log")
         d = cfg["diffusion"]
 
+        map_input_res = int(cfg["diffusion"].get("map_input_res", cfg["world"]["grid_size"]))
         self.train_ds = TrajectoryDataset(
             dataset_root, "train",
-            grid_size=int(cfg["world"]["grid_size"]),
+            grid_size=map_input_res,
             robot_radius_m=float(cfg["world"]["robot_radius_m"]),
             clearance_margin_m=float(cfg["world"]["clearance_margin_m"]),
             width_m=float(cfg["world"]["width_m"]), height_m=float(cfg["world"]["height_m"]),
         )
         self.val_ds = TrajectoryDataset(
             dataset_root, "val",
-            grid_size=int(cfg["world"]["grid_size"]),
+            grid_size=map_input_res,
             robot_radius_m=float(cfg["world"]["robot_radius_m"]),
             clearance_margin_m=float(cfg["world"]["clearance_margin_m"]),
             width_m=float(cfg["world"]["width_m"]), height_m=float(cfg["world"]["height_m"]),

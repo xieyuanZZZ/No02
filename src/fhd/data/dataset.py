@@ -94,7 +94,7 @@ class TrajectoryDataset(Dataset):
         # 预计算 64×64 占据栅格（每张地图一次）
         grids = []
         for m in self.maps:
-            occ = m.occupancy(torch.float32)
+            occ = m.occupancy(torch.float32, grid_size=grid_size)
             if occ.shape[0] != grid_size:
                 raise ValueError(f"栅格分辨率不一致: {occ.shape} vs {grid_size}")
             grids.append(occ)

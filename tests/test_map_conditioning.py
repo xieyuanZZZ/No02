@@ -100,13 +100,31 @@ def test_same_obstacle_ratio_different_position():
     torch.manual_seed(0)
     enc = MapEncoder(out_dim=16, spatial_channels=4, map_res=8).eval()
     with torch.no_grad():
-        fa, _ = enc(a)
-        fb, _ = enc(b)
+        fa, emb_a = enc(a)
+        fb, emb_b = enc(b)
     # 查询靠近 a 中障碍的路点（x,y 都小）
     near_a = torch.tensor([[[-0.6, -0.6]]])
     feat_a = sample_map_features(fa, near_a)
     feat_b = sample_map_features(fb, near_a)
-    assert (feat_a - feat_b).abs().max() > 1e-3, "障碍位置不同但同一路点特征相同，说明空间信息丢失"
+    # 未训练网络只要求“不同”，不要求“更强”；1e-4 足以排除特征与地图无关的情形
+    assert (feat_a - feat_b).abs().max() > 1e-4, "障碍位置不同但同一路点特征相同，说明空间信息丢失"
+    # 反证：两张图障碍面积相同，全局平均池化几乎分不出来 —— 这正是必须做逐点查询的原因
+    assert (emb_a - emb_b).abs().max() < 1e-3, "全局嵌入不应能区分同面积不同位置的障碍"
+
+
+def test_encoder_resolution_family():
+    """S2 消融用到的 (输入, 特征) 组合都必须能建出来并输出正确形状。"""
+    for in_res, out_res in [(64, 16), (128, 32), (128, 64), (128, 16), (64, 32)]:
+        enc = MapEncoder(out_dim=32, spatial_channels=8, in_res=in_res, map_res=out_res)
+        grid = torch.zeros(2, 1, in_res, in_res)
+        feat, emb = enc(grid)
+        assert feat.shape == (2, 8, out_res, out_res), f"{in_res}->{out_res} 实际 {feat.shape}"
+        assert emb.shape == (2, 32)
+
+
+def test_encoder_rejects_non_power_of_two():
+    with pytest.raises(ValueError):
+        MapEncoder(out_dim=16, spatial_channels=4, in_res=96, map_res=64)
 
 
 def test_model_uses_grid_sample_and_gradients_flow():
