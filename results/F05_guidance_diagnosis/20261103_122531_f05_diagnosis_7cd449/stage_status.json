@@ -1,0 +1,14 @@
+{
+  "stage": "F05_guidance_diagnosis",
+  "run_id": "20261103_122531_f05_diagnosis_7cd449",
+  "status": "completed",
+  "started_at": "2026-11-03T12:27:48+08:00",
+  "finished_at": "2026-11-03T12:27:49+08:00",
+  "duration_s": 0.2,
+  "git_commit": "ea6261bba9340f4c330a2a3fa27f3a964c3ff86c",
+  "n_metrics": 24,
+  "tests": {},
+  "extra": {
+    "max_rms_disp": 0.04999314621090889
+  }
+}

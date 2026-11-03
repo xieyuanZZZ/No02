@@ -1,4 +1,4 @@
-﻿"""推理期风险引导的 DDIM 采样（文档 §7，S4 的核心接口）。
+"""推理期风险引导的 DDIM 采样（文档 §7，S4 的核心接口）。
 
 流程（每个 DDIM 采样步）：
   1. 冻结去噪网络，前向得到 ε 与 x̂0（归一化空间）；
@@ -37,6 +37,10 @@ class GuidanceConfig:
     mc_samples: int = 0
     optimize_path: bool = True        # A1/A3 打开，A2 关闭
     optimize_wait: bool = True        # A1 关闭，A2/A3 打开
+    updates_per_step: int = 1         # 每个 DDIM 步内的梯度更新次数（每次重新求梯度）
+    record_snapshots: bool = False    # 记录每个引导步后的 x0（米制），供诊断
+    record_guidance_delta: bool = False  # 记录本步引导产生的即时位移范数
+    guide_only_steps: list[int] | None = None  # 仅在指定采样步施加引导（诊断用）
 
 
 @dataclass
@@ -45,6 +49,8 @@ class GuidanceResult:
     wait: torch.Tensor
     history: list[dict] = field(default_factory=list)
     final: dict = field(default_factory=dict)
+    snapshots: list = field(default_factory=list)
+    all_snapshots: list = field(default_factory=list)
 
 
 def project_wait_local(wait: torch.Tensor, mask: torch.Tensor, max_per_point: float,
@@ -162,6 +168,8 @@ def guided_ddim_sample(
 
     wait = torch.zeros(n, h - 1, dtype=torch.float32, device=start_m.device)
     history: list[dict] = []
+    snapshots: list = []
+    all_snapshots: list = []
     ts = schedule.ddim_timesteps(num_steps)
     n_guided = 0
 
@@ -174,64 +182,84 @@ def guided_ddim_sample(
 
         fraction = i / max(1, len(ts) - 1)
         # 前 start_fraction 比例的采样步不做引导（批复 §20）
-        do_guide = guide.enabled and fraction >= guide.start_fraction
+        if guide.guide_only_steps is not None:
+            do_guide = guide.enabled and (i in guide.guide_only_steps)
+        else:
+            do_guide = guide.enabled and fraction >= guide.start_fraction
 
         guided_this_step = False
         if do_guide:
             n_guided += 1
             guided_this_step = True
-            # 单独建立局部计算图
+            # 单独建立局部计算图；updates_per_step 次内循环，每次更新后**重新计算梯度**
             x0_m = (x0.detach() + 1.0) * scale
-            x0_local = x0_m.detach().clone().requires_grad_(True)
-            wait_local = wait.detach().clone().requires_grad_(True)
-            if objective_fn is None:
-                risk = risk_model(x0_local, wait_local, pause_p, time_steps,
-                                  collision_mode="soft", gate_mode="soft", return_diagnostics=False)
-                loss, detail = guidance_loss(x0_local, wait_local, risk, cfg, obstacles=obstacles)
-                soft_risk_value = float(risk["pair_sum_risk"].detach())
-                finish_value = float(risk["finish_cost"].detach())
-                weights = detail["weighted"]
-            else:
-                loss, detail = objective_fn(x0_local, wait_local)
-                soft_risk_value = float(detail.get("soft_risk", torch.zeros(())).detach())
-                finish_value = float(detail.get("finish_cost", torch.zeros(())).detach())
-                weights = detail.get("weighted", {})
-            g_x, g_w = torch.autograd.grad(loss, (x0_local, wait_local), allow_unused=True)
-            g_x = torch.zeros_like(x0_local) if g_x is None else g_x
-            g_w = torch.zeros_like(wait_local) if g_w is None else g_w
-            if not guide.optimize_path:
-                g_x = torch.zeros_like(g_x)
-            if not guide.optimize_wait:
-                g_w = torch.zeros_like(g_w)
-
-            # 端点梯度屏蔽 + 梯度裁剪
-            g_x[:, 0, :] = 0.0
-            g_x[:, -1, :] = 0.0
-            norm_x = g_x.reshape(n, -1).norm(dim=-1).clamp(min=1e-12)
-            scale_x = (guide.grad_clip_norm / norm_x).clamp(max=1.0)
-            g_x = g_x * scale_x.view(n, 1, 1)
-            norm_w = g_w.reshape(n, -1).norm(dim=-1).clamp(min=1e-12)
-            scale_w = (guide.grad_clip_norm / norm_w).clamp(max=1.0)
-            g_w = g_w * scale_w.view(n, 1)
-
-            # 更新（米制 -> 归一化）
-            x0_m_new = x0_m - guide.step_size_x * g_x
-            if wait_mask is None:
-                # 自动等待点：以当前 x0 的静态净空与其他机器人路径占用为判据
-                if obstacles is not None and getattr(obstacles, "count", 0) > 0:
-                    from fhd.geometry.sdf import analytic_sdf
-
-                    sdf = analytic_sdf(x0_m.detach().reshape(-1, 2), obstacles,
-                                       float(cfg["world"]["robot_radius_m"]),
-                                       float(cfg["world"]["clearance_margin_m"]))
-                    clearance_ok = (sdf >= 0).reshape(n, h)
+            immediate_before = x0_m.detach().clone()
+            soft_risk_value = 0.0
+            finish_value = 0.0
+            weights = {}
+            g_x = torch.zeros_like(x0_m)
+            g_w = torch.zeros_like(wait)
+            n_updates = max(1, int(guide.updates_per_step))
+            for _u in range(n_updates):
+                x0_local = x0_m.detach().clone().requires_grad_(True)
+                wait_local = wait.detach().clone().requires_grad_(True)
+                if objective_fn is None:
+                    risk = risk_model(x0_local, wait_local, pause_p, time_steps,
+                                      collision_mode="soft", gate_mode="soft",
+                                      return_diagnostics=False)
+                    loss, detail = guidance_loss(x0_local, wait_local, risk, cfg, obstacles=obstacles)
+                    soft_risk_value = float(risk["pair_sum_risk"].detach())
+                    finish_value = float(risk["finish_cost"].detach())
+                    weights = detail["weighted"]
                 else:
-                    clearance_ok = torch.ones(n, h, dtype=torch.bool)
-                wait_mask = auto_wait_mask(x0_m.detach(), d_safe, clearance_ok,
-                                           mode=guide.wait_mask_mode)
-            wait = project_wait_local(wait_local.detach() - guide.step_size_w * g_w,
-                                      wait_mask, guide.max_wait_per_point, guide.max_total_wait)
-            x0 = x0_m_new / scale - 1.0
+                    loss, detail = objective_fn(x0_local, wait_local)
+                    soft_risk_value = float(detail.get("soft_risk", torch.zeros(())).detach())
+                    finish_value = float(detail.get("finish_cost", torch.zeros(())).detach())
+                    weights = detail.get("weighted", {})
+                gx, gw = torch.autograd.grad(loss, (x0_local, wait_local), allow_unused=True)
+                gx = torch.zeros_like(x0_local) if gx is None else gx
+                gw = torch.zeros_like(wait_local) if gw is None else gw
+                if not guide.optimize_path:
+                    gx = torch.zeros_like(gx)
+                if not guide.optimize_wait:
+                    gw = torch.zeros_like(gw)
+
+                # 端点梯度屏蔽 + 逐机器人范数裁剪
+                gx[:, 0, :] = 0.0
+                gx[:, -1, :] = 0.0
+                norm_x = gx.reshape(n, -1).norm(dim=-1).clamp(min=1e-12)
+                scale_x = (guide.grad_clip_norm / norm_x).clamp(max=1.0)
+                gx = gx * scale_x.view(n, 1, 1)
+                norm_w = gw.reshape(n, -1).norm(dim=-1).clamp(min=1e-12)
+                scale_w = (guide.grad_clip_norm / norm_w).clamp(max=1.0)
+                gw = gw * scale_w.view(n, 1)
+
+                x0_m = x0_m - guide.step_size_x * gx
+                g_x = g_x + gx
+                g_w = g_w + gw
+                if wait_mask is None:
+                    # 自动等待点：以当前 x0 的静态净空与其他机器人路径占用为判据
+                    if obstacles is not None and getattr(obstacles, "count", 0) > 0:
+                        from fhd.geometry.sdf import analytic_sdf
+
+                        sdf = analytic_sdf(x0_m.detach().reshape(-1, 2), obstacles,
+                                           float(cfg["world"]["robot_radius_m"]),
+                                           float(cfg["world"]["clearance_margin_m"]))
+                        clearance_ok = (sdf >= 0).reshape(n, h)
+                    else:
+                        clearance_ok = torch.ones(n, h, dtype=torch.bool)
+                    wait_mask = auto_wait_mask(x0_m.detach(), d_safe, clearance_ok,
+                                               mode=guide.wait_mask_mode)
+                wait = project_wait_local(wait - guide.step_size_w * gw,
+                                          wait_mask, guide.max_wait_per_point, guide.max_total_wait)
+            if guide.record_snapshots:
+                snapshots.append(x0_m.detach().clone())
+            if guide.record_guidance_delta:
+                immediate = float((x0_m.detach() - immediate_before).norm())
+            else:
+                immediate = 0.0
+            x0_m_new = x0_m
+            x0 = x0_m / scale - 1.0
             x0 = project_endpoints(x0, start_n, goal_n)
 
             record = {
@@ -242,12 +270,15 @@ def guided_ddim_sample(
                 "grad_norm_x": float(g_x.reshape(n, -1).norm()),
                 "grad_norm_w": float(g_w.norm()),
                 "wait_total": float(wait.sum()),
+                "guidance_delta_norm": immediate,
+                "n_updates": n_updates,
             }
             record.update({f"term/{k}": float(v.detach()) for k, v in weights.items()})
         else:
             x0_m_new = (x0.detach() + 1.0) * scale
             record = {"ddim_step": i, "t": int(t), "guided": False,
-                      "wait_total": float(wait.sum())}
+                      "wait_total": float(wait.sum()),
+                      "guidance_delta_norm": 0.0, "n_updates": 0}
 
         if guide.hard_eval_every and (i % guide.hard_eval_every == 0 or i == len(ts) - 1):
             with torch.no_grad():
@@ -260,6 +291,9 @@ def guided_ddim_sample(
                                collision_mode="soft", gate_mode="soft",
                                return_diagnostics=False)["pair_sum_risk"]
                 )
+        if guide.record_snapshots:
+            x0_step = x0.detach() if do_guide else x0.detach()
+            all_snapshots.append(((x0_step + 1.0) * scale).clone())
         history.append(record)
 
         # 一致性重算 epsilon 并做 DDIM 步
@@ -282,4 +316,5 @@ def guided_ddim_sample(
             "guided_steps": n_guided,
             "total_steps": len(ts),
         }
-    return GuidanceResult(paths_m=final_paths, wait=wait, history=history, final=final)
+    return GuidanceResult(paths_m=final_paths, wait=wait, history=history, final=final,
+                          snapshots=snapshots, all_snapshots=all_snapshots)

@@ -69,15 +69,20 @@ class StageReport:
                 self.metric(key, value, group=group)
 
     def table(self, name: str, rows: list[dict]) -> Path:
-        """保存原始数值表为 CSV。"""
+        """保存原始数值表为 CSV。字段取所有行的并集，缺失值留空。"""
         path = self.run_dir / "tables" / f"{name}.csv"
         path.parent.mkdir(parents=True, exist_ok=True)
         if rows:
-            fieldnames = list(rows[0].keys())
+            fieldnames: list[str] = []
+            for row in rows:
+                for key in row:
+                    if key not in fieldnames:
+                        fieldnames.append(key)
             with path.open("w", newline="", encoding="utf-8") as fh:
-                writer = csv.DictWriter(fh, fieldnames=fieldnames)
+                writer = csv.DictWriter(fh, fieldnames=fieldnames, extrasaction="ignore")
                 writer.writeheader()
-                writer.writerows(rows)
+                for row in rows:
+                    writer.writerow({k: row.get(k, "") for k in fieldnames})
         else:
             path.write_text("", encoding="utf-8")
         self.artifacts.append(str(path.relative_to(self.run_dir)))
