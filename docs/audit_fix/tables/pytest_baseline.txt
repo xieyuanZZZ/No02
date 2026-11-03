@@ -1,0 +1,23 @@
+{
+  "passed": 69,
+  "failed": 0,
+  "error": 0,
+  "skipped": 0,
+  "failed_tests": [],
+  "all_passed": true,
+  "returncode": 0,
+  "selection": [
+    "tests"
+  ],
+  "total_duration_s": 7.089
+}
+
+--- 输出尾部 ---
+.....................................................................    [100%]
+============================== warnings summary ===============================
+tests/test_risk_numerics.py::test_r10_numerics_stable_large
+  D:\paper2\tests\test_risk_numerics.py:94: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\torch\csrc\autograd\generated\python_variable_methods.cpp:837.)
+    assert 0.0 <= float(out["pair_sum_risk"]) <= 1.0 + 1e-9
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
