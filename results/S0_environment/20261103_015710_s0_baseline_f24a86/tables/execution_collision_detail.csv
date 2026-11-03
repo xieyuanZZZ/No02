@@ -1,0 +1,11 @@
+sample,first_collision_step,collision_time_s,collision,pos_robot0_x,pos_robot0_y,pos_robot1_x,pos_robot1_y
+0,16,6.4,True,5.141935483870967,4.5,5.5,4.574193548387097
+1,96,,False,,,,
+2,96,,False,,,,
+3,96,,False,,,,
+4,96,,False,,,,
+5,96,,False,,,,
+6,16,6.4,True,5.141935483870967,4.5,5.5,4.290322580645161
+7,96,,False,,,,
+8,17,6.800000000000001,True,5.141935483870967,4.5,5.5,4.574193548387097
+9,96,,False,,,,

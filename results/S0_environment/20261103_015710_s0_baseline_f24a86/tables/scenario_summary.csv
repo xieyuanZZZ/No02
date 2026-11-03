@@ -1,0 +1,8 @@
+scenario,name,n_agents,horizon,map_kind,map_seed,n_obstacles,path_lengths_m,n_wait_points,min_start_distance_m
+crossing,crossing,2,32,open,20261103,0,"[8.8, 8.8]",20,6.262587324740471
+head_on,head_on,2,32,open,20261103,0,"[8.4, 8.4]",6,8.399999999999999
+follow,follow,2,32,open,20261103,0,"[7.4839, 7.4839]",60,0.5161290322580645
+terminal_occupancy,terminal_occupancy,2,32,open,20261103,0,"[2.4, 8.4]",12,4.8373546489791295
+dual_corridor,dual_corridor,2,32,dual_corridor,20261103,1,"[11.4818, 10.3287]",24,0.0
+narrow_gate,narrow_gate,2,32,narrow_gate,20261103,2,"[8.8, 8.8]",32,8.8
+multi_bottleneck,multi_bottleneck_4,4,32,bottleneck,20261103,5,"[8.8, 8.8, 8.8, 8.8]",112,5.822841856437573

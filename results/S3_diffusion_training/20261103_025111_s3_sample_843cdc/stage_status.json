@@ -1,0 +1,26 @@
+{
+  "stage": "S3_diffusion_training",
+  "run_id": "20261103_025111_s3_sample_843cdc",
+  "status": "completed",
+  "started_at": "2026-11-03T02:51:34+08:00",
+  "finished_at": "2026-11-03T02:51:36+08:00",
+  "duration_s": 2.4,
+  "git_commit": "9cc9e0661d9d4e27d119acc8f1c159f172230f4a",
+  "n_metrics": 29,
+  "tests": {},
+  "extra": {
+    "n_tasks": 120,
+    "samples_per_task": 6,
+    "ddim_steps": 40,
+    "success_rate": 0.6638888914138079,
+    "static_collision_rate": 0.33611111111111114,
+    "speed_violation_rate": 0.004166666666666667,
+    "start_err_max_m": 7.88052492023873e-07,
+    "goal_err_max_m": 8.864256603189618e-07,
+    "length_ratio_mean": 0.9941898115360616,
+    "smoothness_mean": 0.0015329258054407545,
+    "diversity_mean_m": 0.23460117016091114,
+    "inference_ms_per_sample": 30.689754750993515,
+    "total_seconds": 22.096623420715332
+  }
+}

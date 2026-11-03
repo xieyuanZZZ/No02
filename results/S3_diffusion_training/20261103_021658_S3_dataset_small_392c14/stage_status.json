@@ -1,0 +1,50 @@
+{
+  "stage": "S3_dataset",
+  "status": "completed",
+  "split_size": "small",
+  "stats": {
+    "train": {
+      "tasks_attempted": 126,
+      "tasks_reachable": 125,
+      "vectors_generated": 244,
+      "discarded_unreachable": 6,
+      "discarded_too_close": 0,
+      "discarded_speed": 2,
+      "discarded_static": 0,
+      "discarded_length": 0,
+      "diversity_mean_m": 0.06477344933974846,
+      "n_maps_used": 5,
+      "n_paths": 244,
+      "elapsed_s": 45.2
+    },
+    "val": {
+      "tasks_attempted": 53,
+      "tasks_reachable": 50,
+      "vectors_generated": 97,
+      "discarded_unreachable": 9,
+      "discarded_too_close": 0,
+      "discarded_speed": 0,
+      "discarded_static": 0,
+      "discarded_length": 0,
+      "diversity_mean_m": 0.14470642879203105,
+      "n_maps_used": 5,
+      "n_paths": 97,
+      "elapsed_s": 18.0
+    },
+    "test": {
+      "tasks_attempted": 63,
+      "tasks_reachable": 60,
+      "vectors_generated": 117,
+      "discarded_unreachable": 8,
+      "discarded_too_close": 0,
+      "discarded_speed": 1,
+      "discarded_static": 0,
+      "discarded_length": 0,
+      "diversity_mean_m": 0.14603588413417523,
+      "n_maps_used": 6,
+      "n_paths": 117,
+      "elapsed_s": 17.5
+    }
+  },
+  "git_commit": "d66f17994e016634853cf44ab593d1d0377ff8df"
+}

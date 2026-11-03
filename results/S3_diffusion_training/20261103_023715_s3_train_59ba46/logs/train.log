@@ -1,0 +1,12 @@
+02:37:16 | INFO    | fhd.s3.train | 开始训练：目标 600 步，batch=96，累积=1，参数=2230082
+02:37:19 | INFO    | fhd.s3.train | step    100 | 验证 loss 0.06626
+02:37:21 | INFO    | fhd.s3.train | step    200 | loss 0.04660 | grad 0.492 | 4328.0 样本/s
+02:37:21 | INFO    | fhd.s3.train | step    200 | 验证 loss 0.05152
+02:37:23 | INFO    | fhd.s3.train | step    300 | 验证 loss 0.03909
+02:37:23 | INFO    | fhd.s3.train | 已保存采样图：sample_step000300.png
+02:37:25 | INFO    | fhd.s3.train | step    400 | loss 0.03340 | grad 0.520 | 4437.7 样本/s
+02:37:25 | INFO    | fhd.s3.train | step    400 | 验证 loss 0.03008
+02:37:27 | INFO    | fhd.s3.train | step    500 | 验证 loss 0.02656
+02:37:29 | INFO    | fhd.s3.train | step    600 | loss 0.02629 | grad 0.351 | 4657.9 样本/s
+02:37:29 | INFO    | fhd.s3.train | step    600 | 验证 loss 0.02709
+02:37:29 | INFO    | fhd.s3.train | 已保存采样图：sample_step000600.png

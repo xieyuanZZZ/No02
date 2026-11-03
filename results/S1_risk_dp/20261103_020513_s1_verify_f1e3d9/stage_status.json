@@ -1,0 +1,15 @@
+{
+  "stage": "S1_risk_dp",
+  "run_id": "20261103_020513_s1_verify_f1e3d9",
+  "status": "passed",
+  "started_at": "2026-11-03T02:05:13+08:00",
+  "finished_at": "2026-11-03T02:05:26+08:00",
+  "duration_s": 13.4,
+  "git_commit": "0ef64b83d45a49c2d391b6df0baf4b7cc3793373",
+  "n_metrics": 36,
+  "tests": {},
+  "extra": {
+    "d_safe_m": 0.35,
+    "r7_max_abs_error": 0.006737749543020144
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "train": {
+    "tasks_attempted": 10411,
+    "tasks_reachable": 10000,
+    "vectors_generated": 19212,
+    "discarded_unreachable": 1443,
+    "discarded_too_close": 0,
+    "discarded_speed": 167,
+    "discarded_static": 0,
+    "discarded_length": 0,
+    "diversity_mean_m": 0.1484607508287305,
+    "n_maps_used": 100,
+    "n_paths": 19212,
+    "elapsed_s": 3799.6
+  },
+  "val": {
+    "tasks_attempted": 519,
+    "tasks_reachable": 500,
+    "vectors_generated": 950,
+    "discarded_unreachable": 70,
+    "discarded_too_close": 0,
+    "discarded_speed": 18,
+    "discarded_static": 0,
+    "discarded_length": 0,
+    "diversity_mean_m": 0.13608649282868,
+    "n_maps_used": 20,
+    "n_paths": 950,
+    "elapsed_s": 174.2
+  },
+  "test": {
+    "tasks_attempted": 514,
+    "tasks_reachable": 500,
+    "vectors_generated": 958,
+    "discarded_unreachable": 61,
+    "discarded_too_close": 0,
+    "discarded_speed": 9,
+    "discarded_static": 0,
+    "discarded_length": 0,
+    "diversity_mean_m": 0.11968414501628749,
+    "n_maps_used": 20,
+    "n_paths": 958,
+    "elapsed_s": 171.0
+  }
+}

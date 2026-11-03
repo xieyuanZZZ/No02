@@ -1,0 +1,112 @@
+{
+  "plan": {
+    "B0": {
+      "n_plans": 4,
+      "plan_valid_rate": 0.25,
+      "plan_valid_ci": {
+        "mean": 0.25,
+        "lo": 0.0,
+        "hi": 0.75,
+        "n": 4,
+        "n_clusters": 4
+      },
+      "plan_time_mean_s": 0.6244881749153137,
+      "wait_total_mean": 0.0,
+      "hard_risk_mean": 0.2085377424955368
+    },
+    "A3": {
+      "n_plans": 4,
+      "plan_valid_rate": 0.25,
+      "plan_valid_ci": {
+        "mean": 0.25,
+        "lo": 0.0,
+        "hi": 0.75,
+        "n": 4,
+        "n_clusters": 4
+      },
+      "plan_time_mean_s": 1.4509170651435852,
+      "wait_total_mean": 0.0,
+      "hard_risk_mean": 0.2085377424955368
+    }
+  },
+  "execution": {
+    "B0|p0.0": {
+      "n": 120,
+      "successes": 30,
+      "safe_completion_rate": 0.25,
+      "wilson_lo": 0.1810971138452223,
+      "wilson_hi": 0.33441302168274245,
+      "collision_rate": 0.25,
+      "makespan_mean_s": 12.400000000000002,
+      "makespan_p90_s": 12.4,
+      "bootstrap": {
+        "mean": 0.25,
+        "lo": 0.0,
+        "hi": 0.75,
+        "n": 120,
+        "n_clusters": 4
+      }
+    },
+    "B0|p0.1": {
+      "n": 120,
+      "successes": 30,
+      "safe_completion_rate": 0.25,
+      "wilson_lo": 0.1810971138452223,
+      "wilson_hi": 0.33441302168274245,
+      "collision_rate": 0.21666666666666667,
+      "makespan_mean_s": 14.196666666666665,
+      "makespan_p90_s": 15.010000000000002,
+      "bootstrap": {
+        "mean": 0.25,
+        "lo": 0.0,
+        "hi": 0.75,
+        "n": 120,
+        "n_clusters": 4
+      }
+    },
+    "A3|p0.0": {
+      "n": 120,
+      "successes": 30,
+      "safe_completion_rate": 0.25,
+      "wilson_lo": 0.1810971138452223,
+      "wilson_hi": 0.33441302168274245,
+      "collision_rate": 0.25,
+      "makespan_mean_s": 12.400000000000002,
+      "makespan_p90_s": 12.4,
+      "bootstrap": {
+        "mean": 0.25,
+        "lo": 0.0,
+        "hi": 0.75,
+        "n": 120,
+        "n_clusters": 4
+      }
+    },
+    "A3|p0.1": {
+      "n": 120,
+      "successes": 30,
+      "safe_completion_rate": 0.25,
+      "wilson_lo": 0.1810971138452223,
+      "wilson_hi": 0.33441302168274245,
+      "collision_rate": 0.21666666666666667,
+      "makespan_mean_s": 14.196666666666665,
+      "makespan_p90_s": 15.010000000000002,
+      "bootstrap": {
+        "mean": 0.25,
+        "lo": 0.0,
+        "hi": 0.75,
+        "n": 120,
+        "n_clusters": 4
+      }
+    }
+  },
+  "paired": {
+    "A3_vs_B0": {
+      "diff": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "significant": false,
+      "n_clusters": 4
+    }
+  },
+  "n_tasks": 4
+}

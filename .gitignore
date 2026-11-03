@@ -13,13 +13,30 @@ dist/
 .venv/
 venv/
 
-# 数据与权重（本地完整保留，不入库）
-data/
+# ---------------------------------------------------------------------------
+# 大文件排除策略（仓库为公开复现用，只保留小体积的代码、报告、指标与图）
+#
+# 收纳：src/ tests/ scripts/ configs/ docs/ data/（原始数据 <10 MB）
+#       results/ 下的 report.md / metrics.csv / aggregate.json / tables / plots /
+#       logs / config_snapshot.yaml / stage_status.json
+# 排除：模型权重（每个 34 MB）、训练中间检查点、虚拟环境、缓存
+# ---------------------------------------------------------------------------
 checkpoints/
-results/
+**/checkpoints/
+*.pt
+*.ckpt
+*.pth
+*.onnx
+*.safetensors
 
-# 临时文件与日志
-*.log
+# 运行目录里可能出现的超大二进制
+results/**/plans/
+results/**/executions/
+results/**/*.npz
+results/**/*.npy
+
+# 临时文件
 tmp/
 .DS_Store
 Thumbs.db
+*.tmp
