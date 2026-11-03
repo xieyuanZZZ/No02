@@ -472,3 +472,65 @@ bash /mnt/d/mpd_official/wsl_setup/run_official_2d.sh mpd
    （或只把 `data_public/data_trained_models/` 目录打成小包）放到 `D:\mpd_official\`。
 2. **Isaac Gym**：官方 tarball 需要 NVIDIA 开发者账号。我已证明 2D 路径不需要它的功能，
    只用 shim 满足 import；如果你要求 100% 官方环境，需要你提供 tarball。
+
+---
+
+## 12. 关于 `D:\第二篇文章` / `~/delay_robust_mmd` 的核查（2026-11-03）
+
+按要求检查了这个目录，结论：**它是另一篇论文（MMD 延迟鲁棒）的工程，不含 MPD 的二维点质量机器人权重。**
+
+### 12.1 里面实际有什么
+
+```
+D:\第二篇文章\
+  .venv_mpc\            Linux 布局的 venv（只有 numpy/scipy/matplotlib/clarabel，无 torch）
+  baselines\external\   Continuous-CBS、SMART
+  collision_safety\ learning_windows\ reports\   该论文自己的实验与检查点
+```
+
+WSL 侧对应 `~/delay_robust_mmd/`：
+
+```
+delay_robust_mmd\mmd\                 MMD 官方仓库（yoraish/mmpd 派生）
+    data_trained_models\              5 个场景，全部是 RobotPlanarDisk：
+        EnvEmpty2D-RobotPlanarDisk
+        EnvEmptyNoWait2D-RobotPlanarDisk
+        EnvConveyor2D-RobotPlanarDisk
+        EnvDropRegion2D-RobotPlanarDisk
+        EnvHighways2D-RobotPlanarDisk
+    data_trajectories\                与上面 5 个场景配套
+    deps\torch_robotics\              与 MPD 同一套 torch_robotics
+```
+
+### 12.2 为什么不能直接拿来做 MPD 基线
+
+| 项 | MPD（我们要的） | MMD（这个仓库） |
+|---|---|---|
+| 环境 | `EnvSimple2D`（0.6 m 圆 + 矩形障碍） | `EnvEmpty2D` / `EnvHighways2D` 等 |
+| 机器人 | `RobotPointMass2D`（纯质点，D=2） | `RobotPlanarDisk`（平面圆盘连杆） |
+| 轨迹表示 | **B-spline 控制点**（18/30 个） | 逐路点（无 `parametric_trajectory` 模块） |
+| 扩散步数 | 1000（DDPM），DDIM 15 步采样 | 25 步（`n_diffusion_steps: 25`） |
+| 用途 | **单机器人**规划器 + 代价引导 | **多机器人** CBS 协调 |
+
+全盘搜索确认：
+```
+find ~ -name env_simple_2d.py        -> 无
+find ~ -name trajectory_bspline.py   -> 无
+find ~ -iname "*EnvSimple2D*"        -> 只有我抽出来的数据集
+```
+`data_trained_models.tar.xz` 里也只有上述 5 个 `RobotPlanarDisk` 场景。
+
+### 12.3 它能提供什么（有价值的副产品）
+
+1. **同一套 `torch_robotics`**（已在 mpd 环境里装好，版本一致）；
+2. **MMD 的五组预训练模型**——如果后续要把 MMD 也作为对照基线，可以直接用；
+3. 证明这台机器已经跑通过 MMD/MPD 家族的环境（conda env `mmd` 存在）。
+
+### 12.4 仍缺的东西
+
+MPD `EnvSimple2D-RobotPointMass2D` 的预训练权重（在 `data_public.tar.gz` 的
+`data_trained_models/` 段，位于压缩包后约 19 GB 处，Drive 配额耗尽拿不到）。
+
+**替代方案**：用官方 MPD 代码 + 我已抽出的官方 EnvSimple2D 数据集（20000 条轨迹），
+在这台 4070 上自己训一个 point-mass 模型。这是"官方代码 + 官方数据 + 自训权重"，
+必须明确标注**不是**官方预训练权重，不能称为完整复现。
