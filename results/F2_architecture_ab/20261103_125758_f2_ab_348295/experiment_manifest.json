@@ -1,0 +1,131 @@
+{
+  "tasks": [
+    {
+      "task": 27,
+      "kind": "open"
+    },
+    {
+      "task": 43,
+      "kind": "open"
+    },
+    {
+      "task": 244,
+      "kind": "open"
+    },
+    {
+      "task": 418,
+      "kind": "open"
+    },
+    {
+      "task": 421,
+      "kind": "open"
+    },
+    {
+      "task": 62,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 263,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 280,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 476,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 483,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 104,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 121,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 137,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 319,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 321,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 148,
+      "kind": "bottleneck"
+    },
+    {
+      "task": 175,
+      "kind": "bottleneck"
+    },
+    {
+      "task": 183,
+      "kind": "bottleneck"
+    },
+    {
+      "task": 190,
+      "kind": "bottleneck"
+    },
+    {
+      "task": 364,
+      "kind": "bottleneck"
+    }
+  ],
+  "models": {
+    "old_index": {
+      "checkpoint": "D:\\paper2\\results\\S3_diffusion_training\\20261103_123911_s3_train_9925d5\\checkpoints\\best.pt",
+      "sha256": "59fadb466dbad8c9d7e967eef0d6742e75928e65bdff644dcedb204781be721b",
+      "step": 10500,
+      "best_val": 0.010459737479686737,
+      "map_conditioning": "index",
+      "map_spatial_res": 16,
+      "data": "D:\\paper2\\data\\dataset",
+      "eval_seconds": 4.8,
+      "map_sensitivity": {
+        "shift": 0.010326785035431385,
+        "other": 0.04311324283480644,
+        "blank": 0.1363079845905304,
+        "base_rms": 1.807042121887207
+      }
+    },
+    "new_grid": {
+      "checkpoint": "D:\\paper2\\results\\S3_diffusion_training\\20261103_124832_s3_train_d6b02d\\checkpoints\\best.pt",
+      "sha256": "f9ea5b03ad8549b130e5150c61dd6522f207f641005e61432ae7dbe3d9e7f9b5",
+      "step": 26500,
+      "best_val": 0.009626190084964037,
+      "map_conditioning": "grid_sample",
+      "map_spatial_res": 16,
+      "data": "D:\\paper2\\data\\dataset",
+      "eval_seconds": 4.8,
+      "map_sensitivity": {
+        "shift": 0.03576219081878662,
+        "other": 0.06525932997465134,
+        "blank": 0.1960950642824173,
+        "base_rms": 1.9287774562835693
+      }
+    }
+  },
+  "eval": {
+    "n_samples": 8,
+    "ddim_steps": 40,
+    "seed": 20261103,
+    "data": "D:\\paper2\\data\\dataset"
+  },
+  "paired": {
+    "diff": 0.05625,
+    "lo": -0.05,
+    "hi": 0.15625,
+    "significant": false,
+    "n_clusters": 20
+  }
+}

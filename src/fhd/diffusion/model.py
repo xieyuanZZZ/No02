@@ -59,12 +59,11 @@ class FiLMResBlock(nn.Module):
 
 
 class MapEncoder(nn.Module):
-    """小型 CNN：64×64 占据栅格 -> 空间特征 [B,C,8,8] + 全局嵌入 [B,embed_dim]。
+    """小型 CNN：64×64 占据栅格 -> 空间特征 [B,C,Hf,Wf] + 全局嵌入 [B,embed_dim]。
 
-    注意：**不能只用全局平均池化**。全局池化会抹平障碍物的空间位置，
-    模型只能学到“这张图有多少障碍”，无法知道障碍在哪里，于是会在有墙的地方
-    画出穿墙直线。这里同时输出空间特征图，并在 U-Net 输入处按轨迹长度插值后
-    与轨迹通道拼接，使每个路点都能“看到”自己附近的障碍。
+    **空间特征必须保留二维结构**：后续用 `grid_sample` 按每个路点的
+    归一化二维坐标去查询局部地图特征。绝不能把二维特征压成 (1,H)——
+    那会把 y 方向的信息整体丢掉，使路点位置与障碍位置失去对应关系。
     """
 
     def __init__(self, out_dim: int = 128, spatial_channels: int = 16, in_channels: int = 1,
@@ -78,10 +77,12 @@ class MapEncoder(nn.Module):
             nn.Conv2d(16, 32, 5, stride=2, padding=2),            # 16
             nn.SiLU(),
         ]
-        if self.map_res <= 16:
+        if self.map_res >= 16:
+            # 64 -> 32 -> 16，再保持 16x16
             layers += [nn.Conv2d(32, spatial_channels, 3, padding=1), nn.SiLU()]
         else:
-            layers += [nn.Conv2d(32, spatial_channels, 3, stride=2, padding=1), nn.SiLU()]  # 8
+            # 64 -> 32 -> 16 -> 8
+            layers += [nn.Conv2d(32, spatial_channels, 3, stride=2, padding=1), nn.SiLU()]
         self.body = nn.Sequential(*layers)
         self.embed = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
@@ -92,6 +93,31 @@ class MapEncoder(nn.Module):
     def forward(self, grid: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         feat = self.body(grid)
         return feat, self.embed(feat)
+
+
+def sample_map_features(feature_map: torch.Tensor, points: torch.Tensor) -> torch.Tensor:
+    """按路点的归一化二维坐标，从地图特征图里查询局部特征。
+
+    参数
+    ----
+    feature_map : [B, C, Hf, Wf]，行索引对应 **y**、列索引对应 **x**
+                  （与 `WorldMap.occupancy` / `raster_sdf` 的约定一致：
+                   row i 的中心 y=(i+0.5)*H/G，col j 的中心 x=(j+0.5)*W/G）
+    points      : [B, H, 2]，归一化世界坐标 ∈ [-1, 1]，即 x_norm=2x/W-1, y_norm=2y/H-1
+
+    返回 [B, C, H]。
+
+    坐标约定（这是最容易出错的地方，由 `tests/test_map_conditioning.py` 锁定）：
+      * `F.grid_sample` 的 grid[..., 0] 是 **x**（对应 Wf/列），grid[..., 1] 是 **y**（对应 Hf/行）；
+      * `align_corners=True` 时，-1 ↔ 第一列/第一行，+1 ↔ 最后一列/最后一行；
+      * 我们的栅格第 0 行就是 y 最小处（origin='lower'），因此 y_norm 与 grid y 同向，
+        **不需要翻转**；若将来把栅格改成 origin='upper'，这里必须同步翻转；
+      * 越界路点用 `padding_mode="border"`（贴边取值），避免露出的轨迹点拿到 0 特征。
+    """
+    grid = points.unsqueeze(2)  # [B,H,1,2] = (x, y)
+    feat = F.grid_sample(feature_map, grid, mode="bilinear", align_corners=True,
+                         padding_mode="border")  # [B,C,H,1]
+    return feat.squeeze(-1)  # [B,C,H]
 
 
 class ConditionalUNet1D(nn.Module):
@@ -107,11 +133,15 @@ class ConditionalUNet1D(nn.Module):
         grid_size: int = 64,
         map_spatial_channels: int = 16,
         map_res: int = 8,
+        map_conditioning: str = "grid_sample",
     ):
         super().__init__()
         ch1, ch2, ch3 = [base_channels * m for m in mults]
         self.cond_dim = cond_dim
         self.map_spatial_channels = map_spatial_channels
+        if map_conditioning not in ("grid_sample", "index"):
+            raise ValueError(f"未知 map_conditioning: {map_conditioning}")
+        self.map_conditioning = map_conditioning
 
         self.time_emb = SinusoidalPosEmb(cond_dim)
         self.time_mlp = nn.Sequential(nn.Linear(cond_dim, cond_dim), nn.SiLU(), nn.Linear(cond_dim, cond_dim))
@@ -156,9 +186,14 @@ class ConditionalUNet1D(nn.Module):
         )
 
         traj = x.transpose(1, 2)  # [B,2,H]
-        map_feat = F.interpolate(
-            map_spatial, size=(1, traj.shape[-1]), mode="nearest"
-        ).squeeze(2)  # [B,C,H]
+        if self.map_conditioning == "grid_sample":
+            # 逐路点二维位置查询：x 是当前（带噪）轨迹，训练与采样完全一致，不使用真实 x0
+            map_feat = sample_map_features(map_spatial, x)  # [B,C,H]
+        else:
+            # 旧实现（有 bug）：把 (Hf,Wf) 压成 (1,H)，丢掉 y 方向且与路点坐标无关
+            map_feat = F.interpolate(
+                map_spatial, size=(1, traj.shape[-1]), mode="nearest"
+            ).squeeze(2)  # [B,C,H]
         h = torch.cat([traj, map_feat], dim=1)  # [B,2+C,H]
         h0 = self.in_conv(h)             # [B,ch1,H]
         d1 = self.down1(h0, cond)        # [B,ch1,H]

@@ -1,0 +1,14 @@
+{
+  "stage": "F2_architecture_ab",
+  "run_id": "20261103_125827_f2_ab_ef2b4a",
+  "status": "completed",
+  "started_at": "2026-11-03T12:59:20+08:00",
+  "finished_at": "2026-11-03T12:59:20+08:00",
+  "duration_s": 0.1,
+  "git_commit": "1abeef873790ce10ddce85b48bdb2382be3c0aae",
+  "n_metrics": 38,
+  "tests": {},
+  "extra": {
+    "paired_diff": 0.06625
+  }
+}

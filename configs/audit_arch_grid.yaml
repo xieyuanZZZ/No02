@@ -1,0 +1,6 @@
+﻿# F2 对照：新架构（grid_sample 逐点二维查询）
+extends: diffusion_train.yaml
+diffusion:
+  map_spatial_res: 16
+  map_conditioning: grid_sample
+  training_steps: 8000

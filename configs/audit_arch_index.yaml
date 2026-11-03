@@ -1,0 +1,6 @@
+﻿# F2 对照：旧架构（地图特征压成 1×H，有 bug），只用于 A/B 对照
+extends: diffusion_train.yaml
+diffusion:
+  map_spatial_res: 16
+  map_conditioning: index
+  training_steps: 8000

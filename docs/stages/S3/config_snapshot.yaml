@@ -47,7 +47,7 @@ guidance:
   endpoint_grad_mask: true
 diffusion:
   horizon: 32
-  training_steps: 40000
+  training_steps: 8000
   smoke_steps: 600
   batch_size: 96
   grad_accum_steps: 1
@@ -71,6 +71,7 @@ diffusion:
   map_spatial_res: 16
   log_every: 10
   num_workers: 0
+  map_conditioning: grid_sample
 dataset:
   astar_resolution: 256
   train_maps: 200
@@ -106,4 +107,4 @@ sampling:
   batch_size: 64
   guidance_start_fraction: 0.25
   guidance_updates_per_step: 1
-_config_path: D:\paper2\configs\diffusion_train.yaml
+_config_path: D:\paper2\configs\audit_arch_grid.yaml

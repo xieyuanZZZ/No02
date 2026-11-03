@@ -1,0 +1,119 @@
+{
+  "tasks": [
+    {
+      "task": 27,
+      "kind": "open"
+    },
+    {
+      "task": 43,
+      "kind": "open"
+    },
+    {
+      "task": 244,
+      "kind": "open"
+    },
+    {
+      "task": 418,
+      "kind": "open"
+    },
+    {
+      "task": 421,
+      "kind": "open"
+    },
+    {
+      "task": 62,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 263,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 280,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 476,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 483,
+      "kind": "dual_corridor"
+    },
+    {
+      "task": 104,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 121,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 137,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 319,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 321,
+      "kind": "narrow_gate"
+    },
+    {
+      "task": 148,
+      "kind": "bottleneck"
+    },
+    {
+      "task": 175,
+      "kind": "bottleneck"
+    },
+    {
+      "task": 183,
+      "kind": "bottleneck"
+    },
+    {
+      "task": 190,
+      "kind": "bottleneck"
+    },
+    {
+      "task": 364,
+      "kind": "bottleneck"
+    }
+  ],
+  "models": {
+    "old_index": {
+      "checkpoint": "D:\\paper2\\results\\S3_diffusion_training\\20261103_123147_s3_train_7e8f85\\checkpoints\\best.pt",
+      "sha256": "32ef7b0a50382aca8ad93b490af0f72b2ec51932585318b23fcb7f9dd2b99980",
+      "step": 6500,
+      "best_val": 0.011361804604530335,
+      "map_conditioning": "index",
+      "map_spatial_res": 16,
+      "data": "D:\\paper2\\data\\dataset",
+      "eval_seconds": 5.1
+    },
+    "new_grid": {
+      "checkpoint": "D:\\paper2\\results\\S3_diffusion_training\\20261103_123435_s3_train_8860ac\\checkpoints\\best.pt",
+      "sha256": "77b87f16777de4c5f8afc7c05f36692ec76314fa76056dcbbe9bf49614485e85",
+      "step": 6500,
+      "best_val": 0.011140709929168224,
+      "map_conditioning": "grid_sample",
+      "map_spatial_res": 16,
+      "data": "D:\\paper2\\data\\dataset",
+      "eval_seconds": 5.0
+    }
+  },
+  "eval": {
+    "n_samples": 8,
+    "ddim_steps": 40,
+    "seed": 20261103,
+    "data": "D:\\paper2\\data\\dataset"
+  },
+  "paired": {
+    "diff": -0.03125,
+    "lo": -0.0625,
+    "hi": 0.0,
+    "significant": false,
+    "n_clusters": 20
+  }
+}

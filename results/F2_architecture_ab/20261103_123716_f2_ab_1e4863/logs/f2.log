@@ -1,0 +1,9 @@
+12:37:16 | INFO    | fhd.f2 | ==============================================================================
+12:37:16 | INFO    | fhd.f2 | F2 新旧地图条件架构对照
+12:37:16 | INFO    | fhd.f2 | ==============================================================================
+12:37:16 | INFO    | fhd.f2 | 固定任务 20 个（每类 5 个），测试集共 489 条轨迹 / 10 张地图
+12:37:21 | INFO    | fhd.f2 | old_index：成功 0.537（{'checkpoint': 'D:\\paper2\\results\\S3_diffusion_training\\20261103_123147_s3_train_7e8f85\\checkpoints\\best.pt', 'sha256': '32ef7b0a50382aca8ad93b490af0f72b2ec51932585318b23fcb7f9dd2b99980', 'step': 6500, 'best_val': 0.011361804604530335, 'map_conditioning': 'index', 'map_spatial_res': 16, 'data': 'D:\\paper2\\data\\dataset', 'eval_seconds': 5.1}）
+12:37:26 | INFO    | fhd.f2 | new_grid：成功 0.506（{'checkpoint': 'D:\\paper2\\results\\S3_diffusion_training\\20261103_123435_s3_train_8860ac\\checkpoints\\best.pt', 'sha256': '77b87f16777de4c5f8afc7c05f36692ec76314fa76056dcbbe9bf49614485e85', 'step': 6500, 'best_val': 0.011140709929168224, 'map_conditioning': 'grid_sample', 'map_spatial_res': 16, 'data': 'D:\\paper2\\data\\dataset', 'eval_seconds': 5.0}）
+12:37:26 | INFO    | fhd.f2 | old_index：成功 0.5375，任务级 CI [0.3500, 0.7127]，静态安全 0.544，长度比 1.027
+12:37:26 | INFO    | fhd.f2 | new_grid：成功 0.5062，任务级 CI [0.3187, 0.6937]，静态安全 0.512，长度比 1.044
+12:37:26 | INFO    | fhd.f2 | 配对差（新−旧）= -0.0312 [-0.0625, +0.0000] 不显著
