@@ -1,0 +1,351 @@
+{
+  "tasks": 24,
+  "sensitive_tasks": 10,
+  "W1_delta": 8,
+  "dev_selection": [
+    {
+      "delta": 1,
+      "dev_collision_rate": 0.057708333333333334,
+      "dev_p0_collision_rate": 0.0
+    },
+    {
+      "delta": 2,
+      "dev_collision_rate": 0.04958333333333333,
+      "dev_p0_collision_rate": 0.041666666666666664
+    },
+    {
+      "delta": 3,
+      "dev_collision_rate": 0.05802083333333333,
+      "dev_p0_collision_rate": 0.08333333333333333
+    },
+    {
+      "delta": 5,
+      "dev_collision_rate": 0.07197916666666666,
+      "dev_p0_collision_rate": 0.08333333333333333
+    },
+    {
+      "delta": 8,
+      "dev_collision_rate": 0.029895833333333333,
+      "dev_p0_collision_rate": 0.0
+    }
+  ],
+  "ps": [
+    0.0,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "by_p": {
+    "0.0": {
+      "W0": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 34.0,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.08333333333333333,
+        "safe_completion_rate": 0.9166666666666666,
+        "makespan_mean_slots": 40.0,
+        "added_slots_mean": 6.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 34.958333333333336,
+        "added_slots_mean": 0.9583333333333334,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 35.125,
+        "added_slots_mean": 1.2083333333333333,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.05": {
+      "W0": {
+        "collision_rate": 0.051458333333333335,
+        "safe_completion_rate": 0.9485416666666667,
+        "makespan_mean_slots": 35.675381944444446,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.07375,
+        "safe_completion_rate": 0.92625,
+        "makespan_mean_slots": 41.63305555555556,
+        "added_slots_mean": 6.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.0053125,
+        "safe_completion_rate": 0.9946875000000001,
+        "makespan_mean_slots": 36.617916666666666,
+        "added_slots_mean": 0.9583333333333334,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.0014930555555555556,
+        "safe_completion_rate": 0.9985069444444443,
+        "makespan_mean_slots": 36.66920138888889,
+        "added_slots_mean": 1.2083333333333333,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.1": {
+      "W0": {
+        "collision_rate": 0.08729166666666667,
+        "safe_completion_rate": 0.9127083333333333,
+        "makespan_mean_slots": 37.63427083333334,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.07208333333333333,
+        "safe_completion_rate": 0.9279166666666668,
+        "makespan_mean_slots": 43.450625,
+        "added_slots_mean": 6.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.0146875,
+        "safe_completion_rate": 0.9853125,
+        "makespan_mean_slots": 38.53364583333333,
+        "added_slots_mean": 0.9583333333333334,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.011111111111111112,
+        "safe_completion_rate": 0.9888888888888889,
+        "makespan_mean_slots": 38.47451388888889,
+        "added_slots_mean": 1.2083333333333333,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.2": {
+      "W0": {
+        "collision_rate": 0.13125,
+        "safe_completion_rate": 0.86875,
+        "makespan_mean_slots": 42.4125,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.06868055555555556,
+        "safe_completion_rate": 0.9313194444444445,
+        "makespan_mean_slots": 47.79902777777778,
+        "added_slots_mean": 6.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.05128472222222222,
+        "safe_completion_rate": 0.9487152777777778,
+        "makespan_mean_slots": 43.218229166666674,
+        "added_slots_mean": 0.9583333333333334,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.058472222222222224,
+        "safe_completion_rate": 0.9415277777777779,
+        "makespan_mean_slots": 43.0103125,
+        "added_slots_mean": 1.2083333333333333,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    }
+  },
+  "sensitive_only": {
+    "0.0": {
+      "W0": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 34.0,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.2,
+        "safe_completion_rate": 0.8,
+        "makespan_mean_slots": 40.0,
+        "added_slots_mean": 6.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 36.3,
+        "added_slots_mean": 2.3,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 36.6,
+        "added_slots_mean": 2.8,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.05": {
+      "W0": {
+        "collision_rate": 0.12308333333333335,
+        "safe_completion_rate": 0.8769166666666667,
+        "makespan_mean_slots": 35.68841666666667,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.177,
+        "safe_completion_rate": 0.8230000000000001,
+        "makespan_mean_slots": 41.64158333333334,
+        "added_slots_mean": 6.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.012333333333333335,
+        "safe_completion_rate": 0.9876666666666667,
+        "makespan_mean_slots": 37.9505,
+        "added_slots_mean": 2.3,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.0034999999999999996,
+        "safe_completion_rate": 0.9965000000000002,
+        "makespan_mean_slots": 37.97691666666667,
+        "added_slots_mean": 2.8,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.1": {
+      "W0": {
+        "collision_rate": 0.20625,
+        "safe_completion_rate": 0.79375,
+        "makespan_mean_slots": 37.65341666666667,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.17283333333333334,
+        "safe_completion_rate": 0.8271666666666666,
+        "makespan_mean_slots": 43.46175,
+        "added_slots_mean": 6.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.032,
+        "safe_completion_rate": 0.9680000000000002,
+        "makespan_mean_slots": 39.81191666666667,
+        "added_slots_mean": 2.3,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.02491666666666667,
+        "safe_completion_rate": 0.9750833333333333,
+        "makespan_mean_slots": 39.57991666666667,
+        "added_slots_mean": 2.8,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.2": {
+      "W0": {
+        "collision_rate": 0.2955,
+        "safe_completion_rate": 0.7045,
+        "makespan_mean_slots": 42.44383333333333,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.16408333333333333,
+        "safe_completion_rate": 0.8359166666666666,
+        "makespan_mean_slots": 47.82116666666667,
+        "added_slots_mean": 6.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.10358333333333332,
+        "safe_completion_rate": 0.8964166666666668,
+        "makespan_mean_slots": 44.377583333333334,
+        "added_slots_mean": 2.3,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.12641666666666668,
+        "safe_completion_rate": 0.8735833333333332,
+        "makespan_mean_slots": 43.799166666666665,
+        "added_slots_mean": 2.8,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    }
+  },
+  "paired_at_p0.1": {
+    "W2_vs_W0": {
+      "diff": 0.07260416666666668,
+      "lo": 0.02545052083333333,
+      "hi": 0.13316059027777774,
+      "significant": true,
+      "n_clusters": 24
+    },
+    "W2_vs_W1": {
+      "diff": 0.05739583333333333,
+      "lo": -0.009131944444444443,
+      "hi": 0.16000434027777777,
+      "significant": false,
+      "n_clusters": 24
+    },
+    "W3_vs_W0": {
+      "diff": 0.07618055555555557,
+      "lo": 0.02909548611111111,
+      "hi": 0.13470659722222214,
+      "significant": true,
+      "n_clusters": 24
+    },
+    "W3_vs_W2": {
+      "diff": 0.003576388888888893,
+      "lo": -0.0022925347222222054,
+      "hi": 0.012848958333333315,
+      "significant": false,
+      "n_clusters": 24
+    },
+    "W3_vs_W1": {
+      "diff": 0.060972222222222226,
+      "lo": -0.010312499999999997,
+      "hi": 0.16840451388888888,
+      "significant": false,
+      "n_clusters": 24
+    }
+  }
+}
