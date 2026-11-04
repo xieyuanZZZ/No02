@@ -1,0 +1,351 @@
+{
+  "tasks": 20,
+  "sensitive_tasks": 20,
+  "W1_delta": 0,
+  "dev_selection": [
+    {
+      "delta": 1,
+      "dev_collision_rate": 0.395125,
+      "dev_p0_collision_rate": 0.25
+    },
+    {
+      "delta": 2,
+      "dev_collision_rate": 0.343375,
+      "dev_p0_collision_rate": 0.3
+    },
+    {
+      "delta": 3,
+      "dev_collision_rate": 0.434375,
+      "dev_p0_collision_rate": 0.25
+    },
+    {
+      "delta": 5,
+      "dev_collision_rate": 0.45737500000000003,
+      "dev_p0_collision_rate": 0.3
+    },
+    {
+      "delta": 8,
+      "dev_collision_rate": 0.504,
+      "dev_p0_collision_rate": 0.2
+    }
+  ],
+  "ps": [
+    0.0,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "by_p": {
+    "0.0": {
+      "W0": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 40.0,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 40.0,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 43.75,
+        "added_slots_mean": 7.85,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 43.9,
+        "added_slots_mean": 9.55,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.05": {
+      "W0": {
+        "collision_rate": 0.40149999999999997,
+        "safe_completion_rate": 0.5985,
+        "makespan_mean_slots": 41.68455555555556,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.40149999999999997,
+        "safe_completion_rate": 0.5985,
+        "makespan_mean_slots": 41.68455555555556,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.1502222222222222,
+        "safe_completion_rate": 0.8497777777777777,
+        "makespan_mean_slots": 45.41199999999999,
+        "added_slots_mean": 7.85,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.006833333333333333,
+        "safe_completion_rate": 0.9931666666666666,
+        "makespan_mean_slots": 45.27644444444444,
+        "added_slots_mean": 9.55,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.1": {
+      "W0": {
+        "collision_rate": 0.5580555555555555,
+        "safe_completion_rate": 0.4419444444444444,
+        "makespan_mean_slots": 43.656555555555556,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.5580555555555555,
+        "safe_completion_rate": 0.4419444444444444,
+        "makespan_mean_slots": 43.656555555555556,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.2697777777777778,
+        "safe_completion_rate": 0.7302222222222222,
+        "makespan_mean_slots": 47.31122222222222,
+        "added_slots_mean": 7.85,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.0662777777777778,
+        "safe_completion_rate": 0.933722222222222,
+        "makespan_mean_slots": 46.86766666666667,
+        "added_slots_mean": 9.55,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.2": {
+      "W0": {
+        "collision_rate": 0.716111111111111,
+        "safe_completion_rate": 0.2838888888888889,
+        "makespan_mean_slots": 48.52433333333333,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.716111111111111,
+        "safe_completion_rate": 0.2838888888888889,
+        "makespan_mean_slots": 48.52433333333333,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.4933333333333333,
+        "safe_completion_rate": 0.5066666666666667,
+        "makespan_mean_slots": 51.99094444444445,
+        "added_slots_mean": 7.85,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.378,
+        "safe_completion_rate": 0.6220000000000001,
+        "makespan_mean_slots": 50.92288888888889,
+        "added_slots_mean": 9.55,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    }
+  },
+  "sensitive_only": {
+    "0.0": {
+      "W0": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 40.0,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 40.0,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 43.75,
+        "added_slots_mean": 7.85,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.0,
+        "safe_completion_rate": 1.0,
+        "makespan_mean_slots": 43.9,
+        "added_slots_mean": 9.55,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.05": {
+      "W0": {
+        "collision_rate": 0.40149999999999997,
+        "safe_completion_rate": 0.5985,
+        "makespan_mean_slots": 41.68455555555556,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.40149999999999997,
+        "safe_completion_rate": 0.5985,
+        "makespan_mean_slots": 41.68455555555556,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.1502222222222222,
+        "safe_completion_rate": 0.8497777777777777,
+        "makespan_mean_slots": 45.41199999999999,
+        "added_slots_mean": 7.85,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.006833333333333333,
+        "safe_completion_rate": 0.9931666666666666,
+        "makespan_mean_slots": 45.27644444444444,
+        "added_slots_mean": 9.55,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.1": {
+      "W0": {
+        "collision_rate": 0.5580555555555555,
+        "safe_completion_rate": 0.4419444444444444,
+        "makespan_mean_slots": 43.656555555555556,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.5580555555555555,
+        "safe_completion_rate": 0.4419444444444444,
+        "makespan_mean_slots": 43.656555555555556,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.2697777777777778,
+        "safe_completion_rate": 0.7302222222222222,
+        "makespan_mean_slots": 47.31122222222222,
+        "added_slots_mean": 7.85,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.0662777777777778,
+        "safe_completion_rate": 0.933722222222222,
+        "makespan_mean_slots": 46.86766666666667,
+        "added_slots_mean": 9.55,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    },
+    "0.2": {
+      "W0": {
+        "collision_rate": 0.716111111111111,
+        "safe_completion_rate": 0.2838888888888889,
+        "makespan_mean_slots": 48.52433333333333,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W1": {
+        "collision_rate": 0.716111111111111,
+        "safe_completion_rate": 0.2838888888888889,
+        "makespan_mean_slots": 48.52433333333333,
+        "added_slots_mean": 0.0,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W2": {
+        "collision_rate": 0.4933333333333333,
+        "safe_completion_rate": 0.5066666666666667,
+        "makespan_mean_slots": 51.99094444444445,
+        "added_slots_mean": 7.85,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      },
+      "W3": {
+        "collision_rate": 0.378,
+        "safe_completion_rate": 0.6220000000000001,
+        "makespan_mean_slots": 50.92288888888889,
+        "added_slots_mean": 9.55,
+        "timeout_rate": 0.0,
+        "fallback_rate": 0.0
+      }
+    }
+  },
+  "paired_at_p0.1": {
+    "W2_vs_W0": {
+      "diff": 0.28827777777777774,
+      "lo": 0.1915347222222222,
+      "hi": 0.3820055555555555,
+      "significant": true,
+      "n_clusters": 20
+    },
+    "W2_vs_W1": {
+      "diff": 0.28827777777777774,
+      "lo": 0.1915347222222222,
+      "hi": 0.3820055555555555,
+      "significant": true,
+      "n_clusters": 20
+    },
+    "W3_vs_W0": {
+      "diff": 0.49177777777777776,
+      "lo": 0.4037569444444444,
+      "hi": 0.5795638888888887,
+      "significant": true,
+      "n_clusters": 20
+    },
+    "W3_vs_W2": {
+      "diff": 0.20350000000000001,
+      "lo": 0.1303777777777778,
+      "hi": 0.2935013888888889,
+      "significant": true,
+      "n_clusters": 20
+    },
+    "W3_vs_W1": {
+      "diff": 0.49177777777777776,
+      "lo": 0.4037569444444444,
+      "hi": 0.5795638888888887,
+      "significant": true,
+      "n_clusters": 20
+    }
+  }
+}

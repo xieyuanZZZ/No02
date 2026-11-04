@@ -81,6 +81,10 @@ def run_mc(paths, wait, p, d_safe, t_steps, dt_s, n, seed):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--bank", default=str(ROOT / "data" / "mpd_delay_plan_bank"))
+    ap.add_argument("--agents", type=int, default=2,
+                    help="2 用 plan_bank.json；>2 用 plan_bank_n{N}.json")
+    ap.add_argument("--screen-seeds", default="20261104",
+                    help="N>2 时用这组种子做敏感性筛选（与评测种子不同）")
     ap.add_argument("--config", default=str(ROOT / "configs" / "base.yaml"))
     ap.add_argument("--n-mc-eval", type=int, default=400)
     ap.add_argument("--n-mc-dev", type=int, default=200)
@@ -104,19 +108,53 @@ def main() -> int:
     logger = get_logger("fhd.mpd_s3", run_dir / "logs" / "s3.log")
     log_section(logger, "阶段三：仅等待优化")
 
-    bank = json.loads((Path(args.bank) / "plan_bank.json").read_text(encoding="utf-8"))
-    trajs_npz = np.load(Path(args.bank) / "plan_bank_trajs.npz")
-    freeze = json.loads((Path(args.bank) / "task_freeze.json").read_text(encoding="utf-8"))
+    n_agents = int(args.agents)
+    bank_json = "plan_bank.json" if n_agents == 2 else f"plan_bank_n{n_agents}.json"
+    trajs_file = "plan_bank_trajs.npz" if n_agents == 2 else f"plan_bank_n{n_agents}_trajs.npz"
+    bank = json.loads((Path(args.bank) / bank_json).read_text(encoding="utf-8"))
+    trajs_npz = np.load(Path(args.bank) / trajs_file)
     tasks = bank["tasks"]
-    sensitive = set(freeze["groups"]["light"]) | set(freeze["groups"]["high"])
-    logger.info("任务 %d（敏感子集 %d），p=%s", len(tasks), len(sensitive), args.ps)
+    sensitive = set()
+    freeze_path = Path(args.bank) / ("task_freeze.json" if n_agents == 2
+                                     else f"task_freeze_n{n_agents}.json")
+    if freeze_path.exists():
+        freeze = json.loads(freeze_path.read_text(encoding="utf-8"))
+        sensitive = set(freeze["groups"]["light"]) | set(freeze["groups"]["high"])
+    logger.info("N=%d，任务 %d（敏感子集 %d），p=%s", n_agents, len(tasks), len(sensitive), args.ps)
 
     budget = WaitBudget(time_steps=t_steps, horizon=h)
     positions = allowed_positions(h, stride=5)
-    mask = make_mask(h, positions, 2)
+    mask = make_mask(h, positions, n_agents)
     logger.info("允许等待的航点 %s（共 %d 个变量/机器人），预算：单点≤%.0f 总量≤%.0f",
                 positions, len(positions), budget.max_added_per_point,
                 budget.max_added_total_per_robot)
+
+    # ---------------- 0) N>2 时先做敏感性筛选并冻结分组 ----------------
+    if not sensitive:
+        log_section(logger, "0. 敏感性筛选（N=%d，筛选种子与评测种子不同）" % n_agents)
+        screen_seeds = [int(x) for x in args.screen_seeds.split(",")]
+        groups = {"insensitive": [], "light": [], "high": []}
+        for ti, jt in enumerate(tasks):
+            paths = torch.tensor(trajs_npz[jt["task_id"]], dtype=torch.float64)
+            w0 = torch.tensor(np.asarray(jt["baseline_wait"]), dtype=torch.float64)
+            rates = []
+            for seed in screen_seeds:
+                m = run_mc(paths, w0, 0.1, d_safe, t_steps, dt_s, args.n_mc_dev,
+                           seed=seed * 3000 + ti)
+                rates.append(m["collision_rate"])
+            c = float(np.mean(rates))
+            groups["insensitive" if c < 0.02 else ("light" if c < 0.2 else "high")].append(
+                jt["task_id"])
+            logger.info("  %s：p=0.1 筛选碰撞率 %.4f", jt["task_id"], c)
+        sensitive = set(groups["light"]) | set(groups["high"])
+        freeze_path.write_text(json.dumps({
+            "screen_seeds": screen_seeds, "reference_p": 0.1,
+            "rule": {"insensitive": "<0.02", "light": "0.02-0.2", "high": ">=0.2"},
+            "groups": groups,
+            "note": "分组仅用筛选种子；正式评测使用独立评测种子",
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        logger.info("分组：不敏感 %d，轻度 %d，高度 %d", len(groups["insensitive"]),
+                    len(groups["light"]), len(groups["high"]))
 
     # ---------------- 1) 等待语义校验 ----------------
     log_section(logger, "1. 等待语义校验（只给第 2 台机器人起点加等待）")
@@ -129,7 +167,7 @@ def main() -> int:
             w = w0.clone()
             w[1, 0] = w[1, 0] + d
             with torch.no_grad():
-                hard = risk_model(paths, w, torch.full((2,), OPT_P, dtype=torch.float64),
+                hard = risk_model(paths, w, torch.full((n_agents,), OPT_P, dtype=torch.float64),
                                   t_steps, collision_mode="hard", gate_mode="hard",
                                   return_diagnostics=False)
             mc = run_mc(paths, w, OPT_P, d_safe, t_steps, dt_s, 300,
@@ -158,7 +196,7 @@ def main() -> int:
     for jt in tasks:
         paths = torch.tensor(trajs_npz[jt["task_id"]], dtype=torch.float64)
         w0 = torch.tensor(np.asarray(jt["baseline_wait"]), dtype=torch.float64)
-        pause = torch.full((2,), OPT_P, dtype=torch.float64)
+        pause = torch.full((n_agents,), OPT_P, dtype=torch.float64)
         d = gradient_diagnostics(w0, mask, budget, risk_model, paths, pause, t_steps,
                                  lam_T=LAM_T, lam_W=LAM_W)
         d["task_id"] = jt["task_id"]
@@ -184,7 +222,7 @@ def main() -> int:
                 w0 = torch.tensor(np.asarray(jt["baseline_wait"]), dtype=torch.float64)
                 # 必须走与评测同一条路径（project_wait 会把单点等待裁到上限）
                 r_d = policy_w1(w0, mask, budget, risk_model, paths,
-                                torch.full((2,), OPT_P, dtype=torch.float64),
+                                torch.full((n_agents,), OPT_P, dtype=torch.float64),
                                 t_steps, d)
                 m = run_mc(paths, r_d.wait, OPT_P, d_safe, t_steps, dt_s, args.n_mc_dev,
                            seed=seed * 1000 + ti)
@@ -198,9 +236,12 @@ def main() -> int:
                     dev_rows[-1]["dev_collision_rate"], dev_rows[-1]["dev_p0_collision_rate"])
     # 硬约束：固定等待也必须保证 p=0 无碰撞（冻结任务的基本要求）
     safe_cands = [r for r in dev_rows if r["dev_p0_collision_rate"] <= 1e-9]
-    pool = safe_cands if safe_cands else dev_rows
-    best_dev = min(pool, key=lambda r: (r["dev_collision_rate"], r["delta"]))
-    W1_DELTA = int(best_dev["delta"])
+    if safe_cands:
+        best_dev = min(safe_cands, key=lambda r: (r["dev_collision_rate"], r["delta"]))
+        W1_DELTA = int(best_dev["delta"])
+    else:
+        logger.warning("没有任何 p=0 安全的固定 Δw；W1 退化为 Δ=0（与 W0 等价）")
+        W1_DELTA = 0
     logger.info("冻结 W1：Δw=%d（开发集选参，正式评测不再调整）", W1_DELTA)
 
     # ---------------- 4) 正式评测 ----------------
@@ -212,7 +253,7 @@ def main() -> int:
     for ti, jt in enumerate(tasks):
         paths = torch.tensor(trajs_npz[jt["task_id"]], dtype=torch.float64)
         w0 = torch.tensor(np.asarray(jt["baseline_wait"]), dtype=torch.float64)
-        pause = torch.full((2,), OPT_P, dtype=torch.float64)
+        pause = torch.full((n_agents,), OPT_P, dtype=torch.float64)
 
         t0 = __import__("time").perf_counter()
         r_w0 = policy_w0(w0, mask, budget, risk_model, paths, pause, t_steps)

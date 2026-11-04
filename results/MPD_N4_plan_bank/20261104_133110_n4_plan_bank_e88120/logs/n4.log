@@ -1,0 +1,17 @@
+13:31:10 | INFO    | fhd.mpd_n4 | ==============================================================================
+13:31:10 | INFO    | fhd.mpd_n4 | 构建 N=4 联合轨迹库
+13:31:10 | INFO    | fhd.mpd_n4 | ==============================================================================
+13:31:10 | INFO    | fhd.mpd_n4 | H=32 T=96 d_safe=0.350 stagger=3
+13:31:10 | INFO    | fhd.mpd_n4 | 有 11 张地图满足 N=4（各含 ≥4 个有效机器人任务）
+13:31:10 | INFO    | fhd.mpd_n4 |   open_crossing_300000：入库（第 0 次抽样命中，最小间距 0.353）
+13:31:10 | INFO    | fhd.mpd_n4 |   open_crossing_300003：入库（第 0 次抽样命中，最小间距 0.369）
+13:31:10 | INFO    | fhd.mpd_n4 |   open_crossing_300006：入库（第 1 次抽样命中，最小间距 0.373）
+13:31:11 | INFO    | fhd.mpd_n4 |   open_crossing_300009：40 次抽样均未找到 p=0 安全组合，跳过
+13:31:12 | INFO    | fhd.mpd_n4 |   open_crossing_300012：40 次抽样均未找到 p=0 安全组合，跳过
+13:31:13 | INFO    | fhd.mpd_n4 |   open_crossing_300015：40 次抽样均未找到 p=0 安全组合，跳过
+13:31:13 | INFO    | fhd.mpd_n4 |   open_crossing_300018：入库（第 0 次抽样命中，最小间距 0.425）
+13:31:13 | INFO    | fhd.mpd_n4 |   single_obstacle_300004：入库（第 1 次抽样命中，最小间距 0.375）
+13:31:14 | INFO    | fhd.mpd_n4 |   single_obstacle_300007：40 次抽样均未找到 p=0 安全组合，跳过
+13:31:15 | INFO    | fhd.mpd_n4 |   single_obstacle_300013：40 次抽样均未找到 p=0 安全组合，跳过
+13:31:15 | INFO    | fhd.mpd_n4 |   single_obstacle_300016：入库（第 4 次抽样命中，最小间距 0.364）
+13:31:15 | INFO    | fhd.mpd_n4 | N=4 联合任务：6 个（尝试 212 次抽样）

@@ -1,0 +1,2701 @@
+{
+  "planner": "mpd",
+  "n_samples": 8,
+  "kinds": [
+    "open_crossing",
+    "single_obstacle"
+  ],
+  "seed": 11,
+  "trajectory_duration": 10.0,
+  "num_T_pts": 128,
+  "items": [
+    {
+      "map_id": "open_crossing_300000",
+      "kind": "open_crossing",
+      "task_index": 0,
+      "file": "cand_open_crossing_300000_t00.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.4300952609919477,
+      "t_guide": 0.26218065997818485,
+      "wall_s": 0.4598298319906462,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        2.7223083930178045,
+        1.9727666283640597
+      ],
+      "goal_m": [
+        7.26299627243293,
+        7.73199695568776
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300000",
+      "kind": "open_crossing",
+      "task_index": 2,
+      "file": "cand_open_crossing_300000_t02.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3699630740156863,
+      "t_guide": 0.20736273098737001,
+      "wall_s": 0.37339189599151723,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.66945098591451,
+        1.6796499801712748
+      ],
+      "goal_m": [
+        6.3064541484522785,
+        8.643295705554236
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300000",
+      "kind": "open_crossing",
+      "task_index": 9,
+      "file": "cand_open_crossing_300000_t09.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.32550343399634585,
+      "t_guide": 0.19041950901737437,
+      "wall_s": 0.32890932701411657,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.3188867068234633,
+        9.231263379625254
+      ],
+      "goal_m": [
+        6.586256013700189,
+        1.3040190977927204
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300000",
+      "kind": "open_crossing",
+      "task_index": 12,
+      "file": "cand_open_crossing_300000_t12.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.42563117798999883,
+      "t_guide": 0.2633793460263405,
+      "wall_s": 0.42964770799153484,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.484621865445601,
+        8.535565806951015
+      ],
+      "goal_m": [
+        5.857230850895688,
+        1.3307649041850909
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300000",
+      "kind": "open_crossing",
+      "task_index": 13,
+      "file": "cand_open_crossing_300000_t13.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3476209039799869,
+      "t_guide": 0.18745714900433086,
+      "wall_s": 0.3541816599899903,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.7841029805358253,
+        5.310531000152091
+      ],
+      "goal_m": [
+        8.341183507085345,
+        4.566186468188639
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300000",
+      "kind": "open_crossing",
+      "task_index": 15,
+      "file": "cand_open_crossing_300000_t15.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.40777217198046856,
+      "t_guide": 0.22037654899759218,
+      "wall_s": 0.4110487129946705,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        2.7002734593773785,
+        7.7656631020540905
+      ],
+      "goal_m": [
+        7.152240359125306,
+        2.3097382699979785
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300000",
+      "kind": "open_crossing",
+      "task_index": 16,
+      "file": "cand_open_crossing_300000_t16.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.33460828199167736,
+      "t_guide": 0.20290339103667066,
+      "wall_s": 0.3394677309843246,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.8675067684409627,
+        3.2037395283228323
+      ],
+      "goal_m": [
+        8.376389465808634,
+        6.867201429104922
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300000",
+      "kind": "open_crossing",
+      "task_index": 17,
+      "file": "cand_open_crossing_300000_t17.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3223083500051871,
+      "t_guide": 0.19653460494009778,
+      "wall_s": 0.3279640359978657,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.7371403697673165,
+        8.767838502055318
+      ],
+      "goal_m": [
+        3.5254476022007584,
+        1.1949947245671813
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300001",
+      "kind": "single_obstacle",
+      "task_index": 2,
+      "file": "cand_single_obstacle_300001_t02.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.31594904098892584,
+      "t_guide": 0.19743289100006223,
+      "wall_s": 0.31974894800805487,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.460505637194582,
+        1.593570620431537
+      ],
+      "goal_m": [
+        6.539494362805418,
+        8.406429379568463
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300001",
+      "kind": "single_obstacle",
+      "task_index": 3,
+      "file": "cand_single_obstacle_300001_t03.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.4206885930034332,
+      "t_guide": 0.24944522601435892,
+      "wall_s": 0.42494937297306024,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.621301837753439,
+        1.4983050261335027
+      ],
+      "goal_m": [
+        4.378698162246561,
+        8.501694973866497
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300001",
+      "kind": "single_obstacle",
+      "task_index": 8,
+      "file": "cand_single_obstacle_300001_t08.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.41305132597335614,
+      "t_guide": 0.2576237009780016,
+      "wall_s": 0.41831468799500726,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.3086565849297007,
+        5.0640604144626025
+      ],
+      "goal_m": [
+        8.6913434150703,
+        4.9359395855373975
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300001",
+      "kind": "single_obstacle",
+      "task_index": 12,
+      "file": "cand_single_obstacle_300001_t12.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.41468445301870815,
+      "t_guide": 0.2503785489825532,
+      "wall_s": 0.4192109979921952,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.430944300902542,
+        0.9737005290866048
+      ],
+      "goal_m": [
+        5.569055699097458,
+        9.026299470913395
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300001",
+      "kind": "single_obstacle",
+      "task_index": 17,
+      "file": "cand_single_obstacle_300001_t17.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.36096759399515577,
+      "t_guide": 0.2013512719713617,
+      "wall_s": 0.36441386098158546,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9590202621291946,
+        3.9795213445891386
+      ],
+      "goal_m": [
+        9.040979737870806,
+        6.020478655410861
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300001",
+      "kind": "single_obstacle",
+      "task_index": 18,
+      "file": "cand_single_obstacle_300001_t18.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.4079512739845086,
+      "t_guide": 0.24473202601075172,
+      "wall_s": 0.41220626898575574,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.88497942783774,
+        1.3760525199311462
+      ],
+      "goal_m": [
+        6.11502057216226,
+        8.623947480068853
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300001",
+      "kind": "single_obstacle",
+      "task_index": 19,
+      "file": "cand_single_obstacle_300001_t19.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3901980109803844,
+      "t_guide": 0.23287313902983442,
+      "wall_s": 0.3939316119940486,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.3595025244310746,
+        1.5019726380224974
+      ],
+      "goal_m": [
+        4.6404974755689254,
+        8.498027361977503
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300001",
+      "kind": "single_obstacle",
+      "task_index": 20,
+      "file": "cand_single_obstacle_300001_t20.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.3525569690100383,
+      "t_guide": 0.2082098059472628,
+      "wall_s": 0.3566853509983048,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.4097436585309016,
+        1.5110516137792867
+      ],
+      "goal_m": [
+        3.5902563414690984,
+        8.488948386220713
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300003",
+      "kind": "open_crossing",
+      "task_index": 4,
+      "file": "cand_open_crossing_300003_t04.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33100099000148475,
+      "t_guide": 0.2084678160608746,
+      "wall_s": 0.33444445399800315,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.767104212916985,
+        7.337419677254167
+      ],
+      "goal_m": [
+        1.534349411471863,
+        2.422344068654381
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300003",
+      "kind": "open_crossing",
+      "task_index": 5,
+      "file": "cand_open_crossing_300003_t05.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.32351517499773763,
+      "t_guide": 0.2009579580044374,
+      "wall_s": 0.32812567899236456,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        2.257324465525761,
+        2.536171557046138
+      ],
+      "goal_m": [
+        8.292459911938884,
+        7.470163343366879
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300003",
+      "kind": "open_crossing",
+      "task_index": 9,
+      "file": "cand_open_crossing_300003_t09.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3596288519911468,
+      "t_guide": 0.22069985698908567,
+      "wall_s": 0.3647239939891733,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.3155506964965635,
+        8.999743216327312
+      ],
+      "goal_m": [
+        4.1261186356539525,
+        0.658905905209348
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300003",
+      "kind": "open_crossing",
+      "task_index": 11,
+      "file": "cand_open_crossing_300003_t11.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3415442709811032,
+      "t_guide": 0.20774218495353125,
+      "wall_s": 0.34521351900184527,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.692460786030419,
+        1.548180075139806
+      ],
+      "goal_m": [
+        5.193393818650549,
+        9.04871863322588
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300003",
+      "kind": "open_crossing",
+      "task_index": 13,
+      "file": "cand_open_crossing_300003_t13.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3721253149851691,
+      "t_guide": 0.20991430300637148,
+      "wall_s": 0.37623051399714313,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.2520436023583292,
+        5.950692371746814
+      ],
+      "goal_m": [
+        8.441117924604777,
+        4.579760570413484
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300003",
+      "kind": "open_crossing",
+      "task_index": 14,
+      "file": "cand_open_crossing_300003_t14.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3582427990040742,
+      "t_guide": 0.1974756020354107,
+      "wall_s": 0.36207867998746224,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        7.0332441915944015,
+        8.116673684120805
+      ],
+      "goal_m": [
+        3.6836926806003625,
+        1.6840990171823085
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300003",
+      "kind": "open_crossing",
+      "task_index": 19,
+      "file": "cand_open_crossing_300003_t19.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3908155000244733,
+      "t_guide": 0.23237014099140652,
+      "wall_s": 0.397533620998729,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.639828786235061,
+        9.34963740211423
+      ],
+      "goal_m": [
+        5.636576988637335,
+        0.9283947727235577
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300003",
+      "kind": "open_crossing",
+      "task_index": 21,
+      "file": "cand_open_crossing_300003_t21.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3655671220039949,
+      "t_guide": 0.2134454679908231,
+      "wall_s": 0.3690360850014258,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        7.346338915171379,
+        1.4248186469675743
+      ],
+      "goal_m": [
+        2.4791922566160887,
+        8.184647433450323
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300004",
+      "kind": "single_obstacle",
+      "task_index": 5,
+      "file": "cand_single_obstacle_300004_t05.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.40056363999610767,
+      "t_guide": 0.2520583850564435,
+      "wall_s": 0.4060659760143608,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.524754448271569,
+        1.2214832440635832
+      ],
+      "goal_m": [
+        4.475245551728431,
+        8.778516755936417
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300004",
+      "kind": "single_obstacle",
+      "task_index": 6,
+      "file": "cand_single_obstacle_300004_t06.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33572730197920464,
+      "t_guide": 0.1960157169669401,
+      "wall_s": 0.3414953209867235,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9267677982941773,
+        3.4415789763785094
+      ],
+      "goal_m": [
+        9.073232201705823,
+        6.558421023621491
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300004",
+      "kind": "single_obstacle",
+      "task_index": 9,
+      "file": "cand_single_obstacle_300004_t09.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.34446823300095275,
+      "t_guide": 0.2082082799752243,
+      "wall_s": 0.34919309799443,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9558108249782107,
+        5.498670745001827
+      ],
+      "goal_m": [
+        9.044189175021788,
+        4.501329254998173
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300004",
+      "kind": "single_obstacle",
+      "task_index": 10,
+      "file": "cand_single_obstacle_300004_t10.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3708790590171702,
+      "t_guide": 0.206678003014531,
+      "wall_s": 0.37813822700991295,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.997301757193327,
+        1.1170269413005611
+      ],
+      "goal_m": [
+        4.002698242806673,
+        8.882973058699438
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300004",
+      "kind": "single_obstacle",
+      "task_index": 12,
+      "file": "cand_single_obstacle_300004_t12.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.33599777100607753,
+      "t_guide": 0.19388675899244845,
+      "wall_s": 0.3419186619867105,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.1329800208802747,
+        5.2528616987853365
+      ],
+      "goal_m": [
+        8.867019979119725,
+        4.7471383012146635
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300004",
+      "kind": "single_obstacle",
+      "task_index": 13,
+      "file": "cand_single_obstacle_300004_t13.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.3368001880007796,
+      "t_guide": 0.20279087900416926,
+      "wall_s": 0.34068041399586946,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.0727086025971642,
+        4.286835120308136
+      ],
+      "goal_m": [
+        8.927291397402836,
+        5.713164879691864
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300004",
+      "kind": "single_obstacle",
+      "task_index": 14,
+      "file": "cand_single_obstacle_300004_t14.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33241955400444567,
+      "t_guide": 0.203526713012252,
+      "wall_s": 0.3376788290042896,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.5153944020936976,
+        1.6876823024130458
+      ],
+      "goal_m": [
+        6.484605597906302,
+        8.312317697586954
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300004",
+      "kind": "single_obstacle",
+      "task_index": 17,
+      "file": "cand_single_obstacle_300004_t17.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.36705790797714144,
+      "t_guide": 0.20996488095261157,
+      "wall_s": 0.37173533500754274,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.1962729517916064,
+        5.539359162180815
+      ],
+      "goal_m": [
+        8.803727048208394,
+        4.460640837819185
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300006",
+      "kind": "open_crossing",
+      "task_index": 0,
+      "file": "cand_open_crossing_300006_t00.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3736618660041131,
+      "t_guide": 0.21862593494006433,
+      "wall_s": 0.3773653210082557,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.0861539286581403,
+        5.0561098997181295
+      ],
+      "goal_m": [
+        8.450152690854202,
+        4.6779893843010765
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300006",
+      "kind": "open_crossing",
+      "task_index": 1,
+      "file": "cand_open_crossing_300006_t01.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3558445309754461,
+      "t_guide": 0.198061711009359,
+      "wall_s": 0.3599693280120846,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.239354664269507,
+        5.066542049248208
+      ],
+      "goal_m": [
+        8.727728042641743,
+        4.949980629523942
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300006",
+      "kind": "open_crossing",
+      "task_index": 5,
+      "file": "cand_open_crossing_300006_t05.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.41542285299510695,
+      "t_guide": 0.25759937602560967,
+      "wall_s": 0.4208915450144559,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.19445851629322,
+        6.773704499713672
+      ],
+      "goal_m": [
+        1.7808716862807739,
+        2.9377296150238927
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300006",
+      "kind": "open_crossing",
+      "task_index": 8,
+      "file": "cand_open_crossing_300006_t08.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3549887840053998,
+      "t_guide": 0.22099026301293634,
+      "wall_s": 0.36006215400993824,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.574767334203204,
+        1.1238241452456832
+      ],
+      "goal_m": [
+        4.19620920488569,
+        8.589761510328872
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300006",
+      "kind": "open_crossing",
+      "task_index": 13,
+      "file": "cand_open_crossing_300006_t13.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.34178858500672504,
+      "t_guide": 0.21815141101251356,
+      "wall_s": 0.3465699799999129,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.7366991128728171,
+        5.770137722201979
+      ],
+      "goal_m": [
+        8.833380626955993,
+        3.7990896535160643
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300006",
+      "kind": "open_crossing",
+      "task_index": 18,
+      "file": "cand_open_crossing_300006_t18.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3314939520205371,
+      "t_guide": 0.21130578796146438,
+      "wall_s": 0.33499894800479524,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.32873357769818,
+        5.650043152672337
+      ],
+      "goal_m": [
+        8.616786477139796,
+        4.320440650504369
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300006",
+      "kind": "open_crossing",
+      "task_index": 21,
+      "file": "cand_open_crossing_300006_t21.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.31869210698641837,
+      "t_guide": 0.19939371600048617,
+      "wall_s": 0.32264426999608986,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.0950040284683755,
+        8.801436060778412
+      ],
+      "goal_m": [
+        4.5499911729290226,
+        1.5588716448494375
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300006",
+      "kind": "open_crossing",
+      "task_index": 22,
+      "file": "cand_open_crossing_300006_t22.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.35275186601211317,
+      "t_guide": 0.2189799219777342,
+      "wall_s": 0.35750472702784464,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.707509654058647,
+        9.1190410176032
+      ],
+      "goal_m": [
+        4.212078435108606,
+        0.6684757624395631
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300007",
+      "kind": "single_obstacle",
+      "task_index": 0,
+      "file": "cand_single_obstacle_300007_t00.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.33688756299670786,
+      "t_guide": 0.20281819798401557,
+      "wall_s": 0.34057940801722,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9361529109117255,
+        6.046211435467129
+      ],
+      "goal_m": [
+        9.063847089088274,
+        3.953788564532871
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300007",
+      "kind": "single_obstacle",
+      "task_index": 2,
+      "file": "cand_single_obstacle_300007_t02.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33579043799545616,
+      "t_guide": 0.2073969250486698,
+      "wall_s": 0.33976473202346824,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.6657838885163723,
+        5.194061853719221
+      ],
+      "goal_m": [
+        8.334216111483627,
+        4.805938146280779
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300007",
+      "kind": "single_obstacle",
+      "task_index": 3,
+      "file": "cand_single_obstacle_300007_t03.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.41101359500316903,
+      "t_guide": 0.21043227601330727,
+      "wall_s": 0.4147359700000379,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.928294253753436,
+        0.9822863567897997
+      ],
+      "goal_m": [
+        5.071705746246564,
+        9.0177136432102
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300007",
+      "kind": "single_obstacle",
+      "task_index": 8,
+      "file": "cand_single_obstacle_300007_t08.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.333033853006782,
+      "t_guide": 0.20535887801088393,
+      "wall_s": 0.33724443800747395,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.4357206576878854,
+        5.131538025433999
+      ],
+      "goal_m": [
+        8.564279342312116,
+        4.868461974566001
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300007",
+      "kind": "single_obstacle",
+      "task_index": 11,
+      "file": "cand_single_obstacle_300007_t11.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.34500989099615254,
+      "t_guide": 0.21455502504250035,
+      "wall_s": 0.348651512991637,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.430507243056899,
+        1.001067383245735
+      ],
+      "goal_m": [
+        5.569492756943101,
+        8.998932616754265
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300007",
+      "kind": "single_obstacle",
+      "task_index": 14,
+      "file": "cand_single_obstacle_300007_t14.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33700808000867255,
+      "t_guide": 0.21758214803412557,
+      "wall_s": 0.34176430499064736,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9384656996536993,
+        3.7905323744378796
+      ],
+      "goal_m": [
+        9.0615343003463,
+        6.20946762556212
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300007",
+      "kind": "single_obstacle",
+      "task_index": 16,
+      "file": "cand_single_obstacle_300007_t16.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.34262947700335644,
+      "t_guide": 0.2123525910137687,
+      "wall_s": 0.3481031169940252,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9832544058236143,
+        4.945008499104728
+      ],
+      "goal_m": [
+        9.016745594176385,
+        5.054991500895272
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300007",
+      "kind": "single_obstacle",
+      "task_index": 20,
+      "file": "cand_single_obstacle_300007_t20.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.31820300401886925,
+      "t_guide": 0.19687066003098153,
+      "wall_s": 0.321844805002911,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.712211234727297,
+        1.3044245599023534
+      ],
+      "goal_m": [
+        6.287788765272703,
+        8.695575440097647
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300009",
+      "kind": "open_crossing",
+      "task_index": 0,
+      "file": "cand_open_crossing_300009_t00.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3402440090139862,
+      "t_guide": 0.20600077902781777,
+      "wall_s": 0.3442945329879876,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.335207738235436,
+        4.7851913617091135
+      ],
+      "goal_m": [
+        1.105050141476851,
+        4.932034043267257
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300009",
+      "kind": "open_crossing",
+      "task_index": 3,
+      "file": "cand_open_crossing_300009_t03.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3626294029818382,
+      "t_guide": 0.23097930994117633,
+      "wall_s": 0.3666724410140887,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.6242295726688445,
+        2.0392844615362087
+      ],
+      "goal_m": [
+        3.1839298470976027,
+        8.156942200241174
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300009",
+      "kind": "open_crossing",
+      "task_index": 6,
+      "file": "cand_open_crossing_300009_t06.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33096805700915866,
+      "t_guide": 0.20707246498204768,
+      "wall_s": 0.33542754099471495,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        2.589777860917932,
+        2.2572908597652623
+      ],
+      "goal_m": [
+        7.504369209813759,
+        7.773263026543225
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300009",
+      "kind": "open_crossing",
+      "task_index": 7,
+      "file": "cand_open_crossing_300009_t07.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3869081960001495,
+      "t_guide": 0.26535243407124653,
+      "wall_s": 0.39135635501588695,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.976383708525539,
+        3.778166737296377
+      ],
+      "goal_m": [
+        0.990303203474436,
+        6.016469494016908
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300009",
+      "kind": "open_crossing",
+      "task_index": 10,
+      "file": "cand_open_crossing_300009_t10.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.35537251000641845,
+      "t_guide": 0.2108528280223254,
+      "wall_s": 0.3590534840186592,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.880342051943121,
+        4.395718600887571
+      ],
+      "goal_m": [
+        9.174363122960603,
+        5.713582314420166
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300009",
+      "kind": "open_crossing",
+      "task_index": 12,
+      "file": "cand_open_crossing_300009_t12.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.37533370597520843,
+      "t_guide": 0.21448102698195726,
+      "wall_s": 0.3808069410151802,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.9932856393863716,
+        7.830650878637139
+      ],
+      "goal_m": [
+        6.251543168281571,
+        1.3153347575475332
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300009",
+      "kind": "open_crossing",
+      "task_index": 14,
+      "file": "cand_open_crossing_300009_t14.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.43559904699213803,
+      "t_guide": 0.2604086240171455,
+      "wall_s": 0.4404395680176094,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.5719919295464462,
+        4.354047167046435
+      ],
+      "goal_m": [
+        8.76783137179109,
+        4.714583023129229
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300009",
+      "kind": "open_crossing",
+      "task_index": 18,
+      "file": "cand_open_crossing_300009_t18.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3882674860069528,
+      "t_guide": 0.23360498197143897,
+      "wall_s": 0.39234443299937993,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.9627824647846233,
+        8.18622261096494
+      ],
+      "goal_m": [
+        7.6594786978403295,
+        1.8506478912929618
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300010",
+      "kind": "single_obstacle",
+      "task_index": 0,
+      "file": "cand_single_obstacle_300010_t00.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3353990789910313,
+      "t_guide": 0.20907440697192214,
+      "wall_s": 0.33888311201008037,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.4419454263368183,
+        6.582817687374035
+      ],
+      "goal_m": [
+        8.558054573663181,
+        3.417182312625965
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300010",
+      "kind": "single_obstacle",
+      "task_index": 1,
+      "file": "cand_single_obstacle_300010_t01.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.35902496200287715,
+      "t_guide": 0.2230445939640049,
+      "wall_s": 0.3629427370033227,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.458081207225498,
+        1.6086102908070599
+      ],
+      "goal_m": [
+        3.541918792774502,
+        8.39138970919294
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300010",
+      "kind": "single_obstacle",
+      "task_index": 3,
+      "file": "cand_single_obstacle_300010_t03.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3765175949956756,
+      "t_guide": 0.24160312296589836,
+      "wall_s": 0.3800681050051935,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.495151503597681,
+        0.900579506065541
+      ],
+      "goal_m": [
+        5.504848496402319,
+        9.09942049393446
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300010",
+      "kind": "single_obstacle",
+      "task_index": 8,
+      "file": "cand_single_obstacle_300010_t08.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3389441230101511,
+      "t_guide": 0.2133400279271882,
+      "wall_s": 0.3428894569806289,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9429957716797457,
+        6.0313736244142016
+      ],
+      "goal_m": [
+        9.057004228320254,
+        3.9686263755857984
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300010",
+      "kind": "single_obstacle",
+      "task_index": 12,
+      "file": "cand_single_obstacle_300010_t12.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.37468423499376513,
+      "t_guide": 0.20363252802053466,
+      "wall_s": 0.3799023129977286,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.7381637961501393,
+        5.774407357134793
+      ],
+      "goal_m": [
+        8.26183620384986,
+        4.225592642865207
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300010",
+      "kind": "single_obstacle",
+      "task_index": 16,
+      "file": "cand_single_obstacle_300010_t16.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.32840528298402205,
+      "t_guide": 0.20683788997121155,
+      "wall_s": 0.332396065001376,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.481616861975358,
+        1.6540963366187498
+      ],
+      "goal_m": [
+        5.518383138024642,
+        8.34590366338125
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300010",
+      "kind": "single_obstacle",
+      "task_index": 17,
+      "file": "cand_single_obstacle_300010_t17.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3134014510142151,
+      "t_guide": 0.19233960198471323,
+      "wall_s": 0.318654870003229,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.2190278725733865,
+        0.8293351647660057
+      ],
+      "goal_m": [
+        4.7809721274266135,
+        9.170664835233994
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300010",
+      "kind": "single_obstacle",
+      "task_index": 22,
+      "file": "cand_single_obstacle_300010_t22.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 6,
+      "t_inference_total": 0.33159149100538343,
+      "t_guide": 0.19340771800489165,
+      "wall_s": 0.33623297899612226,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.8899445727455255,
+        6.357264040404076
+      ],
+      "goal_m": [
+        9.110055427254474,
+        3.6427359595959237
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300012",
+      "kind": "open_crossing",
+      "task_index": 0,
+      "file": "cand_open_crossing_300012_t00.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3135245929879602,
+      "t_guide": 0.19175100000575185,
+      "wall_s": 0.31707971400464885,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        2.870676829652456,
+        1.0422294601612798
+      ],
+      "goal_m": [
+        6.753020469451041,
+        8.393852955972621
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300012",
+      "kind": "open_crossing",
+      "task_index": 3,
+      "file": "cand_open_crossing_300012_t03.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3180166280071717,
+      "t_guide": 0.19798157198238187,
+      "wall_s": 0.3218589620082639,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.048814374427394,
+        1.2539582708951853
+      ],
+      "goal_m": [
+        5.060088165336068,
+        8.736683750516324
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300012",
+      "kind": "open_crossing",
+      "task_index": 8,
+      "file": "cand_open_crossing_300012_t08.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.4051217469968833,
+      "t_guide": 0.21986771796946414,
+      "wall_s": 0.4097069629933685,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.506223435118915,
+        7.148652112082631
+      ],
+      "goal_m": [
+        1.521741717222867,
+        2.8888487949881623
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300012",
+      "kind": "open_crossing",
+      "task_index": 9,
+      "file": "cand_open_crossing_300012_t09.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.36798418598482385,
+      "t_guide": 0.2225281900318805,
+      "wall_s": 0.37206240798695944,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.659034872227942,
+        7.180153145218004
+      ],
+      "goal_m": [
+        1.3169416744096443,
+        2.749328822248275
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300012",
+      "kind": "open_crossing",
+      "task_index": 10,
+      "file": "cand_open_crossing_300012_t10.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.36409133099368773,
+      "t_guide": 0.23068307098583318,
+      "wall_s": 0.3703020889952313,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        2.1406259708144404,
+        7.970870378249961
+      ],
+      "goal_m": [
+        7.6307785424117585,
+        1.969135868792875
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300012",
+      "kind": "open_crossing",
+      "task_index": 16,
+      "file": "cand_open_crossing_300012_t16.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3256504109886009,
+      "t_guide": 0.2054216619580984,
+      "wall_s": 0.3337641289981548,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.207998620496225,
+        5.272513977894154
+      ],
+      "goal_m": [
+        1.476922558921207,
+        4.61156848964145
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300012",
+      "kind": "open_crossing",
+      "task_index": 18,
+      "file": "cand_open_crossing_300012_t18.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33114437901531346,
+      "t_guide": 0.2109366439981386,
+      "wall_s": 0.3353846700047143,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.959960825356507,
+        4.157744332983034
+      ],
+      "goal_m": [
+        8.074722617492261,
+        6.6607597690074805
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300012",
+      "kind": "open_crossing",
+      "task_index": 20,
+      "file": "cand_open_crossing_300012_t20.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33994281900231726,
+      "t_guide": 0.21369250796851702,
+      "wall_s": 0.3440439760161098,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        2.7583749412139826,
+        8.297817960552322
+      ],
+      "goal_m": [
+        7.165428687188322,
+        1.7106534847584147
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300013",
+      "kind": "single_obstacle",
+      "task_index": 0,
+      "file": "cand_single_obstacle_300013_t00.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3606140319898259,
+      "t_guide": 0.22433994399034418,
+      "wall_s": 0.3642705329984892,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.627200187626464,
+        5.5536301616826975
+      ],
+      "goal_m": [
+        8.372799812373536,
+        4.4463698383173025
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300013",
+      "kind": "single_obstacle",
+      "task_index": 8,
+      "file": "cand_single_obstacle_300013_t08.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.38445853602024727,
+      "t_guide": 0.23913164201076142,
+      "wall_s": 0.3885297890228685,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9273567036089165,
+        4.324973972002306
+      ],
+      "goal_m": [
+        9.072643296391083,
+        5.675026027997694
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300013",
+      "kind": "single_obstacle",
+      "task_index": 11,
+      "file": "cand_single_obstacle_300013_t11.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33414811600232497,
+      "t_guide": 0.19664470202405937,
+      "wall_s": 0.3379311970202252,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.1341870795622286,
+        3.6423739637448316
+      ],
+      "goal_m": [
+        8.865812920437772,
+        6.357626036255168
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300013",
+      "kind": "single_obstacle",
+      "task_index": 13,
+      "file": "cand_single_obstacle_300013_t13.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.3282371509994846,
+      "t_guide": 0.20350099701317959,
+      "wall_s": 0.33358021097956225,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.5928842276568091,
+        5.591187462427941
+      ],
+      "goal_m": [
+        8.407115772343191,
+        4.408812537572059
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300013",
+      "kind": "single_obstacle",
+      "task_index": 15,
+      "file": "cand_single_obstacle_300013_t15.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.34728586999699473,
+      "t_guide": 0.20931181297055446,
+      "wall_s": 0.35182596498634666,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.8228510830286249,
+        6.532282273258357
+      ],
+      "goal_m": [
+        9.177148916971376,
+        3.467717726741643
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300013",
+      "kind": "single_obstacle",
+      "task_index": 16,
+      "file": "cand_single_obstacle_300013_t16.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3698657130007632,
+      "t_guide": 0.22300209096283652,
+      "wall_s": 0.3754865720111411,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.074388131447002,
+        1.4005321239534618
+      ],
+      "goal_m": [
+        5.925611868552998,
+        8.599467876046539
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300013",
+      "kind": "single_obstacle",
+      "task_index": 17,
+      "file": "cand_single_obstacle_300013_t17.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3411686340114102,
+      "t_guide": 0.21956158499233425,
+      "wall_s": 0.34528861701255664,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.297714722930889,
+        1.3673631662592376
+      ],
+      "goal_m": [
+        4.702285277069111,
+        8.632636833740762
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300013",
+      "kind": "single_obstacle",
+      "task_index": 19,
+      "file": "cand_single_obstacle_300013_t19.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.37320268200710416,
+      "t_guide": 0.22226279499591328,
+      "wall_s": 0.37881410398404114,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.615663528956378,
+        1.7179385137824847
+      ],
+      "goal_m": [
+        5.384336471043622,
+        8.282061486217515
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300015",
+      "kind": "open_crossing",
+      "task_index": 4,
+      "file": "cand_open_crossing_300015_t04.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.35260759000084363,
+      "t_guide": 0.21092601999407634,
+      "wall_s": 0.35700270801316947,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.402649410251088,
+        8.561659524000714
+      ],
+      "goal_m": [
+        3.9906907651492314,
+        1.5451642718913106
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300015",
+      "kind": "open_crossing",
+      "task_index": 5,
+      "file": "cand_open_crossing_300015_t05.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3847387300047558,
+      "t_guide": 0.2292951499694027,
+      "wall_s": 0.3888698229857255,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.971924143908345,
+        8.661312178371052
+      ],
+      "goal_m": [
+        2.9752663487338338,
+        1.200128543425396
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300015",
+      "kind": "open_crossing",
+      "task_index": 9,
+      "file": "cand_open_crossing_300015_t09.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3243874769832473,
+      "t_guide": 0.20170886599225923,
+      "wall_s": 0.3281617359898519,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        7.111288500538948,
+        7.850758976116297
+      ],
+      "goal_m": [
+        2.801024680524698,
+        1.8925459914730125
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300015",
+      "kind": "open_crossing",
+      "task_index": 11,
+      "file": "cand_open_crossing_300015_t11.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3608610759838484,
+      "t_guide": 0.22804727597394958,
+      "wall_s": 0.36450091798906215,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.755650922599937,
+        5.559472892712746
+      ],
+      "goal_m": [
+        1.4410748749804712,
+        4.123725545242502
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300015",
+      "kind": "open_crossing",
+      "task_index": 12,
+      "file": "cand_open_crossing_300015_t12.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3561715530231595,
+      "t_guide": 0.2044894240098074,
+      "wall_s": 0.3597758229880128,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.958999618362135,
+        4.594000246191
+      ],
+      "goal_m": [
+        0.8356901433123063,
+        5.641299236509862
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300015",
+      "kind": "open_crossing",
+      "task_index": 15,
+      "file": "cand_open_crossing_300015_t15.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.3296519099967554,
+      "t_guide": 0.20141609202255495,
+      "wall_s": 0.33453792400541715,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        2.5630988295483794,
+        1.5572713184133147
+      ],
+      "goal_m": [
+        7.425175412282797,
+        8.892586542400595
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300015",
+      "kind": "open_crossing",
+      "task_index": 17,
+      "file": "cand_open_crossing_300015_t17.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.31211718800477684,
+      "t_guide": 0.19147378503112122,
+      "wall_s": 0.31753562300582416,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        8.861622268733942,
+        4.665976376113803
+      ],
+      "goal_m": [
+        0.9292346838358101,
+        5.025466638769177
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300015",
+      "kind": "open_crossing",
+      "task_index": 20,
+      "file": "cand_open_crossing_300015_t20.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3379168380051851,
+      "t_guide": 0.20312961700255983,
+      "wall_s": 0.34332090700627305,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.030235585970112,
+        8.155454740106213
+      ],
+      "goal_m": [
+        6.712918005279938,
+        1.8471559157135315
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300016",
+      "kind": "single_obstacle",
+      "task_index": 5,
+      "file": "cand_single_obstacle_300016_t05.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.3506623449793551,
+      "t_guide": 0.19952748194918968,
+      "wall_s": 0.3544628839881625,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.2180077892665744,
+        5.214370661769805
+      ],
+      "goal_m": [
+        8.781992210733426,
+        4.785629338230195
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300016",
+      "kind": "single_obstacle",
+      "task_index": 6,
+      "file": "cand_single_obstacle_300016_t06.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.35748985200189054,
+      "t_guide": 0.20303096607676707,
+      "wall_s": 0.36140422002063133,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.642943529414067,
+        1.6991630255726675
+      ],
+      "goal_m": [
+        4.357056470585933,
+        8.300836974427332
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300016",
+      "kind": "single_obstacle",
+      "task_index": 7,
+      "file": "cand_single_obstacle_300016_t07.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3550559490104206,
+      "t_guide": 0.20407232901197858,
+      "wall_s": 0.3588225319981575,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.3341414049586038,
+        3.597175333953524
+      ],
+      "goal_m": [
+        8.665858595041396,
+        6.402824666046476
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300016",
+      "kind": "single_obstacle",
+      "task_index": 13,
+      "file": "cand_single_obstacle_300016_t13.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.35787778699886985,
+      "t_guide": 0.21506306700757705,
+      "wall_s": 0.36159578498336487,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.642223592993986,
+        0.9307092786381173
+      ],
+      "goal_m": [
+        6.357776407006014,
+        9.069290721361883
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300016",
+      "kind": "single_obstacle",
+      "task_index": 14,
+      "file": "cand_single_obstacle_300016_t14.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.347677323006792,
+      "t_guide": 0.19340858797659166,
+      "wall_s": 0.351331437996123,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.29634598246871,
+        1.3991569688137533
+      ],
+      "goal_m": [
+        3.7036540175312904,
+        8.600843031186248
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300016",
+      "kind": "single_obstacle",
+      "task_index": 15,
+      "file": "cand_single_obstacle_300016_t15.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.36801103499601595,
+      "t_guide": 0.21890982796321623,
+      "wall_s": 0.3719438080152031,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.944509596019571,
+        1.2242524033334208
+      ],
+      "goal_m": [
+        5.055490403980429,
+        8.77574759666658
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300016",
+      "kind": "single_obstacle",
+      "task_index": 17,
+      "file": "cand_single_obstacle_300016_t17.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.34469527201144956,
+      "t_guide": 0.19677374995080754,
+      "wall_s": 0.3502969289838802,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.7904182024035205,
+        1.6057574585254928
+      ],
+      "goal_m": [
+        6.2095817975964795,
+        8.394242541474508
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300016",
+      "kind": "single_obstacle",
+      "task_index": 20,
+      "file": "cand_single_obstacle_300016_t20.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.34185346800950356,
+      "t_guide": 0.21393880899995565,
+      "wall_s": 0.346076338988496,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.13001476869406,
+        4.5474682863323626
+      ],
+      "goal_m": [
+        8.86998523130594,
+        5.4525317136676374
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300018",
+      "kind": "open_crossing",
+      "task_index": 3,
+      "file": "cand_open_crossing_300018_t03.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.4185820529819466,
+      "t_guide": 0.21885957499034703,
+      "wall_s": 0.4231357719982043,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.48362793622541,
+        8.040198520324063
+      ],
+      "goal_m": [
+        3.4780918728840624,
+        1.5838154313559916
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300018",
+      "kind": "open_crossing",
+      "task_index": 4,
+      "file": "cand_open_crossing_300018_t04.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3265367319982033,
+      "t_guide": 0.2021032889606431,
+      "wall_s": 0.33068829600233585,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.9447915770507389,
+        6.477761108680928
+      ],
+      "goal_m": [
+        8.577021700769416,
+        3.5085376946953724
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300018",
+      "kind": "open_crossing",
+      "task_index": 6,
+      "file": "cand_open_crossing_300018_t06.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3784199809888378,
+      "t_guide": 0.2204433389706537,
+      "wall_s": 0.3821830590022728,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.976623338161807,
+        8.568752776634836
+      ],
+      "goal_m": [
+        4.652528075506002,
+        1.4719273898188365
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300018",
+      "kind": "open_crossing",
+      "task_index": 13,
+      "file": "cand_open_crossing_300018_t13.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3387003710085992,
+      "t_guide": 0.2109579840034712,
+      "wall_s": 0.34301778601366095,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        4.872166160010751,
+        1.2317312775956926
+      ],
+      "goal_m": [
+        4.845663188809717,
+        9.048926596402564
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300018",
+      "kind": "open_crossing",
+      "task_index": 16,
+      "file": "cand_open_crossing_300018_t16.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.31599115999415517,
+      "t_guide": 0.1958472480182536,
+      "wall_s": 0.31949584401445463,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.9939314295826405,
+        1.1877611136086101
+      ],
+      "goal_m": [
+        3.319659241754035,
+        9.260583725634005
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300018",
+      "kind": "open_crossing",
+      "task_index": 19,
+      "file": "cand_open_crossing_300018_t19.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33061626899871044,
+      "t_guide": 0.20668564399238676,
+      "wall_s": 0.3361842979793437,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.3727451675450753,
+        4.779342674438796
+      ],
+      "goal_m": [
+        8.961766514849662,
+        5.559570073953939
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300018",
+      "kind": "open_crossing",
+      "task_index": 21,
+      "file": "cand_open_crossing_300018_t21.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3202744010195602,
+      "t_guide": 0.1995922659698408,
+      "wall_s": 0.3248179780202918,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.977500297810248,
+        8.320048461021681
+      ],
+      "goal_m": [
+        6.437982711559111,
+        1.3113493340139257
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "open_crossing_300018",
+      "kind": "open_crossing",
+      "task_index": 22,
+      "file": "cand_open_crossing_300018_t22.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.33290299598593265,
+      "t_guide": 0.21088714501820505,
+      "wall_s": 0.33688096998957917,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.771185961233594,
+        8.782883511723234
+      ],
+      "goal_m": [
+        3.4251159558887925,
+        1.0960789762629135
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300019",
+      "kind": "single_obstacle",
+      "task_index": 2,
+      "file": "cand_single_obstacle_300019_t02.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.3320607669884339,
+      "t_guide": 0.20202385302400216,
+      "wall_s": 0.33792020598775707,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        3.9356458013392706,
+        1.305692299339094
+      ],
+      "goal_m": [
+        6.0643541986607294,
+        8.694307700660906
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300019",
+      "kind": "single_obstacle",
+      "task_index": 3,
+      "file": "cand_single_obstacle_300019_t03.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 5,
+      "t_inference_total": 0.35094051199848764,
+      "t_guide": 0.2119673029810656,
+      "wall_s": 0.3545709900208749,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.7808896470828546,
+        3.6929010829277615
+      ],
+      "goal_m": [
+        8.219110352917145,
+        6.3070989170722385
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300019",
+      "kind": "single_obstacle",
+      "task_index": 8,
+      "file": "cand_single_obstacle_300019_t08.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3513927480089478,
+      "t_guide": 0.22386480594286695,
+      "wall_s": 0.35563347800052725,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        5.774977820306839,
+        0.9126535562346358
+      ],
+      "goal_m": [
+        4.225022179693161,
+        9.087346443765364
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300019",
+      "kind": "single_obstacle",
+      "task_index": 11,
+      "file": "cand_single_obstacle_300019_t11.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 6,
+      "t_inference_total": 0.37673482100944966,
+      "t_guide": 0.23735620200750418,
+      "wall_s": 0.3808526130160317,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        0.8744868618209987,
+        3.6740087210614636
+      ],
+      "goal_m": [
+        9.125513138179002,
+        6.325991278938536
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300019",
+      "kind": "single_obstacle",
+      "task_index": 13,
+      "file": "cand_single_obstacle_300019_t13.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3239270470221527,
+      "t_guide": 0.19940490502631292,
+      "wall_s": 0.3276591780013405,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.0669593304471285,
+        3.680872221778314
+      ],
+      "goal_m": [
+        8.933040669552872,
+        6.319127778221686
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300019",
+      "kind": "single_obstacle",
+      "task_index": 15,
+      "file": "cand_single_obstacle_300019_t15.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3528182019945234,
+      "t_guide": 0.22670245199697092,
+      "wall_s": 0.3576595069898758,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        6.415684214065404,
+        0.8994975249079094
+      ],
+      "goal_m": [
+        3.5843157859345953,
+        9.10050247509209
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300019",
+      "kind": "single_obstacle",
+      "task_index": 22,
+      "file": "cand_single_obstacle_300019_t22.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 8,
+      "t_inference_total": 0.3360127769992687,
+      "t_guide": 0.20760657399659976,
+      "wall_s": 0.3400828939920757,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.791981898654293,
+        5.444464417168926
+      ],
+      "goal_m": [
+        8.208018101345708,
+        4.555535582831074
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    },
+    {
+      "map_id": "single_obstacle_300019",
+      "kind": "single_obstacle",
+      "task_index": 23,
+      "file": "cand_single_obstacle_300019_t23.npz",
+      "status": "ok",
+      "n_raw": 8,
+      "n_official_valid": 7,
+      "t_inference_total": 0.33647258099517785,
+      "t_guide": 0.2079843340034131,
+      "wall_s": 0.3429313900123816,
+      "n_T_pts": 128,
+      "trajectory_duration": 10.0,
+      "start_m": [
+        1.707532338650518,
+        5.120732876639914
+      ],
+      "goal_m": [
+        8.292467661349482,
+        4.879267123360086
+      ],
+      "planner": "mpd",
+      "model_sha256": "6632bbb494353e14505ea6ab0f600a5cf240279a1e4dc964608a66ae6aa013d0"
+    }
+  ]
+}

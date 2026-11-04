@@ -113,11 +113,23 @@ def policy_w0(w0, mask, budget, risk_model, paths, pause_p, time_steps) -> WaitR
                       hard_risk=h, finish_s=f, feasible=True, fallback=False)
 
 
+def apply_start_wait(w0, delta: float) -> torch.Tensor:
+    """固定发车间隔扩增：第 i 台机器人在起点额外等待 delta*i 个时隙。
+
+    N=2 时退化为"只给第 2 台加 delta"，与阶段三的实现一致；
+    N>2 时相当于把固定时间裕度按顺序摊开，是所有方法共用的同族基线。
+    """
+    n = w0.shape[0]
+    add = torch.zeros_like(w0)
+    idx = torch.arange(n, dtype=w0.dtype, device=w0.device) * float(delta)
+    add[:, 0] = idx
+    return w0 + add
+
+
 def policy_w1(w0, mask, budget, risk_model, paths, pause_p, time_steps,
-              delta: int, robot: int = 1) -> WaitResult:
-    """固定额外等待：只给第 robot 台机器人的**起点**加 delta 个时隙。"""
-    w = w0.clone()
-    w[robot, 0] = w[robot, 0] + float(delta)
+              delta: int, robot: int | None = None) -> WaitResult:
+    """固定额外等待：在起点给第 i 台机器人加 delta*i 个时隙。"""
+    w = apply_start_wait(w0, delta)
     w = project_wait(w, w0, mask, budget)
     w = torch.round(w)
     s, h, f, _ = _eval(risk_model, paths, w, pause_p, time_steps)
@@ -126,14 +138,19 @@ def policy_w1(w0, mask, budget, risk_model, paths, pause_p, time_steps,
 
 
 def policy_w2_enum(w0, mask, budget, risk_model, paths, pause_p, time_steps,
-                   lam_T: float, deltas=tuple(range(0, 9)), robot: int = 1) -> WaitResult:
+                   lam_T: float, deltas=tuple(range(0, 9)),
+                   robot: int | None = None) -> WaitResult:
     """枚举起点等待：用 DP 的硬风险 + 完成时间增量选最优。"""
     base_finish = _eval(risk_model, paths, w0, pause_p, time_steps)[2]
+    zero = torch.zeros_like(pause_p)
     best = None
     for d in deltas:
-        w = w0.clone()
-        w[robot, 0] = w[robot, 0] + float(d)
+        w = apply_start_wait(w0, d)
         w = torch.round(project_wait(w, w0, mask, budget))
+        # 硬约束：等待不得让 p=0 变得不安全（Δ=0 一定满足，故候选集非空）
+        _, h0, _, _ = _eval(risk_model, paths, w, zero, time_steps)
+        if h0 > 1e-9:
+            continue
         _, h, f, _ = _eval(risk_model, paths, w, pause_p, time_steps)
         j = h + lam_T * (f - base_finish)
         rec = {"delta": int(d), "hard_risk": h, "finish_s": f, "J": j}
@@ -180,8 +197,10 @@ def policy_w3_optimize(w0, mask, budget, risk_model, paths, pause_p, time_steps,
         w_cont = project_wait(w0 + F.softplus(u) * mask, w0, mask, budget)
         w_disc = discretize(w_cont, w0, mask, budget)
         s_d, h_d, f_d, _ = _eval(risk_model, paths, w_disc, pause_p, time_steps)
-        if (not bool(torch.isfinite(w_disc).all())) or h_d > hard0 + 1e-9 or f_d > 95.0 * 0.4:
-            # 回退：优化结果不优于原计划（硬风险）或超时
+        completion = (budget.horizon - 1) + w_disc.sum(dim=-1)   # 每台机器人的完成时隙
+        over_window = bool((completion >= budget.time_steps).any())
+        if (not bool(torch.isfinite(w_disc).all())) or h_d > hard0 + 1e-9 or over_window:
+            # 回退：优化结果不优于原计划（硬风险）或越过执行窗口
             return WaitResult(wait=w0.clone(), added=torch.zeros_like(w0),
                               soft_risk=soft0, hard_risk=hard0, finish_s=base_finish,
                               feasible=True, fallback=True, history=history,

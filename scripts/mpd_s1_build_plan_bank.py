@@ -62,6 +62,19 @@ def arc_length_resample(pts: np.ndarray, h: int) -> np.ndarray:
     return out
 
 
+def candidate_waypoints(bank_dir, map_id: str, task_index: int, cand: int,
+                        h_wp: int, subdir: str = "candidates"):
+    """读取一条原始候选并重采样成执行航点（下游建库复用）。"""
+    z = np.load(Path(bank_dir) / subdir / f"cand_{map_id}_t{int(task_index):02d}.npz",
+                allow_pickle=True)
+    pos_m = z["pos_m_raw"].astype(np.float64)[cand]
+    wp = arc_length_resample(pos_m, h_wp)
+    start_m = z["start_m"].astype(np.float64)
+    goal_m = z["goal_m"].astype(np.float64)
+    info = {"path_length": float(np.linalg.norm(np.diff(pos_m, axis=0), axis=-1).sum())}
+    return wp, start_m, goal_m, info
+
+
 def continuous_clearance(pts: np.ndarray, circles: np.ndarray, boxes: np.ndarray) -> np.ndarray:
     """逐点对障碍的精确有符号距离（正=在障碍外）。米制。"""
     d = np.full(len(pts), np.inf)
