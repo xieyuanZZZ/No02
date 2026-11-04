@@ -121,10 +121,7 @@ def main() -> int:
                         m = simulate_mpc(paths_np, w_np, p,
                                          MPCSimConfig(d_safe=d_safe, horizon_steps=T),
                                          seed=seed, record=False)
-                        hit = np.zeros(len(pairs), dtype=bool)
-                        if m.first_collision_pair is not None:
-                            hit[pairs.index(tuple(m.first_collision_pair))] = True
-                        mpc_flags.append(hit)
+                        mpc_flags.append(np.asarray(m.pair_collision, dtype=bool))
                     ideal_flags = np.asarray(ideal_flags)
                     mpc_flags = np.asarray(mpc_flags)
                     ri = pair_rates(ideal_flags, pairs)

@@ -103,7 +103,7 @@ def test_mpc_solves_and_respects_control_bounds():
         ref[k, :2] = [1.0 + 0.1 * k, 5.0]
     U, info = mpc.solve(x0, ref)
     assert info["ok"], info["status"]
-    assert np.abs(U[0]).sum() <= 2.0 + 1e-4
+    assert np.abs(info["u"]).sum() <= 2.0 + 1e-6
 
 
 def test_mpc_reports_failure_gracefully():
@@ -123,8 +123,8 @@ def test_mpc_tracks_straight_line():
     ex.reset(np.array([wp[0, 0], wp[0, 1], 0.0, 0.0]))
     while ex.t < 60 and not ex.done:
         ex.step()
-    arr = ex.log.arrays()
-    dev = np.array([abs(arr["p"][k][1] - 5.0) for k in range(len(arr["p"]))])
+    P = np.asarray(ex.trace["p"])
+    dev = np.abs(P[:, 1] - 5.0)
     assert ex.done
     assert dev.max() < 0.35, f"直线跟踪横向偏差过大 {dev.max():.3f} m"
 
@@ -137,8 +137,8 @@ def test_pause_causes_brake_hold_restart():
     ex.reset(np.array([wp[0, 0], wp[0, 1], 0.0, 0.0]))
     while ex.t < 60 and not ex.done:
         ex.step(pause_request=abs(ex.t - 2.0) < 1e-9, pause_duration=1.0)
-    modes = ex.log.mode
-    assert "BRAKING" in modes and "HOLDING" in modes
+    modes = ex.trace["mode"]
+    assert "BRAKE_PAUSE" in modes and "HOLD" in modes
     assert ex.done
 
 

@@ -60,17 +60,29 @@ class LinearMPC:
 
     # ------------------------------------------------------------------ #
     def _build_prediction(self):
-        """构造 X = F x0 + G U 的 F、G。"""
+        """构造 X = F x0 + G U 的 F、G。
+
+        正确关系（离散双积分器，控制周期 dt_ctrl）：
+            x_0 = x_current
+            x_1 = Ac x_0 + Bc u_0
+            x_2 = Ac^2 x_0 + Ac Bc u_0 + Bc u_1
+            ...
+            x_k = Ac^k x_0 + Σ_{j=0}^{k-1} Ac^{k-1-j} Bc u_j
+
+        **注意**：u_j 的系数是 `Ac^{k-1-j} Bc`，不是 `Ac^{k-j} Bc`，
+        且 j 只能取到 k-1（x_k 不依赖 u_k）。旧实现两者都写错了。
+        """
         Np, Ac, Bc = self.Np, self.di.Ac, self.di.Bc
         F = np.zeros((4 * (Np + 1), 4))
         G = np.zeros((4 * (Np + 1), 2 * Np))
-        Ak = np.eye(4)
+        # 预先算好 Ac^p
+        powers = [np.eye(4)]
+        for _ in range(Np):
+            powers.append(Ac @ powers[-1])
         for k in range(Np + 1):
-            F[4 * k:4 * k + 4, :] = Ak
-            if k < Np:
-                for j in range(k + 1):
-                    G[4 * k:4 * k + 4, 2 * j:2 * j + 2] = np.linalg.matrix_power(Ac, k - j) @ Bc
-            Ak = Ac @ Ak
+            F[4 * k:4 * k + 4, :] = powers[k]
+            for j in range(k):
+                G[4 * k:4 * k + 4, 2 * j:2 * j + 2] = powers[k - 1 - j] @ Bc
         self.F, self.G = F, G
 
     # ------------------------------------------------------------------ #
