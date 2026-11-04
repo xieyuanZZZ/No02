@@ -1,0 +1,12 @@
+19:50:59 | INFO    | fhd.mpc_single | ==============================================================================
+19:50:59 | INFO    | fhd.mpc_single | MPC 单机正确性测试
+19:50:59 | INFO    | fhd.mpc_single | ==============================================================================
+19:50:59 | INFO    | fhd.mpc_single |   直线跟踪                   done=True 完成 6.50s rmse=0.051 max_err=0.219 vmax=1.50 amax=1.85 违规=0 QP失败=0
+19:50:59 | INFO    | fhd.mpc_single |   曲线跟踪                   done=True 完成 8.40s rmse=0.242 max_err=0.526 vmax=1.50 amax=1.43 违规=0 QP失败=0
+19:50:59 | INFO    | fhd.mpc_single |   高曲率路径                  done=True 完成 12.00s rmse=0.167 max_err=0.513 vmax=1.48 amax=1.51 违规=0 QP失败=0
+19:50:59 | INFO    | fhd.mpc_single |   直角转弯                   done=True 完成 8.20s rmse=0.091 max_err=0.201 vmax=1.50 amax=1.85 违规=0 QP失败=0
+19:50:59 | INFO    | fhd.mpc_single |   运行中暂停一次                done=True 完成 9.40s rmse=0.036 max_err=0.191 vmax=1.50 amax=2.00 违规=0 QP失败=0
+19:51:00 | INFO    | fhd.mpc_single |   连续两次暂停                 done=True 完成 10.50s rmse=0.036 max_err=0.197 vmax=1.50 amax=2.00 违规=0 QP失败=0
+19:51:00 | INFO    | fhd.mpc_single |   暂停后重启                  done=True 完成 11.80s rmse=0.145 max_err=0.322 vmax=1.50 amax=2.00 违规=0 QP失败=0
+19:51:00 | INFO    | fhd.mpc_single |   长暂停                    done=True 完成 9.80s rmse=0.037 max_err=0.193 vmax=1.50 amax=2.00 违规=0 QP失败=0
+19:51:00 | INFO    | fhd.mpc_single |   饱和度测试：v_max=1.500 (上限 1.5)  a_max=1.414 (上限 2.0)  违规=0

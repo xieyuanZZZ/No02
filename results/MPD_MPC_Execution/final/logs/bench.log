@@ -1,0 +1,15 @@
+19:53:52 | INFO    | fhd.mpc_bench | ==============================================================================
+19:53:52 | INFO    | fhd.mpc_bench | MPC 动力学执行基准
+19:53:52 | INFO    | fhd.mpc_bench | ==============================================================================
+19:54:15 | INFO    | fhd.mpc_bench | N2 open_crossing_300000_pair02_11 完成（3 任务 × 2 p × 8 MC）
+19:54:42 | INFO    | fhd.mpc_bench | N2 open_crossing_300000_pair02_18 完成（3 任务 × 2 p × 8 MC）
+19:55:07 | INFO    | fhd.mpc_bench | N2 open_crossing_300000_pair02_21 完成（3 任务 × 2 p × 8 MC）
+19:55:30 | INFO    | fhd.mpc_bench | N2 open_crossing_300000_pair11_18 完成（3 任务 × 2 p × 8 MC）
+19:55:54 | INFO    | fhd.mpc_bench | N2 open_crossing_300000_pair11_21 完成（3 任务 × 2 p × 8 MC）
+19:56:19 | INFO    | fhd.mpc_bench | N2 open_crossing_300000_pair18_21 完成（3 任务 × 2 p × 8 MC）
+19:57:09 | INFO    | fhd.mpc_bench | N4 open_crossing_300000_n4_0 完成（3 任务 × 2 p × 8 MC）
+19:58:00 | INFO    | fhd.mpc_bench | N4 open_crossing_300000_n4_1 完成（3 任务 × 2 p × 8 MC）
+19:59:03 | INFO    | fhd.mpc_bench | N4 open_crossing_300003_n4_0 完成（3 任务 × 2 p × 8 MC）
+19:59:57 | INFO    | fhd.mpc_bench | N4 open_crossing_300003_n4_1 完成（3 任务 × 2 p × 8 MC）
+20:00:56 | INFO    | fhd.mpc_bench | N4 open_crossing_300006_n4_0 完成（3 任务 × 2 p × 8 MC）
+20:01:51 | INFO    | fhd.mpc_bench | N4 open_crossing_300006_n4_1 完成（3 任务 × 2 p × 8 MC）

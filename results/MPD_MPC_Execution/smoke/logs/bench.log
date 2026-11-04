@@ -1,0 +1,6 @@
+19:51:23 | INFO    | fhd.mpc_bench | ==============================================================================
+19:51:23 | INFO    | fhd.mpc_bench | MPC 动力学执行基准
+19:51:23 | INFO    | fhd.mpc_bench | ==============================================================================
+19:51:30 | INFO    | fhd.mpc_bench | N2 open_crossing_300000_pair02_11 完成（2 任务 × 2 p × 2 MC）
+19:51:38 | INFO    | fhd.mpc_bench | N2 open_crossing_300000_pair02_18 完成（2 任务 × 2 p × 2 MC）
+19:51:52 | INFO    | fhd.mpc_bench | N4 open_crossing_300000_n4_0 完成（2 任务 × 2 p × 2 MC）

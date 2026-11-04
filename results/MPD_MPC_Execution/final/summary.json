@@ -1,0 +1,162 @@
+{
+  "n_mc": 8,
+  "total_time_s": 479.4036400000332,
+  "by_group": {
+    "N2": {
+      "orig": {
+        "0.0": {
+          "ideal_collision": 0.0,
+          "ideal_safe": 1.0,
+          "ideal_completion": 13.6,
+          "mpc_collision": 0.0,
+          "mpc_safe": 1.0,
+          "mpc_completion": 14.533333333333298,
+          "extra_brake_s": 0.0,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        },
+        "0.1": {
+          "ideal_collision": 0.0625,
+          "ideal_safe": 0.9375,
+          "ideal_completion": 15.200000000000003,
+          "mpc_collision": 0.14583333333333334,
+          "mpc_safe": 0.8541666666666666,
+          "mpc_completion": 18.689583333333328,
+          "extra_brake_s": 6.533333333333329,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        },
+        "0.2": {
+          "ideal_collision": 0.0625,
+          "ideal_safe": 0.9375,
+          "ideal_completion": 17.400000000000002,
+          "mpc_collision": 0.14583333333333334,
+          "mpc_safe": 0.8541666666666666,
+          "mpc_completion": 22.416666666666714,
+          "extra_brake_s": 12.154166666666685,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        }
+      },
+      "w2plus": {
+        "0.0": {
+          "ideal_collision": 0.0,
+          "ideal_safe": 1.0,
+          "ideal_completion": 14.133333333333335,
+          "mpc_collision": 0.0,
+          "mpc_safe": 1.0,
+          "mpc_completion": 15.433333333333302,
+          "extra_brake_s": 0.0,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        },
+        "0.1": {
+          "ideal_collision": 0.0,
+          "ideal_safe": 1.0,
+          "ideal_completion": 15.625,
+          "mpc_collision": 0.020833333333333332,
+          "mpc_safe": 0.9791666666666666,
+          "mpc_completion": 19.49375000000001,
+          "extra_brake_s": 6.497916666666665,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        },
+        "0.2": {
+          "ideal_collision": 0.020833333333333332,
+          "ideal_safe": 0.9791666666666666,
+          "ideal_completion": 17.700000000000003,
+          "mpc_collision": 0.125,
+          "mpc_safe": 0.875,
+          "mpc_completion": 23.125000000000057,
+          "extra_brake_s": 12.062500000000021,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        }
+      }
+    },
+    "N4": {
+      "orig": {
+        "0.0": {
+          "ideal_collision": 0.0,
+          "ideal_safe": 1.0,
+          "ideal_completion": 16.0,
+          "mpc_collision": 0.16666666666666666,
+          "mpc_safe": 0.8333333333333334,
+          "mpc_completion": 16.8333333333333,
+          "extra_brake_s": 0.0,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        },
+        "0.1": {
+          "ideal_collision": 0.5416666666666666,
+          "ideal_safe": 0.4583333333333333,
+          "ideal_completion": 17.425,
+          "mpc_collision": 0.6041666666666666,
+          "mpc_safe": 0.3958333333333333,
+          "mpc_completion": 21.639583333333373,
+          "extra_brake_s": 12.087499999999999,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        },
+        "0.2": {
+          "ideal_collision": 0.7708333333333334,
+          "ideal_safe": 0.22916666666666666,
+          "ideal_completion": 19.39166666666667,
+          "mpc_collision": 0.8125,
+          "mpc_safe": 0.1875,
+          "mpc_completion": 26.28333333333344,
+          "extra_brake_s": 24.92291666666672,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        }
+      },
+      "w2plus": {
+        "0.0": {
+          "ideal_collision": 0.0,
+          "ideal_safe": 1.0,
+          "ideal_completion": 17.599999999999998,
+          "mpc_collision": 0.0,
+          "mpc_safe": 1.0,
+          "mpc_completion": 19.666666666666675,
+          "extra_brake_s": 0.0,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        },
+        "0.1": {
+          "ideal_collision": 0.0625,
+          "ideal_safe": 0.9375,
+          "ideal_completion": 18.791666666666668,
+          "mpc_collision": 0.4791666666666667,
+          "mpc_safe": 0.5208333333333334,
+          "mpc_completion": 23.85000000000007,
+          "extra_brake_s": 11.229166666666677,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        },
+        "0.2": {
+          "ideal_collision": 0.3958333333333333,
+          "ideal_safe": 0.6041666666666666,
+          "ideal_completion": 20.366666666666667,
+          "mpc_collision": 0.6041666666666666,
+          "mpc_safe": 0.375,
+          "mpc_completion": 28.33750000000013,
+          "extra_brake_s": 25.320833333333415,
+          "tracking_rmse": 0.0,
+          "mpc_failures": 0,
+          "constraint_violations": 0
+        }
+      }
+    }
+  }
+}
