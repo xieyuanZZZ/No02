@@ -43,6 +43,9 @@ class WaitResult:
     fallback: bool
     history: list[dict] = field(default_factory=list)
     elapsed_s: float = 0.0
+    dp_evals: int = 0          # 调用（硬/软）First-Hit DP 前向的次数
+    grad_steps: int = 0        # 反向传播步数（无梯度方法恒为 0）
+    p0_safe: bool = True       # 最终等待计划在 p=0 下是否无碰撞
 
 
 # --------------------------------------------------------------------------- #
@@ -105,6 +108,14 @@ def _eval(risk_model, paths, wait, pause_p, time_steps):
                           gate_mode="hard", return_diagnostics=False)
     return (float(soft["pair_sum_risk"]), float(hard["pair_sum_risk"]),
             float(soft["finish_cost"]), float(hard["finish_cost"]))
+
+
+def _eval_hard(risk_model, paths, wait, pause_p, time_steps):
+    """只跑 Hard First-Hit DP（W2+ 候选评价用，省掉软核那一半开销）。"""
+    with torch.no_grad():
+        hard = risk_model(paths, wait, pause_p, time_steps, collision_mode="hard",
+                          gate_mode="hard", return_diagnostics=False)
+    return float(hard["pair_sum_risk"]), float(hard["finish_cost"])
 
 
 def policy_w0(w0, mask, budget, risk_model, paths, pause_p, time_steps) -> WaitResult:
@@ -204,10 +215,157 @@ def policy_w3_optimize(w0, mask, budget, risk_model, paths, pause_p, time_steps,
             return WaitResult(wait=w0.clone(), added=torch.zeros_like(w0),
                               soft_risk=soft0, hard_risk=hard0, finish_s=base_finish,
                               feasible=True, fallback=True, history=history,
-                              elapsed_s=time.perf_counter() - t0)
+                              elapsed_s=time.perf_counter() - t0,
+                              dp_evals=steps + 2, grad_steps=steps, p0_safe=True)
+    with torch.no_grad():
+        zero = torch.zeros_like(pause_p)
+        p0_risk = risk_model(paths, w_disc, zero, time_steps, collision_mode="hard",
+                             gate_mode="hard", return_diagnostics=False)
+        p0_safe = float(p0_risk["pair_sum_risk"]) <= 1e-9
     return WaitResult(wait=w_disc, added=w_disc - w0, soft_risk=s_d, hard_risk=h_d,
                       finish_s=f_d, feasible=True, fallback=False, history=history,
-                      elapsed_s=time.perf_counter() - t0)
+                      elapsed_s=time.perf_counter() - t0,
+                      dp_evals=steps + 3, grad_steps=steps, p0_safe=bool(p0_safe))
+
+
+# --------------------------------------------------------------------------- #
+def policy_w2plus(w0, mask, budget, risk_model, paths, pause_p, time_steps,
+                  lam_T: float = 0.05, max_evals: int = 800, restarts: int = 3,
+                  allow_two_move: bool = True, seed: int = 0) -> WaitResult:
+    """W2+：与 W3 **完全相同的等待变量与约束**，但用整数坐标下降（无梯度）。
+
+    搜索：
+      * 变量 = 允许航点上的整数新增等待（与 W3 同一 mask）；
+      * 每次尝试把某个变量 ±1 时隙，用 **Hard First-Hit DP** 评价；
+      * 目标 J = R_hard + λ_T·(T_finish − T_finish(w0))；
+      * 硬约束：w ≥ w0、单点 ≤6、每机器人总量 ≤12、完成时隙 < T、**p=0 必须无碰撞**；
+      * 多起点 + 随机重启，可选一次调整两个变量的邻域。
+    """
+    t0 = time.perf_counter()
+    gen = torch.Generator().manual_seed(int(seed))
+    zero = torch.zeros_like(pause_p)
+    n, h1 = w0.shape
+    positions = [(i, k) for i in range(n) for k in range(h1) if float(mask[i, k]) > 0]
+
+    base = _eval(risk_model, paths, w0, pause_p, time_steps)
+    base_finish = base[2]
+    dp_evals = 0
+
+    def evaluate(w):
+        nonlocal dp_evals
+        dp_evals += 1
+        hard_p, hard_finish = _eval_hard(risk_model, paths, w, pause_p, time_steps)
+        return hard_p + lam_T * (hard_finish - base_finish), hard_p, hard_finish
+
+    def p0_ok(w):
+        nonlocal dp_evals
+        dp_evals += 1
+        h0, _ = _eval_hard(risk_model, paths, w, zero, time_steps)
+        return h0 <= 1e-9
+
+    def repair(w):
+        w = torch.maximum(w, w0)
+        w = torch.round(w)
+        return project_wait(w, w0, mask, budget).round()
+
+    def legal(w):
+        added = w - w0
+        if float(added.min()) < -1e-9:
+            return False
+        if float(added.max()) > budget.max_added_per_point + 1e-9:
+            return False
+        cap = min(budget.max_added_total_per_robot, budget.max_added_total_allowed())
+        if float(added.sum(dim=-1).max()) > cap + 1e-9:
+            return False
+        completion = (budget.horizon - 1) + w.sum(dim=-1)
+        return bool((completion < budget.time_steps).all())
+
+    # ---- 多起点 ----
+    starts = [w0.clone()]
+    if restarts >= 2:
+        w1 = w0.clone()
+        for i, k in positions:
+            w1[i, k] = w1[i, k] + 1.0
+        starts.append(repair(w1))
+    if restarts >= 3:
+        w2 = w0.clone()
+        noise = torch.randint(0, 3, (n, h1), generator=gen).to(w0.dtype)
+        w2 = w2 + noise * mask
+        starts.append(repair(w2))
+
+    best = None
+    history: list[dict] = []
+    for si, start in enumerate(starts[:max(1, restarts)]):
+        if not legal(start):
+            continue
+        cur = start.clone()
+        cur_j, cur_hard, cur_fin = evaluate(cur)
+        if not p0_ok(cur):
+            continue
+        evals_this = 0
+        improved = True
+        sweep = 0
+        while improved and evals_this < max_evals:
+            improved = False
+            sweep += 1
+            # 单变量邻域
+            for (i, k) in positions:
+                for delta in (+1.0, -1.0):
+                    if evals_this >= max_evals:
+                        break
+                    cand = cur.clone()
+                    cand[i, k] = cand[i, k] + delta
+                    cand = repair(cand)
+                    if not legal(cand):
+                        continue
+                    if torch.allclose(cand, cur):
+                        continue
+                    evals_this += 1
+                    j, hp, fin = evaluate(cand)
+                    if j < cur_j - 1e-9 and p0_ok(cand):
+                        cur, cur_j, cur_hard, cur_fin = cand, j, hp, fin
+                        improved = True
+            # 双变量邻域（一次 +1 两个位置），缓解坐标下降的局部最优
+            if allow_two_move and evals_this < max_evals and not improved:
+                for a in range(len(positions)):
+                    if evals_this >= max_evals or improved:
+                        break
+                    for b in range(a + 1, len(positions)):
+                        if evals_this >= max_evals:
+                            break
+                        cand = cur.clone()
+                        for idx in (a, b):
+                            i, k = positions[idx]
+                            cand[i, k] = cand[i, k] + 1.0
+                        cand = repair(cand)
+                        if not legal(cand) or torch.allclose(cand, cur):
+                            continue
+                        evals_this += 1
+                        j, hp, fin = evaluate(cand)
+                        if j < cur_j - 1e-9 and p0_ok(cand):
+                            cur, cur_j, cur_hard, cur_fin = cand, j, hp, fin
+                            improved = True
+            history.append({"restart": si, "sweep": sweep, "J": cur_j,
+                            "hard_risk": cur_hard, "finish_s": cur_fin,
+                            "added": float((cur - w0).sum()), "evals": evals_this})
+        if best is None or cur_j < best[0]:
+            best = (cur_j, cur, cur_hard, cur_fin)
+
+    if best is None:
+        s0, h0v, f0, _ = _eval(risk_model, paths, w0, pause_p, time_steps)
+        return WaitResult(wait=w0.clone(), added=torch.zeros_like(w0), soft_risk=s0,
+                          hard_risk=h0v, finish_s=f0, feasible=True, fallback=True,
+                          history=history, elapsed_s=time.perf_counter() - t0,
+                          dp_evals=dp_evals, grad_steps=0, p0_safe=True)
+
+    _, w_best, hard_best, fin_best = best
+    soft_best = _eval(risk_model, paths, w_best, pause_p, time_steps)[0]
+    p0 = p0_ok(w_best)
+    return WaitResult(wait=w_best, added=w_best - w0, soft_risk=soft_best,
+                      hard_risk=hard_best, finish_s=fin_best, feasible=True,
+                      fallback=False, history=history,
+                      elapsed_s=time.perf_counter() - t0, dp_evals=dp_evals,
+                      grad_steps=0, p0_safe=bool(p0))
 
 
 # --------------------------------------------------------------------------- #
