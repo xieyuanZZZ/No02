@@ -1,0 +1,486 @@
+{
+  "tasks": 20,
+  "ps": [
+    0.05,
+    0.1,
+    0.2
+  ],
+  "A_prob": {
+    "0.05": {
+      "A0_p0.1": {
+        "collision_rate": 0.006666666666666668,
+        "safe_completion_rate": 0.9933333333333332,
+        "makespan_mean_slots": 45.263066666666674
+      },
+      "A1_p0.2": {
+        "collision_rate": 0.07933333333333334,
+        "safe_completion_rate": 0.9206666666666667,
+        "makespan_mean_slots": 48.352999999999994
+      },
+      "A2_multi": {
+        "collision_rate": 0.0054666666666666665,
+        "safe_completion_rate": 0.9945333333333333,
+        "makespan_mean_slots": 46.12986666666667
+      },
+      "W0": {
+        "collision_rate": 0.4043333333333333,
+        "safe_completion_rate": 0.5956666666666666,
+        "makespan_mean_slots": 41.676399999999994
+      }
+    },
+    "0.1": {
+      "A0_p0.1": {
+        "collision_rate": 0.06673333333333333,
+        "safe_completion_rate": 0.9332666666666668,
+        "makespan_mean_slots": 46.855066666666666
+      },
+      "A1_p0.2": {
+        "collision_rate": 0.09913333333333332,
+        "safe_completion_rate": 0.9008666666666667,
+        "makespan_mean_slots": 49.812733333333334
+      },
+      "A2_multi": {
+        "collision_rate": 0.05206666666666667,
+        "safe_completion_rate": 0.9479333333333331,
+        "makespan_mean_slots": 47.760266666666666
+      },
+      "W0": {
+        "collision_rate": 0.5597333333333333,
+        "safe_completion_rate": 0.4402666666666667,
+        "makespan_mean_slots": 43.65240000000001
+      }
+    },
+    "0.2": {
+      "A0_p0.1": {
+        "collision_rate": 0.3771333333333333,
+        "safe_completion_rate": 0.6228666666666666,
+        "makespan_mean_slots": 50.9054
+      },
+      "A1_p0.2": {
+        "collision_rate": 0.2088,
+        "safe_completion_rate": 0.7912,
+        "makespan_mean_slots": 53.435266666666664
+      },
+      "A2_multi": {
+        "collision_rate": 0.31086666666666674,
+        "safe_completion_rate": 0.6891333333333333,
+        "makespan_mean_slots": 51.812333333333335
+      },
+      "W0": {
+        "collision_rate": 0.7158,
+        "safe_completion_rate": 0.2842,
+        "makespan_mean_slots": 48.50313333333333
+      }
+    }
+  },
+  "B_budget": {
+    "0.05": {
+      "W2+_b12": {
+        "collision_rate": 0.004,
+        "safe_completion_rate": 0.9960000000000001,
+        "makespan_mean_slots": 45.63313333333334
+      },
+      "W2+_b16": {
+        "collision_rate": 0.004,
+        "safe_completion_rate": 0.9960000000000001,
+        "makespan_mean_slots": 45.63313333333334
+      },
+      "W2+_b24": {
+        "collision_rate": 0.004,
+        "safe_completion_rate": 0.9960000000000001,
+        "makespan_mean_slots": 45.63313333333334
+      },
+      "W2+_b8": {
+        "collision_rate": 0.004266666666666667,
+        "safe_completion_rate": 0.9957333333333335,
+        "makespan_mean_slots": 45.646
+      },
+      "W3_b12": {
+        "collision_rate": 0.006666666666666668,
+        "safe_completion_rate": 0.9933333333333332,
+        "makespan_mean_slots": 45.263066666666674
+      },
+      "W3_b16": {
+        "collision_rate": 0.006666666666666668,
+        "safe_completion_rate": 0.9933333333333332,
+        "makespan_mean_slots": 45.263066666666674
+      },
+      "W3_b24": {
+        "collision_rate": 0.006666666666666668,
+        "safe_completion_rate": 0.9933333333333332,
+        "makespan_mean_slots": 45.263066666666674
+      },
+      "W3_b8": {
+        "collision_rate": 0.007933333333333334,
+        "safe_completion_rate": 0.9920666666666665,
+        "makespan_mean_slots": 45.1638
+      }
+    },
+    "0.1": {
+      "W2+_b12": {
+        "collision_rate": 0.05066666666666667,
+        "safe_completion_rate": 0.9493333333333334,
+        "makespan_mean_slots": 47.04113333333333
+      },
+      "W2+_b16": {
+        "collision_rate": 0.05066666666666667,
+        "safe_completion_rate": 0.9493333333333334,
+        "makespan_mean_slots": 47.04113333333333
+      },
+      "W2+_b24": {
+        "collision_rate": 0.05066666666666667,
+        "safe_completion_rate": 0.9493333333333334,
+        "makespan_mean_slots": 47.04113333333333
+      },
+      "W2+_b8": {
+        "collision_rate": 0.05286666666666667,
+        "safe_completion_rate": 0.9471333333333334,
+        "makespan_mean_slots": 47.06013333333333
+      },
+      "W3_b12": {
+        "collision_rate": 0.06673333333333333,
+        "safe_completion_rate": 0.9332666666666668,
+        "makespan_mean_slots": 46.855066666666666
+      },
+      "W3_b16": {
+        "collision_rate": 0.06673333333333333,
+        "safe_completion_rate": 0.9332666666666668,
+        "makespan_mean_slots": 46.855066666666666
+      },
+      "W3_b24": {
+        "collision_rate": 0.06673333333333333,
+        "safe_completion_rate": 0.9332666666666668,
+        "makespan_mean_slots": 46.855066666666666
+      },
+      "W3_b8": {
+        "collision_rate": 0.07093333333333332,
+        "safe_completion_rate": 0.9290666666666668,
+        "makespan_mean_slots": 46.7558
+      }
+    },
+    "0.2": {
+      "W2+_b12": {
+        "collision_rate": 0.3677333333333333,
+        "safe_completion_rate": 0.6322666666666666,
+        "makespan_mean_slots": 50.930800000000005
+      },
+      "W2+_b16": {
+        "collision_rate": 0.3677333333333333,
+        "safe_completion_rate": 0.6322666666666666,
+        "makespan_mean_slots": 50.930800000000005
+      },
+      "W2+_b24": {
+        "collision_rate": 0.3677333333333333,
+        "safe_completion_rate": 0.6322666666666666,
+        "makespan_mean_slots": 50.930800000000005
+      },
+      "W2+_b8": {
+        "collision_rate": 0.3722,
+        "safe_completion_rate": 0.6277999999999999,
+        "makespan_mean_slots": 50.98373333333334
+      },
+      "W3_b12": {
+        "collision_rate": 0.3771333333333333,
+        "safe_completion_rate": 0.6228666666666666,
+        "makespan_mean_slots": 50.9054
+      },
+      "W3_b16": {
+        "collision_rate": 0.3771333333333333,
+        "safe_completion_rate": 0.6228666666666666,
+        "makespan_mean_slots": 50.9054
+      },
+      "W3_b24": {
+        "collision_rate": 0.3771333333333333,
+        "safe_completion_rate": 0.6228666666666666,
+        "makespan_mean_slots": 50.9054
+      },
+      "W3_b8": {
+        "collision_rate": 0.3857333333333333,
+        "safe_completion_rate": 0.6142666666666665,
+        "makespan_mean_slots": 50.82366666666667
+      }
+    }
+  },
+  "C_diagnosis": [
+    {
+      "task_id": "open_crossing_300000_n4_0",
+      "map_id": "open_crossing_300000",
+      "collision_rate_p0.2": 0.06,
+      "added_total": 14.0,
+      "added_max_per_robot": 10.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.08358253058574971,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 14.533333333333333,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300000_n4_1",
+      "map_id": "open_crossing_300000",
+      "collision_rate_p0.2": 0.044,
+      "added_total": 10.0,
+      "added_max_per_robot": 5.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.0434519993845085,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 17.545454545454547,
+      "first_collision_pair_mode": 0
+    },
+    {
+      "task_id": "open_crossing_300003_n4_0",
+      "map_id": "open_crossing_300003",
+      "collision_rate_p0.2": 0.108,
+      "added_total": 16.0,
+      "added_max_per_robot": 7.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.17978623974340602,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 27.0,
+      "first_collision_pair_mode": 3
+    },
+    {
+      "task_id": "open_crossing_300003_n4_1",
+      "map_id": "open_crossing_300003",
+      "collision_rate_p0.2": 0.16,
+      "added_total": 12.0,
+      "added_max_per_robot": 8.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.19584688559486485,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 24.475,
+      "first_collision_pair_mode": 0
+    },
+    {
+      "task_id": "open_crossing_300006_n4_0",
+      "map_id": "open_crossing_300006",
+      "collision_rate_p0.2": 0.128,
+      "added_total": 12.0,
+      "added_max_per_robot": 6.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.13915328297316,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 22.28125,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300006_n4_1",
+      "map_id": "open_crossing_300006",
+      "collision_rate_p0.2": 0.212,
+      "added_total": 18.0,
+      "added_max_per_robot": 12.0,
+      "budget_cap": 12.0,
+      "budget_saturated": true,
+      "hard_risk_p0.2": 0.20590728975361405,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 22.943396226415093,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300009_n4_0",
+      "map_id": "open_crossing_300009",
+      "collision_rate_p0.2": 0.468,
+      "added_total": 17.0,
+      "added_max_per_robot": 9.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.48569749954154606,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 31.64957264957265,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300009_n4_1",
+      "map_id": "open_crossing_300009",
+      "collision_rate_p0.2": 0.448,
+      "added_total": 18.0,
+      "added_max_per_robot": 10.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.46587072807897956,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 33.44642857142857,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300012_n4_0",
+      "map_id": "open_crossing_300012",
+      "collision_rate_p0.2": 0.208,
+      "added_total": 8.0,
+      "added_max_per_robot": 5.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.20632730231202046,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 22.53846153846154,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300012_n4_1",
+      "map_id": "open_crossing_300012",
+      "collision_rate_p0.2": 0.056,
+      "added_total": 15.0,
+      "added_max_per_robot": 8.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.05952837753518947,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 27.642857142857142,
+      "first_collision_pair_mode": 0
+    },
+    {
+      "task_id": "open_crossing_300015_n4_0",
+      "map_id": "open_crossing_300015",
+      "collision_rate_p0.2": 0.484,
+      "added_total": 13.0,
+      "added_max_per_robot": 8.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.4784871025589784,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 26.380165289256198,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300015_n4_1",
+      "map_id": "open_crossing_300015",
+      "collision_rate_p0.2": 0.428,
+      "added_total": 5.0,
+      "added_max_per_robot": 5.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.456922215023261,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 25.94392523364486,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300018_n4_0",
+      "map_id": "open_crossing_300018",
+      "collision_rate_p0.2": 0.196,
+      "added_total": 9.0,
+      "added_max_per_robot": 7.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.15471055416192137,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 24.959183673469386,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "open_crossing_300018_n4_1",
+      "map_id": "open_crossing_300018",
+      "collision_rate_p0.2": 0.152,
+      "added_total": 13.0,
+      "added_max_per_robot": 9.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.13484342251102344,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 25.0,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "single_obstacle_300001_n4_0",
+      "map_id": "single_obstacle_300001",
+      "collision_rate_p0.2": 0.208,
+      "added_total": 18.0,
+      "added_max_per_robot": 10.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.20702545599350997,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 18.23076923076923,
+      "first_collision_pair_mode": 2
+    },
+    {
+      "task_id": "single_obstacle_300001_n4_1",
+      "map_id": "single_obstacle_300001",
+      "collision_rate_p0.2": 0.16,
+      "added_total": 7.0,
+      "added_max_per_robot": 5.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.17531493934798625,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 17.2,
+      "first_collision_pair_mode": 2
+    },
+    {
+      "task_id": "single_obstacle_300004_n4_0",
+      "map_id": "single_obstacle_300004",
+      "collision_rate_p0.2": 0.172,
+      "added_total": 13.0,
+      "added_max_per_robot": 8.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.18196810183087686,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 27.74418604651163,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "single_obstacle_300004_n4_1",
+      "map_id": "single_obstacle_300004",
+      "collision_rate_p0.2": 0.188,
+      "added_total": 12.0,
+      "added_max_per_robot": 7.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.20135813897146837,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 27.382978723404257,
+      "first_collision_pair_mode": 1
+    },
+    {
+      "task_id": "single_obstacle_300007_n4_0",
+      "map_id": "single_obstacle_300007",
+      "collision_rate_p0.2": 0.204,
+      "added_total": 23.0,
+      "added_max_per_robot": 10.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.232746771244153,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 35.509803921568626,
+      "first_collision_pair_mode": 3
+    },
+    {
+      "task_id": "single_obstacle_300007_n4_1",
+      "map_id": "single_obstacle_300007",
+      "collision_rate_p0.2": 0.16,
+      "added_total": 18.0,
+      "added_max_per_robot": 9.0,
+      "budget_cap": 12.0,
+      "budget_saturated": false,
+      "hard_risk_p0.2": 0.1378450906132409,
+      "p0_safe": true,
+      "fallback": false,
+      "first_collision_step_mean": 26.025,
+      "first_collision_pair_mode": 1
+    }
+  ]
+}
