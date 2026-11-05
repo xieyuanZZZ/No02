@@ -12,7 +12,8 @@ from __future__ import annotations
 import torch
 import torch.nn as nn
 
-from fhd.execution.progress import finish_cost, move_probabilities, propagate_progress, release_times
+from fhd.execution.progress import (finish_cost, move_probabilities, propagate_progress,
+                                    release_times, release_times_with_durations)
 from fhd.risk.collision_kernel import build_pair_index, pair_collision_tensors
 from fhd.risk.first_hit_dp import first_hit_dp
 
@@ -71,6 +72,7 @@ class FirstHitRisk(nn.Module):
         lambda_tail_s: float | None = None,
         return_diagnostics: bool = True,
         return_history: bool = False,
+        segment_durations: torch.Tensor | None = None,
     ) -> dict:
         """返回 pair_risks、pair_sum_risk、finish_cost、unfinished_prob、diagnostics。"""
         if paths.dim() != 3:
@@ -83,7 +85,7 @@ class FirstHitRisk(nn.Module):
         lam_tail = self.lambda_tail_s if lambda_tail_s is None else float(lambda_tail_s)
 
         # 1) 前进概率与单机进度分布（J_finish 使用，与 DP 共用同一门槛）
-        tau = release_times(wait)
+        tau = release_times_with_durations(wait, segment_durations)
         a = move_probabilities(
             tau, pause_p, time_steps, beta=self.beta, offset=self.offset, gate_mode=gate_mode
         )

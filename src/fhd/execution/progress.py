@@ -29,6 +29,27 @@ def release_times(wait: torch.Tensor, h: int | None = None) -> torch.Tensor:
     return steps + torch.cumsum(wait, dim=-1)
 
 
+def release_times_with_durations(wait: torch.Tensor,
+                                 durations: torch.Tensor | None = None) -> torch.Tensor:
+    """带**段通行时长**的释放时刻。
+
+    durations [N, H-1]：第 j 段的实际通行时长（单位：时隙），默认全 1 = 原模型。
+    tau_m = (到达航点 m 的累计通行时间) + sum_{h<=m} w_h
+
+    这是 M1/M2 的接口：只改进度转移的**时间尺度**，不改首次碰撞 DP 的数学结构。
+    """
+    if wait.dim() != 2:
+        raise ValueError("wait 必须是 [N, H-1]")
+    n, h1 = wait.shape
+    if durations is None:
+        return release_times(wait)
+    if durations.shape != wait.shape:
+        raise ValueError(f"durations 形状应为 {tuple(wait.shape)}，实际 {tuple(durations.shape)}")
+    zero = torch.zeros(n, 1, dtype=wait.dtype, device=wait.device)
+    time_to_wp = torch.cat([zero, torch.cumsum(durations, dim=-1)], dim=-1)   # [N,H]
+    return time_to_wp[:, :-1] + torch.cumsum(wait, dim=-1)
+
+
 def move_probabilities(
     tau: torch.Tensor,
     pause_p: torch.Tensor,

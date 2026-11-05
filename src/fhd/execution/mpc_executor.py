@@ -164,7 +164,7 @@ class SingleRobotExecutor:
         elif self.mode == "HOLD":
             if self.t >= self.hold_until:
                 held = self.t - self._hold_start_t
-                if self._hold_kind == "dwell":
+                if self._hold_kind == "dwell" and self._dwell_idx is not None:
                     self.actual_wait_time += held
                     k = self._dwell_idx
                     self.dwell_done[k] = True
@@ -222,7 +222,7 @@ class SingleRobotExecutor:
     def segment_stats(self) -> list:
         """每段的 (序号, 长度, 实际通行时间, 进入速度, 驶出速度, 期间是否有停车)。"""
         out = []
-        paused_k = [int(d[0]) for d in self.rec.dwell_done]
+        paused_k = [int(d[0]) for d in self.rec.dwell_done if d[0] is not None]
         for k in range(self.path.n_wp - 1):
             t0, t1 = self.wp_arrival[k], self.wp_arrival[k + 1]
             if np.isnan(t0) or np.isnan(t1):

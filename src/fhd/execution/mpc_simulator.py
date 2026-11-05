@@ -74,6 +74,7 @@ class SimResult:
     # 可选全轨迹
     trajectories: np.ndarray | None = None
     modes: np.ndarray | None = None
+    segment_times: list | None = None          # 每台机器人每段的实测通行时间
 
 
 def make_pause_events(seed: int, pause_p: float, n_robots: int, n_slots: int,
@@ -200,4 +201,5 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
         mean_solve_ms=float(np.mean([1000 * e.mpc.last_solve_time for e in execs])),
         mpc_failures=int(sum(e.mpc.fail_count for e in execs)),
         constraint_violations=int(sum(e.constraint_violations for e in execs)),
-        trajectories=traj, modes=mode_rec)
+        trajectories=traj, modes=mode_rec,
+        segment_times=[e.segment_stats() for e in execs])
