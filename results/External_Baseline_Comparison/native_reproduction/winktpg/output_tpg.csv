@@ -1,0 +1,2 @@
+success,runtime,solution cost,min-solution cost,#type-2 edges,#type-1 edges,#Nodes,#low-level calls,#replan,runtime of low-level planning,runtime of topo-logical sort,runtime of simulation,planning horizon,execution horizon,delay type,Gaussian variance,Gaussian P Thresh,solver name,instance name,number of agent
+1,0.001695,1223.75,1005.06,462,1100,1140,183,0,0.000523,0,6.7e-05,20,10,0,0.01,0.05,speed_solver,example_path.txt,40

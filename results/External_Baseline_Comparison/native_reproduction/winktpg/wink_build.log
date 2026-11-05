@@ -1,0 +1,10 @@
+[ 33%] Building CXX object CMakeFiles/tpg.dir/src/Timer.cpp.o
+[ 44%] Building CXX object CMakeFiles/tpg.dir/src/driver.cpp.o
+[ 44%] Building CXX object CMakeFiles/tpg.dir/src/generate_graph.cpp.o
+[ 44%] Building CXX object CMakeFiles/tpg.dir/src/simulator.cpp.o
+[ 55%] Building CXX object CMakeFiles/tpg.dir/src/sipp_ip.cpp.o
+[ 66%] Building CXX object CMakeFiles/tpg.dir/src/speed_solver.cpp.o
+[ 77%] Building CXX object CMakeFiles/tpg.dir/src/topo_sort.cpp.o
+[ 88%] Building CXX object CMakeFiles/tpg.dir/src/tpg_execute.cpp.o
+[100%] Linking CXX executable tpg
+[100%] Built target tpg
