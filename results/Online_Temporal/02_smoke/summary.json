@@ -1,0 +1,160 @@
+{
+  "stage": "online_temporal_ab_comparison",
+  "n_tasks": 2,
+  "n_mc": 2,
+  "ps": [
+    0.1
+  ],
+  "methods": [
+    "A_w2plus",
+    "B_simple_online",
+    "C_online_firsthit"
+  ],
+  "plan_meta": {
+    "open_crossing_300000_n4_0": {
+      "w2plus_hard_risk": 0.03866470052564919,
+      "w2plus_elapsed_s": 9.23084380000364,
+      "w2plus_dp_evals": 316
+    },
+    "open_crossing_300000_n4_1": {
+      "w2plus_hard_risk": 0.026830932940577257,
+      "w2plus_elapsed_s": 8.808030599961057,
+      "w2plus_dp_evals": 311
+    }
+  },
+  "by_method_p": {
+    "A_w2plus": {
+      "0.1": {
+        "n_tasks": 2,
+        "collision_rate": 0.5,
+        "safe_rate": 0.5,
+        "timeout_rate": 0.0,
+        "completion_mean_s": 20.97500000000003,
+        "total_wait_mean_s": 15.4,
+        "online_wait_mean_s": 0.0,
+        "coord_mean_ms": 0.0,
+        "coord_p95_ms": 0.0,
+        "coord_over_budget": 0,
+        "infeasible_stops": 0,
+        "mpc_failures": 0
+      }
+    },
+    "B_simple_online": {
+      "0.1": {
+        "n_tasks": 2,
+        "collision_rate": 0.75,
+        "safe_rate": 0.25,
+        "timeout_rate": 0.0,
+        "completion_mean_s": 18.9,
+        "total_wait_mean_s": 12.999999999999993,
+        "online_wait_mean_s": 1.2999999999999967,
+        "coord_mean_ms": 3.245492737078207,
+        "coord_p95_ms": 4.719589999876916,
+        "coord_over_budget": 0,
+        "infeasible_stops": 0,
+        "mpc_failures": 0
+      }
+    },
+    "C_online_firsthit": {
+      "0.1": {
+        "n_tasks": 2,
+        "collision_rate": 0.25,
+        "safe_rate": 0.75,
+        "timeout_rate": 0.0,
+        "completion_mean_s": 20.30000000000002,
+        "total_wait_mean_s": 14.499999999999996,
+        "online_wait_mean_s": 2.199999999999994,
+        "coord_mean_ms": 13.488489780925352,
+        "coord_p95_ms": 43.59875375230327,
+        "coord_over_budget": 0,
+        "infeasible_stops": 0,
+        "mpc_failures": 0
+      }
+    }
+  },
+  "paired": {
+    "0.1": {
+      "B_simple_online_minus_A_w2plus": {
+        "collision_rate": {
+          "n_tasks": 2,
+          "mean": 0.25,
+          "ci_lo": 0.0,
+          "ci_hi": 0.5
+        },
+        "safe_rate": {
+          "n_tasks": 2,
+          "mean": -0.25,
+          "ci_lo": -0.5,
+          "ci_hi": 0.0
+        },
+        "completion_mean_s": {
+          "n_tasks": 2,
+          "mean": -2.0750000000000295,
+          "ci_lo": -2.1500000000000306,
+          "ci_hi": -2.0000000000000284
+        },
+        "total_wait_mean_s": {
+          "n_tasks": 2,
+          "mean": -2.4000000000000066,
+          "ci_lo": -2.4000000000000092,
+          "ci_hi": -2.400000000000004
+        }
+      },
+      "C_online_firsthit_minus_B_simple_online": {
+        "collision_rate": {
+          "n_tasks": 2,
+          "mean": -0.5,
+          "ci_lo": -0.5,
+          "ci_hi": -0.5
+        },
+        "safe_rate": {
+          "n_tasks": 2,
+          "mean": 0.5,
+          "ci_lo": 0.5,
+          "ci_hi": 0.5
+        },
+        "completion_mean_s": {
+          "n_tasks": 2,
+          "mean": 1.40000000000002,
+          "ci_lo": 1.3000000000000185,
+          "ci_hi": 1.5000000000000213
+        },
+        "total_wait_mean_s": {
+          "n_tasks": 2,
+          "mean": 1.5000000000000027,
+          "ci_lo": 1.200000000000001,
+          "ci_hi": 1.8000000000000043
+        }
+      },
+      "C_online_firsthit_minus_A_w2plus": {
+        "collision_rate": {
+          "n_tasks": 2,
+          "mean": -0.25,
+          "ci_lo": -0.5,
+          "ci_hi": 0.0
+        },
+        "safe_rate": {
+          "n_tasks": 2,
+          "mean": 0.25,
+          "ci_lo": 0.0,
+          "ci_hi": 0.5
+        },
+        "completion_mean_s": {
+          "n_tasks": 2,
+          "mean": -0.6750000000000096,
+          "ci_lo": -0.70000000000001,
+          "ci_hi": -0.6500000000000092
+        },
+        "total_wait_mean_s": {
+          "n_tasks": 2,
+          "mean": -0.9000000000000039,
+          "ci_lo": -1.2000000000000028,
+          "ci_hi": -0.600000000000005
+        }
+      }
+    }
+  },
+  "runtime": {
+    "total_s": 11.866090799914673
+  }
+}

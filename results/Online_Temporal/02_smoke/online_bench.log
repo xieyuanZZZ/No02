@@ -1,0 +1,8 @@
+18:02:55 | INFO    | fhd.online_bench | ==============================================================================
+18:02:55 | INFO    | fhd.online_bench | A/B/C 在线时序协调配对实验
+18:02:55 | INFO    | fhd.online_bench | ==============================================================================
+18:02:55 | INFO    | fhd.online_bench | 任务数 2：['open_crossing_300000_n4_0', 'open_crossing_300000_n4_1']
+18:03:04 | INFO    | fhd.online_bench | [W2+] open_crossing_300000_n4_0 完成（9.2s, 316 DP）
+18:03:13 | INFO    | fhd.online_bench | [W2+] open_crossing_300000_n4_1 完成（8.8s, 311 DP）
+18:03:19 | INFO    | fhd.online_bench | [open_crossing_300000_n4_0] 完成
+18:03:25 | INFO    | fhd.online_bench | [open_crossing_300000_n4_1] 完成
