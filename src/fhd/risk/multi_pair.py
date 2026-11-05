@@ -1,4 +1,4 @@
-﻿"""N 机器人两两首次碰撞风险汇总（文档 §4.4），对外主入口 FirstHitRisk。
+"""N 机器人两两首次碰撞风险汇总（文档 §4.4），对外主入口 FirstHitRisk。
 
 重要说明：
   * R_hard 只在 collision_mode="hard" 且 gate_mode="hard" 时才是**精确首次碰撞概率**；
@@ -73,8 +73,19 @@ class FirstHitRisk(nn.Module):
         return_diagnostics: bool = True,
         return_history: bool = False,
         segment_durations: torch.Tensor | None = None,
+        duration_semantics: str = "travel_excl_pause",
     ) -> dict:
-        """返回 pair_risks、pair_sum_risk、finish_cost、unfinished_prob、diagnostics。"""
+        """返回 pair_risks、pair_sum_risk、finish_cost、unfinished_prob、diagnostics。
+
+        `segment_durations` 必须是**不含随机暂停、不含航点等待**的段行驶时长
+        （通常由 p=0 校准运行得到）。`duration_semantics="includes_pause"`
+        与 pause_p>0 同时使用会重复计入等待，直接报错而不是静默给数。
+        """
+        if segment_durations is not None:
+            if duration_semantics not in ("travel_excl_pause", "travel_only"):
+                raise ValueError(
+                    "segment_durations 语义必须排除随机暂停与航点等待，"
+                    f"收到 {duration_semantics!r}；包含暂停的时长会与 pause_p 重复计入")
         if paths.dim() != 3:
             raise ValueError("paths 必须是 [N,H,2]")
         n, h, _ = paths.shape

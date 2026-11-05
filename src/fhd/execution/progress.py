@@ -45,6 +45,13 @@ def release_times_with_durations(wait: torch.Tensor,
         return release_times(wait)
     if durations.shape != wait.shape:
         raise ValueError(f"durations 形状应为 {tuple(wait.shape)}，实际 {tuple(durations.shape)}")
+    if not torch.isfinite(durations).all():
+        raise ValueError("durations 含 NaN/Inf；右删失段必须先用拟合模型补全再传入")
+    if (durations < 0).any():
+        raise ValueError("durations 不能为负")
+    # 语义：durations[m] 是第 m 段**行驶**时间，不含随机暂停、不含航点等待。
+    # 航点等待 w[m] 已单独累加；若把含暂停的实测时长放在这里，DP 的 (1-p)
+    # 会把同一暂停重复计入。
     zero = torch.zeros(n, 1, dtype=wait.dtype, device=wait.device)
     time_to_wp = torch.cat([zero, torch.cumsum(durations, dim=-1)], dim=-1)   # [N,H]
     return time_to_wp[:, :-1] + torch.cumsum(wait, dim=-1)
