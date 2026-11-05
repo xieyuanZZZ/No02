@@ -276,6 +276,14 @@ MPC 失败 7/576（1.2%，全部为 `primal infeasible` 后的可行制动回退
 按实施任务书要求，本轮**没有删除这些任务、没有修改地图、也没有把这些障碍碰撞混入
 First-Hit 风险标签**；阶段二的 pair 风险只针对机器人-机器人首次碰撞。
 
+**场景与跟踪可视化**：
+
+![规划场景与等待计划](../results/Online_FirstHit_v2/figures_overview/fig01_scene_plans.png)
+
+![MPC 动力学跟踪](../results/Online_FirstHit_v2/figures_overview/fig02_mpc_tracking.png)
+
+![D1/D2 碰撞率与安全完成率](../results/Online_FirstHit_v2/figures_overview/fig05_execution_rates.png)
+
 ### 3.3 结果解读（必须先看的事实）
 
 1. **D1 与 D2 不是同一个执行模型**。D1 的时隙是原子推进；D2 有加速/制动/停稳/重启。

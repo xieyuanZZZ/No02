@@ -274,6 +274,10 @@ bias=+0.055（高估）；M0 的两两风险之和作为并集上界，覆盖率
 **M3 没有优于 M0。** 主要失败在 p=0（MAE 0.0568 vs 0.0114）与 W2+（0.0691 vs 0.0257）；
 N4 上 M3 的 MAE 接近 M0 的两倍。
 
+![M0–M3 修正效果](../results/Online_FirstHit_v2/figures_overview/fig03_m0m3.png)
+
+![典型 case：真实碰撞与 M3 虚假碰撞](../results/Online_FirstHit_v2/figures_overview/fig04_case_study.png)
+
 ---
 
 ## 7. 消融与动力学一致性
