@@ -1,0 +1,20 @@
+20:29:58 | INFO    | fhd.online_bench | ==============================================================================
+20:29:58 | INFO    | fhd.online_bench | 五方法在线时序协调配对实验
+20:29:58 | INFO    | fhd.online_bench | ==============================================================================
+20:29:58 | INFO    | fhd.online_bench | 任务数 8：['open_crossing_300000_n4_0', 'open_crossing_300000_n4_1', 'open_crossing_300003_n4_0', 'open_crossing_300003_n4_1', 'open_crossing_300006_n4_0', 'open_crossing_300006_n4_1', 'open_crossing_300009_n4_0', 'open_crossing_300009_n4_1']
+20:30:05 | INFO    | fhd.online_bench | [W2+] open_crossing_300000_n4_0 完成（7.0s, 316 DP）
+20:30:12 | INFO    | fhd.online_bench | [W2+] open_crossing_300000_n4_1 完成（6.9s, 311 DP）
+20:30:26 | INFO    | fhd.online_bench | [W2+] open_crossing_300003_n4_0 完成（13.9s, 646 DP）
+20:30:33 | INFO    | fhd.online_bench | [W2+] open_crossing_300003_n4_1 完成（6.9s, 318 DP）
+20:30:47 | INFO    | fhd.online_bench | [W2+] open_crossing_300006_n4_0 完成（13.7s, 643 DP）
+20:30:53 | INFO    | fhd.online_bench | [W2+] open_crossing_300006_n4_1 完成（6.9s, 321 DP）
+20:31:01 | INFO    | fhd.online_bench | [W2+] open_crossing_300009_n4_0 完成（7.2s, 335 DP）
+20:31:08 | INFO    | fhd.online_bench | [W2+] open_crossing_300009_n4_1 完成（7.1s, 326 DP）
+20:38:33 | INFO    | fhd.online_bench | [open_crossing_300000_n4_0] 完成
+20:45:54 | INFO    | fhd.online_bench | [open_crossing_300000_n4_1] 完成
+20:53:08 | INFO    | fhd.online_bench | [open_crossing_300003_n4_0] 完成
+21:00:26 | INFO    | fhd.online_bench | [open_crossing_300003_n4_1] 完成
+21:07:56 | INFO    | fhd.online_bench | [open_crossing_300006_n4_0] 完成
+21:15:40 | INFO    | fhd.online_bench | [open_crossing_300006_n4_1] 完成
+21:24:43 | INFO    | fhd.online_bench | [open_crossing_300009_n4_0] 完成
+21:33:51 | INFO    | fhd.online_bench | [open_crossing_300009_n4_1] 完成
