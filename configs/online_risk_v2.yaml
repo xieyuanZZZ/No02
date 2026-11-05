@@ -1,0 +1,58 @@
+# 阶段二（P2-v2/M3）：独立风险标定、M3 状态模型与冻结盲测的固定参数
+stage: phase2_dynamic_risk_v2
+
+split:
+  ratios: [0.5, 0.2, 0.3]     # 实际比例在数据少时以地图独立性优先，报告中如实写
+  seed: 20261105
+  unit: map_id
+  forbid_test_in_calibration: true
+
+calibration_data:
+  seeds: [92001, 92002, 92003]
+  ps: [0.0, 0.05, 0.1, 0.2]
+  only_calib_val: true
+  recorder: phase1_simulate_mpc
+  saved_state: [s, v, mode, v_plan]
+  saved_events: [hold_start, resume, brake_start, brake_stop, pause_accepted,
+                 pause_rejected, infeasible_stop, creep_start, waypoint_arrival]
+
+m1_m2:
+  n_draws: 24
+  duration_semantics: travel_excl_pause
+  calibrate_at: p=0
+  leakage_guard: predictions_before_truth
+
+m3:
+  dt: 0.1
+  dt_slot: 0.4
+  states: [NORMAL, BRAKE, HOLD, RESTART]
+  rollout: vectorized_monte_carlo
+  n_samples_candidates: [100, 200, 400]
+  selection: validation_mae
+  model_seed_table: independent_of_truth
+  ablations:
+    - full
+    - no_braking
+    - no_modes
+    - no_speed
+  team_risk: joint_sample_any_pair
+  pair_sum_is_not_team_probability: true
+
+blind_test:
+  truth_seed0: 20280915
+  n_mc: 30
+  freeze_predictions_before_truth: true
+  metrics: [mae, rmse, bias, spearman, brier, reliability, top1, top3]
+  bootstrap_unit: task_id
+  bootstrap_samples: 4000
+
+dynamics_check:
+  p: 0.1
+  n_samples: 60
+  seed0: 20280977
+
+results:
+  phase1_smoke: results/Online_FirstHit_v2/01_mpc_benchmark_smoke
+  phase1_formal: results/Online_FirstHit_v2/02_mpc_benchmark
+  baselines: results/Online_FirstHit_v2/03_risk_baselines
+  m3: results/Online_FirstHit_v2/04_dynamic_risk_m3
