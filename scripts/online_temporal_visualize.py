@@ -75,11 +75,15 @@ def main() -> int:
     events = make_pause_events(args.seed, args.p, 4, T, cfg)
 
     methods = [
-        ("A 离线 W2+", w2, None),
-        ("B 简单在线", w0, SimpleConflictCoordinator(
+        ("原始等待", w0, None),
+        ("离线 W2+ 等待", w2, None),
+        ("简单在线冲突预测", w0, SimpleConflictCoordinator(
             paths, w0, d_safe, dt_slot, 3.0, args.p, {"hold_slots": 1})),
-        ("C First-Hit 在线", w0, OnlineFirstHitCoordinator(
+        ("First-Hit 在线调整", w0, OnlineFirstHitCoordinator(
             paths, w0, d_safe, dt_slot, 3.2, args.p, risk_model=risk,
+            config={"hold_slots": 1})),
+        ("离线 W2+ + First-Hit 在线", w2, OnlineFirstHitCoordinator(
+            paths, w2, d_safe, dt_slot, 3.2, args.p, risk_model=risk,
             config={"hold_slots": 1})),
     ]
     runs = []
@@ -89,7 +93,7 @@ def main() -> int:
                          coordinator=coord)
         runs.append((name, r))
 
-    fig, axes = plt.subplots(3, 2, figsize=(13, 12))
+    fig, axes = plt.subplots(len(methods), 2, figsize=(13, 4 * len(methods)))
     for row, (name, r) in enumerate(runs):
         ax = axes[row, 0]
         for i in range(4):
@@ -138,7 +142,7 @@ def main() -> int:
         ax.grid(alpha=0.25)
         ax.legend(fontsize=6, ncol=2)
 
-    fig.suptitle(f"A/B/C 典型 case：{args.task_id}  p={args.p}  seed={args.seed}",
+    fig.suptitle(f"五方法典型 case：{args.task_id}  p={args.p}  seed={args.seed}",
                  fontsize=13, y=0.995)
     fig.tight_layout()
     path = out / f"online_case_{args.task_id}_p{args.p}_seed{args.seed}.png"

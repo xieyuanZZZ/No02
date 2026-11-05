@@ -19,10 +19,12 @@ coordinator:
   # B
   conflict_margin_m: 0.15
   predict_dt: 0.1
-  B_horizon_s: 3.0
+  simple_horizon_s: 3.0
   stop_before_conflict_m: 0.10
-  # C
-  C_horizon_s: 3.2
+  eta_tie_s: 0.10
+  conflict_memory_s: 3.0
+  # First-Hit 在线
+  firsthit_horizon_s: 3.2
   lambda_time: 0.005
   min_risk_reduction: 0.02
   min_baseline_risk: 0.02
@@ -38,7 +40,8 @@ experiment:
   ps: [0.0, 0.05, 0.1, 0.2]
   n_mc: 30
   seed0: 20281115
-  methods: [A_w2plus, B_simple_online, C_online_firsthit]
+  methods: [raw_wait, offline_w2plus, simple_online_fixed, firsthit_online,
+            offline_plus_firsthit]
   diagnostic_orig: true
 
 notes:

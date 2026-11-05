@@ -76,7 +76,7 @@ def test_b_conflict_issues_legal_stop_action():
     paths = _cross_paths()
     waits = np.zeros((2, 31))
     execs = _execs(paths, waits, v0=[(1.0, 0.0), (0.0, 1.0)], steps=2)
-    obs = build_observation(execs, 0.2, 0.35, 0.4, 3.0, 0.0)
+    obs = build_observation(execs, 0.2, 0.35, 0.4, 3.0, 0.1)
     co = SimpleConflictCoordinator(paths, waits, 0.35, 0.4, 6.0, 0.0,
                                    {"hold_slots": 1})
     actions = co.decide(obs)
@@ -91,7 +91,7 @@ def test_b_no_feasible_stop_records_and_returns_empty():
     paths = _cross_paths()
     waits = np.zeros((2, 31))
     execs = _execs(paths, waits, v0=[(1.5, 0.0), (0.0, 1.5)], steps=1)
-    obs = build_observation(execs, 0.1, 0.35, 0.4, 3.0, 0.0)
+    obs = build_observation(execs, 0.1, 0.35, 0.4, 3.0, 0.1)
     co = SimpleConflictCoordinator(paths, waits, 0.35, 0.4, 3.0, 0.0,
                                    {"lookahead_m": 0.05})
     actions = co.decide(obs)
@@ -159,13 +159,13 @@ def test_simulator_runs_b_and_c_and_logs_runtime():
     b = SimpleConflictCoordinator(paths, waits, cfg.d_safe, cfg.dt_slot, 3.0, 0.1,
                                   {"hold_slots": 1})
     r_b = simulate_mpc(paths, waits, 0.1, cfg, seed=2, record=True, coordinator=b)
-    assert r_b.coordinator_name == "B_simple_online"
+    assert r_b.coordinator_name == "simple_conflict_online"
     assert r_b.coordinator_stats["n_decisions"] > 0
     assert r_b.coordinator_stats["mean_ms"] >= 0
     c = OnlineFirstHitCoordinator(paths, waits, cfg.d_safe, cfg.dt_slot, 3.2, 0.1,
                                   risk_model=risk, config={"hold_slots": 1})
     r_c = simulate_mpc(paths, waits, 0.1, cfg, seed=2, record=True, coordinator=c)
-    assert r_c.coordinator_name == "C_online_firsthit"
+    assert r_c.coordinator_name == "firsthit_online"
     assert r_c.coordinator_stats["n_decisions"] > 0
 
 

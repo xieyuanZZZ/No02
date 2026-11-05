@@ -61,21 +61,31 @@ def _w2plus_for_task(jt, n, risk, cfg, ti, budget_cfg):
     return res.wait.numpy(), float(res.hard_risk), elapsed, int(res.dp_evals)
 
 
-def _make_coordinator(method, paths, wait, d_safe, dt_slot, pause_p, risk, ccfg):
-    if method == "B_simple_online":
+METHODS = (
+    # (名称, 初始等待计划, Coordinator 类型)
+    ("raw_wait", "orig", None),
+    ("offline_w2plus", "w2plus", None),
+    ("simple_online_fixed", "orig", "simple"),
+    ("firsthit_online", "orig", "firsthit"),
+    ("offline_plus_firsthit", "w2plus", "firsthit"),
+)
+
+
+def _make_coordinator(kind, paths, wait, d_safe, dt_slot, pause_p, risk, ccfg):
+    if kind == "simple":
         return SimpleConflictCoordinator(
-            paths, wait, d_safe, dt_slot, ccfg["B_horizon_s"], pause_p,
+            paths, wait, d_safe, dt_slot, ccfg["simple_horizon_s"], pause_p,
             {**ccfg})
-    if method == "C_online_firsthit":
+    if kind == "firsthit":
         return OnlineFirstHitCoordinator(
-            paths, wait, d_safe, dt_slot, ccfg["C_horizon_s"], pause_p,
+            paths, wait, d_safe, dt_slot, ccfg["firsthit_horizon_s"], pause_p,
             risk_model=risk, config={**ccfg})
     return None
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default="results/Online_Temporal/03_ab_comparison")
+    ap.add_argument("--out", default="results/Online_Temporal_v2/01_pilot")
     ap.add_argument("--n4-tasks", type=int, default=8)
     ap.add_argument("--n-mc", type=int, default=30)
     ap.add_argument("--ps", default="0,0.05,0.1,0.2")
@@ -97,13 +107,13 @@ def main() -> int:
         args.n4_tasks = min(args.n4_tasks, 2)
         args.n_mc = min(args.n_mc, 2)
         ps = [0.1]
-    method_names = ["A_w2plus", "B_simple_online", "C_online_firsthit"]
+    method_names = [m[0] for m in METHODS]
     ccfg = dict(tcfg["coordinator"])
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     logger = get_logger("fhd.online_bench", out / "online_bench.log")
-    log_section(logger, "A/B/C 在线时序协调配对实验")
+    log_section(logger, "五方法在线时序协调配对实验")
 
     bank = json.loads((ROOT / "data" / "mpd_delay_plan_bank" / "plan_bank_n4.json")
                       .read_text(encoding="utf-8"))
@@ -122,7 +132,7 @@ def main() -> int:
         w0 = np.asarray(jt["baseline_wait"], dtype=np.float64)
         w2, hard, elapsed, dp_evals = _w2plus_for_task(
             jt, 4, risk, base, ti, tcfg["offline_w2plus"])
-        plans[jt["task_id"]] = {"orig": w0, "A_w2plus": w2}
+        plans[jt["task_id"]] = {"orig": w0, "w2plus": w2}
         plan_meta[jt["task_id"]] = {
             "w2plus_hard_risk": hard, "w2plus_elapsed_s": elapsed,
             "w2plus_dp_evals": dp_evals,
@@ -134,8 +144,6 @@ def main() -> int:
     for ti, jt in enumerate(tasks):
         tid = jt["task_id"]
         paths = np.asarray(trajs[tid], dtype=np.float64)
-        w0 = plans[tid]["orig"]
-        w2 = plans[tid]["A_w2plus"]
         obs, obs_meta = load_obstacles_for_map(str(jt.get("map_id", "")))
         for p in ps:
             for k in range(args.n_mc):
@@ -143,9 +151,9 @@ def main() -> int:
                 events = make_pause_events(seed, p, 4, T,
                                            MPCSimConfig(d_safe=d_safe,
                                                         horizon_steps=T))
-                for method in method_names:
-                    wait = w2 if method == "A_w2plus" else w0
-                    coord = _make_coordinator(method, paths, wait, d_safe,
+                for method, plan_key, kind in METHODS:
+                    wait = plans[tid][plan_key]
+                    coord = _make_coordinator(kind, paths, wait, d_safe,
                                               dt_slot, p, risk, ccfg)
                     r = simulate_mpc(paths, wait, p,
                                      MPCSimConfig(d_safe=d_safe, horizon_steps=T),
@@ -258,7 +266,7 @@ def main() -> int:
         return {t: a[t] - b[t] for t in common}
 
     summary = {
-        "stage": "online_temporal_ab_comparison",
+        "stage": "online_temporal_v2_pilot",
         "n_tasks": len(tasks), "n_mc": args.n_mc, "ps": ps,
         "methods": method_names,
         "plan_meta": plan_meta,
@@ -266,14 +274,19 @@ def main() -> int:
         "paired": {},
         "runtime": {"total_s": time.perf_counter() - t_start},
     }
+    comparisons = (
+        ("simple_online_fixed", "raw_wait"),
+        ("firsthit_online", "simple_online_fixed"),
+        ("firsthit_online", "offline_w2plus"),
+        ("offline_plus_firsthit", "offline_w2plus"),
+        ("offline_plus_firsthit", "firsthit_online"),
+    )
     for p in ps:
         summary["paired"][str(p)] = {}
-        for a, b in (("B_simple_online", "A_w2plus"),
-                     ("C_online_firsthit", "B_simple_online"),
-                     ("C_online_firsthit", "A_w2plus")):
+        for a, b in comparisons:
             summary["paired"][str(p)][f"{a}_minus_{b}"] = {}
             for metric in ("collision_rate", "safe_rate", "completion_mean_s",
-                           "total_wait_mean_s"):
+                           "total_wait_mean_s", "online_wait_mean_s"):
                 diffs = paired(a, b, p, metric)
                 summary["paired"][str(p)][f"{a}_minus_{b}"][metric] = \
                     bootstrap_task_ci(diffs, seed=7)

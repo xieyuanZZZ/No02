@@ -28,7 +28,7 @@ from fhd.risk.multi_pair import FirstHitRisk
 
 
 class OnlineFirstHitCoordinator(Coordinator):
-    name = "C_online_firsthit"
+    name = "firsthit_online"
 
     def __init__(self, paths, wait_slots, d_safe, dt_slot, horizon_s, pause_p,
                  risk_model: FirstHitRisk, config: dict | None = None):

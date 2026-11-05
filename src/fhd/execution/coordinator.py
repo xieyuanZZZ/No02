@@ -87,30 +87,75 @@ class Coordinator:
         raise NotImplementedError
 
     # ------------------------------------------------------------------ #
-    def future_progress(self, obs: Observation, robot_id: int, times: np.ndarray) -> np.ndarray:
-        """名义短时预测：当前速度沿路径外推，并不得越过下一计划停车点。
+    def future_progress(self, obs: Observation, robot_id: int, times: np.ndarray,
+                        extra_wait: dict | None = None) -> np.ndarray:
+        """名义短时预测：当前速度沿路径外推，**按已知计划等待恢复**。
 
-        明确近似：不预测未来随机暂停、不用真实未来轨迹；制动/等待中的机器人
-        视为停在当前进度；到下一计划等待点后保持静止（首个窗口内不预测恢复）。
+        语义（v2 修正）：
+          * NORMAL/RESTART：按当前速度走，遇到 `wait_slots>0` 的航点停车
+            `wait_slots*dt_slot`，等待结束后继续沿路径走；
+          * HOLD：先保持 `hold_remaining`，之后以 0.6 m/s 的名义速度恢复；
+          * BRAKE/CREEP：窗口内按静止处理（保守，不预测制动后的恢复）；
+          * `extra_wait={robot:(waypoint, slots)}` 用于动作前瞻：在指定航点
+            追加一次等待，然后继续按计划走。
+        不读取未来随机暂停事件或真实轨迹。
         """
         rb = obs.robots[robot_id]
-        s_now = rb.s
-        if rb.mode not in ("NORMAL", "RESTART") or rb.speed < 0.02:
-            return np.full_like(times, s_now, dtype=np.float64)
-        stops = np.where(self.wait_slots[robot_id] > 1e-9)[0]
-        stop_s = rb.length
-        for k in stops:
-            if self.s_wp[robot_id, k] > s_now + 0.01:
-                stop_s = min(stop_s, float(self.s_wp[robot_id, k]))
-                break
-        v = min(rb.speed, 1.5)
-        return np.minimum(s_now + v * times, stop_s)
+        times = np.asarray(times, dtype=np.float64)
+        s_now = float(rb.s)
+        out = np.full(times.shape, s_now, dtype=np.float64)
+        if rb.mode in ("BRAKE_DWELL", "BRAKE_PAUSE", "CREEP_DWELL"):
+            return out
 
-    def future_positions(self, obs: Observation, times: np.ndarray) -> np.ndarray:
-        """[T,N,2] 名义未来位置。"""
+        t_start = 0.0
+        if rb.mode == "HOLD":
+            t_start = max(float(rb.hold_remaining), 0.0)
+            v = 0.6
+            out[times <= t_start] = s_now
+        else:
+            v = min(float(rb.speed), 1.5)
+            if v < 0.02:
+                return out
+
+        extra = (extra_wait or {}).get(robot_id)
+        stops = []
+        for k in range(self.paths.shape[1] - 1):
+            if self.s_wp[robot_id, k] <= s_now + 0.01:
+                continue
+            hold = 0.0
+            if self.wait_slots[robot_id, k] > 1e-9:
+                hold = float(self.wait_slots[robot_id, k]) * self.dt_slot
+            if extra is not None and int(extra[0]) == k:
+                hold += float(extra[1]) * self.dt_slot
+            if hold > 1e-9:
+                stops.append((float(self.s_wp[robot_id, k]), hold))
+        stops.append((float(rb.length), 0.0))
+        stops.sort(key=lambda x: x[0])
+
+        s = s_now
+        cursor = t_start
+        for stop_s, hold in stops:
+            if stop_s <= s + 1e-9:
+                continue
+            travel = (stop_s - s) / max(v, 1e-9)
+            t_arr = cursor + travel
+            mask = (times >= cursor) & (times < t_arr)
+            out[mask] = s + v * (times[mask] - cursor)
+            mask = (times >= t_arr) & (times < t_arr + hold)
+            out[mask] = stop_s
+            cursor = t_arr + hold
+            s = stop_s
+            if cursor > times[-1] + 1e-9:
+                break
+        out[times >= cursor] = s
+        return np.clip(out, 0.0, rb.length)
+
+    def future_positions(self, obs: Observation, times: np.ndarray,
+                         extra_wait: dict | None = None) -> np.ndarray:
+        """[T,N,2] 名义未来位置（可带一台机器人的额外等待做动作前瞻）。"""
         out = np.zeros((len(times), len(obs.robots), 2))
         for i in range(len(obs.robots)):
-            s = self.future_progress(obs, i, times)
+            s = self.future_progress(obs, i, times, extra_wait)
             for k, sk in enumerate(s):
                 out[k, i] = self.s_to_position(self.paths[i], sk)
         return out
