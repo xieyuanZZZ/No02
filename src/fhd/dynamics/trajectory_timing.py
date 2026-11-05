@@ -101,26 +101,25 @@ class TimeParameterizedPath:
     # ------------------------------------------------------------------ #
 
     def _scheduled_speed_cap(self):
-        """由离散调度表 t_k = (k + Σw)·Δt 推出的位置-速度上限。
+        """由离散调度表推出的位置-速度上限。
 
-        离散执行模型假设每时隙推进一个航点，因此每段的平均速度是
-        Δs_k / Δt_k。MPC 若不受此限制，短段机器人会以 v_max 抢跑，
-        相对时序被破坏、p=0 的安全保证失效。这里把该速度作为**上限**，
-        只允许更慢（物理受限时自然变慢），不允许更快。
+        语义约定（阶段一 §1.2-7）：
+          * `w[k] = dwell[k]` 表示"到达航点 k 后、离开航点 k 前"的等待；
+          * 离散模型里两航点之间的**行驶**时间恒为 1 个时隙，
+            等待发生在航点处、由执行状态机停车实现，**不是**把等待
+            摊进相邻段的平均速度。
+        旧实现用 Δt_k = Δt_slot + dwell[k+1] 作为第 k 段的可用时间，
+        等于把"在 k+1 等待"提前摊到"k→k+1 的行驶"上，既改变了
+        原始 W2+ 等待计划的含义，又让机器人提前减速。这里改为
+        每段平均速度上限 = Δs_k / dt_slot；等待只由 `dwell` 与
+        状态机负责。
         """
         if not getattr(self, "use_schedule", True):
             return None
-        t_k = np.zeros(self.n_wp)
-        acc = 0.0
-        for k in range(self.n_wp):
-            if k > 0:
-                acc += float(self.dwell[k])
-            t_k[k] = k * self.p.dt_slot + acc
         cap = np.full(self.s_grid.shape, self.p.v_max)
         for k in range(self.n_wp - 1):
-            dt_seg = max(t_k[k + 1] - t_k[k], 1e-6)
             seg_len = max(self.s_wp[k + 1] - self.s_wp[k], 1e-9)
-            vavg = seg_len / dt_seg
+            vavg = seg_len / max(self.p.dt_slot, 1e-9)
             mask = (self.s_grid >= self.s_wp[k]) & (self.s_grid <= self.s_wp[k + 1])
             cap[mask] = np.minimum(cap[mask], vavg)
         return cap
@@ -152,31 +151,114 @@ class TimeParameterizedPath:
                 tot += float(self.dwell[k])
         return tot
 
-    def project(self, p: np.ndarray) -> float:
-        """把任意点投影到路径上，返回弧长（用于从实际位置估计进度）。"""
-        d = np.linalg.norm(self.waypoints[1:] - self.waypoints[:-1], axis=-1)
-        best, best_s = np.inf, 0.0
-        for k in range(self.n_wp - 1):
-            a, b = self.waypoints[k], self.waypoints[k + 1]
-            ab = b - a
-            L2 = float(ab @ ab)
-            if L2 < 1e-12:
-                continue
-            t = float(np.clip((p - a) @ ab / L2, 0.0, 1.0))
-            q = a + t * ab
-            dist = float(np.linalg.norm(p - q))
-            if dist < best:
-                best, best_s = dist, float(self.s_wp[k] + t * np.sqrt(L2))
-        return best_s
-
     def nominal_arrival_times(self) -> dict:
-        """无随机暂停时的**计划**到达时刻（含停车等待）。"""
-        t = 0.0
-        out = {"waypoint": [], "time": []}
+        """无随机暂停时的**计划**时刻（旧实现把累计时间重复累加，已修正）。
+
+        定义（与离散执行模型 `tau_m = m + Σ_{h<=m} w_h` 对齐）：
+          * `t_grid` 本身是**累计运动时间**，因此到航点 k 的运动时间为
+            `t_grid(s_wp[k])`，不能再把之前航点的 t_grid 累加一次；
+          * `arrival[k]  = t_grid(s_wp[k]) + Σ_{h<k} dwell[h]`
+            （到达航点 k、尚未等待的时刻）；
+          * `departure[k] = arrival[k] + dwell[k]`
+            （在航点 k 等待结束、准备离开的时刻）；
+          * `wait_before_arrival` / `wait_after_arrival` 两种定义都显式给出，
+            调用方不得混用。
+
+        返回字典包含：waypoint、arrival、departure、motion_time、
+        wait_before_arrival、wait_after_arrival、time（= arrival，兼容旧键）。
+        """
+        out = {"waypoint": [], "arrival": [], "departure": [], "motion_time": [],
+               "wait_before_arrival": [], "wait_after_arrival": [], "time": []}
+        cum_wait = 0.0
         for k in range(self.n_wp):
-            s = float(self.s_wp[k])
-            t += float(np.interp(s, self.s_grid, self.t_grid))
+            motion = float(np.interp(float(self.s_wp[k]), self.s_grid, self.t_grid))
+            arrival = motion + cum_wait
+            departure = arrival + float(self.dwell[k])
             out["waypoint"].append(k)
-            out["time"].append(t)
-            t += float(self.dwell[k])
+            out["motion_time"].append(motion)
+            out["wait_before_arrival"].append(cum_wait)
+            out["wait_after_arrival"].append(float(self.dwell[k]))
+            out["arrival"].append(arrival)
+            out["departure"].append(departure)
+            out["time"].append(arrival)      # 兼容旧接口：time = 到达时刻
+            cum_wait += float(self.dwell[k])
         return out
+
+    def scheduled_segment_durations(self) -> np.ndarray:
+        """离散名义调度下每段的**行驶**时间（单位：秒，不含航点等待）。"""
+        return np.full(max(self.n_wp - 1, 0), float(self.p.dt_slot))
+
+    def project(self, p: np.ndarray) -> float:
+        """把任意点投影到整条折线上，返回弧长（无历史约束的全局投影）。"""
+        s, _ = project_point_on_path(self.waypoints, self.s_wp, p, None, None)
+        return s
+
+
+def project_point_on_path(waypoints: np.ndarray, s_wp: np.ndarray, p: np.ndarray,
+                          s_prev: float | None = None,
+                          back_window: float | None = None,
+                          forward_window: float | None = None) -> tuple[float, float]:
+    """折线投影；给定 `s_prev` 时只在历史邻域内搜索，返回 (弧长, 横向误差)。
+
+    折线拐角、近距离平行段或自交路径上，全局最近点可能让进度倒跳。
+    这里把候选段限制在 `[s_prev - back_window, s_prev + forward_window]`，
+    再选择最近点；若最近点仍略小于 s_prev（数值噪声），夹回 s_prev。
+    真实倒车需调用方显式传入更大的 back_window。
+    """
+    p = np.asarray(p, dtype=np.float64)
+    best, best_s = np.inf, 0.0
+    lo = -np.inf if s_prev is None or back_window is None else float(s_prev) - float(back_window)
+    hi = np.inf if s_prev is None or forward_window is None else float(s_prev) + float(forward_window)
+    for k in range(len(waypoints) - 1):
+        s0, s1 = float(s_wp[k]), float(s_wp[k + 1])
+        if s1 < lo or s0 > hi:
+            continue
+        a, b = waypoints[k], waypoints[k + 1]
+        ab = b - a
+        L2 = float(ab @ ab)
+        if L2 < 1e-12:
+            continue
+        t = float(np.clip((p - a) @ ab / L2, 0.0, 1.0))
+        q = a + t * ab
+        dist = float(np.linalg.norm(p - q))
+        s_cand = s0 + t * np.sqrt(L2)
+        if dist < best - 1e-12:
+            best, best_s = dist, s_cand
+    if not np.isfinite(best):
+        # 没有任何段落入邻域：退化为全路径投影
+        return project_point_on_path(waypoints, s_wp, p, None, None)
+    if s_prev is not None:
+        best_s = max(best_s, float(s_prev) - 1e-9)
+    return float(best_s), float(best)
+
+
+class MonotoneProgress:
+    """带历史邻域约束的单调弧长进度跟踪器。
+
+    * `back_window` 允许很小的数值回退；正数时夹回上一进度；
+    * 需要真实倒车时显式设置 `allow_reverse=True` 并给出额外窗口；
+    * 同时保存横向误差，避免把错误投影误判为到达。
+    """
+
+    def __init__(self, path: TimeParameterizedPath, back_window: float = 0.15,
+                 forward_window: float = 1.2, allow_reverse: bool = False):
+        self.path = path
+        self.back_window = float(back_window)
+        self.forward_window = float(forward_window)
+        self.allow_reverse = bool(allow_reverse)
+        self.s = 0.0
+        self.lateral = 0.0
+
+    def reset(self, p: np.ndarray | None = None) -> float:
+        self.s, self.lateral = project_point_on_path(
+            self.path.waypoints, self.path.s_wp, np.zeros(2) if p is None else p)
+        return self.s
+
+    def update(self, p: np.ndarray) -> tuple[float, float]:
+        back = self.forward_window if self.allow_reverse else self.back_window
+        s, lat = project_point_on_path(self.path.waypoints, self.path.s_wp, p,
+                                       self.s, back, self.forward_window)
+        if not self.allow_reverse:
+            s = max(s, self.s)
+        self.s, self.lateral = float(s), float(lat)
+        return self.s, self.lateral
