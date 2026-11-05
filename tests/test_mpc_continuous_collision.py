@@ -41,6 +41,15 @@ def test_mid_interval_crossing_but_endpoints_safe():
     assert a == pytest.approx((1.0 - 0.35 / np.sqrt(2.0)) / 2.0, abs=1e-12)
 
 
+def test_endpoint_collision_and_tailgating():
+    # 端点才相遇：r0=(-2,0), dr=(2,0) -> alpha=0.825 首次进入 0.35
+    a = first_breach_alpha(np.array([-2.0, 0.0]), np.array([2.0, 0.0]), 0.35)
+    assert a == pytest.approx((2.0 - 0.35) / 2.0)
+    # 同向追尾：后车更快
+    a2 = first_breach_alpha(np.array([-1.0, 0.0]), np.array([1.2, 0.0]), 0.35)
+    assert a2 == pytest.approx((1.0 - 0.35) / 1.2, abs=1e-12)
+
+
 def test_parallel_motion_never_collides():
     assert first_breach_alpha(np.array([0.0, 1.0]), np.array([1.0, 0.0]), 0.35) is None
 
@@ -124,6 +133,35 @@ def test_all_pair_events_uses_same_time_grid():
     evs = all_pair_events(pos, np.array([0.0, 0.5]), [(0, 1)], 0.35)
     assert evs[0]["collision"]
     assert evs[0]["first_time"] == pytest.approx(0.325 * 0.5)
+
+
+def test_analytic_min_distance_matches_dense_sampling():
+    """解析相对运动最小距离与 2001 点数值采样在高频下吻合。"""
+    rng = np.random.default_rng(7)
+    for _ in range(20):
+        r0 = rng.normal(size=2) * 1.5
+        dr = rng.normal(size=2) * 1.5
+        d, _ = relative_min_distance(r0, dr)
+        u = np.linspace(0, 1, 2001)[:, None]
+        dense = np.linalg.norm(r0[None, :] + u * dr[None, :], axis=1).min()
+        assert abs(d - dense) < 2e-3
+
+
+def test_first_breach_matches_dense_first_crossing():
+    rng = np.random.default_rng(8)
+    for _ in range(20):
+        r0 = rng.normal(size=2) * 1.5
+        dr = rng.normal(size=2) * 2.0
+        a = first_breach_alpha(r0, dr, 0.35)
+        u = np.linspace(0, 1, 20001)
+        d = np.linalg.norm(r0[None, :] + u[:, None] * dr[None, :], axis=1)
+        hit = np.where(d < 0.35)[0]
+        dense_a = float(u[hit[0]]) if hit.size else None
+        if a is None:
+            assert dense_a is None or abs(dense_a - 0.0) < 1e-4
+        else:
+            assert dense_a is not None
+            assert abs(a - dense_a) < 2e-4
 
 
 def test_no_collision_reports_finite_min_distance():

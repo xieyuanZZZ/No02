@@ -555,8 +555,10 @@ class SingleRobotExecutor:
             self.sub_positions.append(self.x[:2].copy())
             self.sub_times.append(t0 + (j + 1) * self.di.p.dt)
         v = self.x[2:]
-        # 不做后处理速度裁剪：越界就如实计数（约束由 QP + 保守回退保证）
-        if np.abs(v).sum() > self.di.p.v_max * (1.0 + 1e-3):
+        # 不做后处理速度裁剪。物理速度界是欧氏 ||v||<=v_max；QP 内部用更保守的
+        # L1 球，但直接制动伺服可让 L1 超过 v_max 而 ||v|| 仍低于 v_max。
+        # 约束违反只按物理欧氏界计数，避免把保守多边形的松弛误报为越界。
+        if float(np.linalg.norm(v)) > self.di.p.v_max * (1.0 + 1e-3):
             self.constraint_violations += 1
 
         # ---------------- 3) 进度与航点事件 ----------------
