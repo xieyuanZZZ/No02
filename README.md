@@ -1,7 +1,13 @@
-﻿# First-Hit Risk-Guided Diffusion for 2D Multi-Robot Trajectory Planning
+# First-Hit Risk-Guided Diffusion for 2D Multi-Robot Trajectory Planning
 > **第二版方案执行报告（S0–S6）**：[docs/revised/06_final_report.md](docs/revised/06_final_report.md)
 
 > **审计与修复报告（第 1 轮）**：[docs/audit_fix/05_round1_report.md](docs/audit_fix/05_round1_report.md)
+
+> **Online First-Hit v2 阶段一（MPC 审计与可信基准）**：
+> [docs/Online_FirstHit_v2_阶段一_MPC审计与可信基准.md](docs/Online_FirstHit_v2_阶段一_MPC审计与可信基准.md)
+
+> **Online First-Hit v2 阶段二（动力学风险 M3 与冻结盲测）**：
+> [docs/Online_FirstHit_v2_阶段二_动力学风险建模与盲测.md](docs/Online_FirstHit_v2_阶段二_动力学风险建模与盲测.md)
 
 # 可微首次碰撞风险引导的二维多机器人扩散轨迹规划
 

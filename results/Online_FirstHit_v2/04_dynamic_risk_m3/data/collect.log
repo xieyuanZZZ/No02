@@ -1,0 +1,35 @@
+13:32:56 | INFO    | fhd.collect_risk | ==============================================================================
+13:32:56 | INFO    | fhd.collect_risk | M3 校准数据采集（仅 calib/val）
+13:32:56 | INFO    | fhd.collect_risk | ==============================================================================
+13:33:06 | INFO    | fhd.collect_risk | [N2] open_crossing_300000_pair02_11 校准数据完成
+13:33:18 | INFO    | fhd.collect_risk | [N2] open_crossing_300000_pair02_18 校准数据完成
+13:33:28 | INFO    | fhd.collect_risk | [N2] open_crossing_300000_pair02_21 校准数据完成
+13:33:37 | INFO    | fhd.collect_risk | [N2] open_crossing_300000_pair11_18 校准数据完成
+13:33:48 | INFO    | fhd.collect_risk | [N2] open_crossing_300000_pair11_21 校准数据完成
+13:33:58 | INFO    | fhd.collect_risk | [N2] open_crossing_300000_pair18_21 校准数据完成
+13:34:10 | INFO    | fhd.collect_risk | [N2] open_crossing_300003_pair02_22 校准数据完成
+13:34:23 | INFO    | fhd.collect_risk | [N2] open_crossing_300003_pair11_22 校准数据完成
+13:34:36 | INFO    | fhd.collect_risk | [N2] open_crossing_300003_pair17_22 校准数据完成
+13:34:50 | INFO    | fhd.collect_risk | [N2] open_crossing_300006_pair03_07 校准数据完成
+13:35:03 | INFO    | fhd.collect_risk | [N2] open_crossing_300006_pair03_18 校准数据完成
+13:35:17 | INFO    | fhd.collect_risk | [N2] open_crossing_300006_pair07_17 校准数据完成
+13:35:33 | INFO    | fhd.collect_risk | [N2] open_crossing_300006_pair07_18 校准数据完成
+13:35:49 | INFO    | fhd.collect_risk | [N2] open_crossing_300006_pair17_18 校准数据完成
+13:36:24 | INFO    | fhd.collect_risk | [N2] open_crossing_300015_pair03_15 校准数据完成
+13:36:58 | INFO    | fhd.collect_risk | [N2] open_crossing_300015_pair03_18 校准数据完成
+13:36:58 | INFO    | fhd.collect_risk | [N2] traces 保存：384 runs
+13:37:44 | INFO    | fhd.collect_risk | [N4] open_crossing_300006_n4_0 校准数据完成
+13:38:06 | INFO    | fhd.collect_risk | [N4] open_crossing_300006_n4_1 校准数据完成
+13:38:34 | INFO    | fhd.collect_risk | [N4] open_crossing_300009_n4_0 校准数据完成
+13:39:23 | INFO    | fhd.collect_risk | [N4] open_crossing_300009_n4_1 校准数据完成
+13:40:02 | INFO    | fhd.collect_risk | [N4] open_crossing_300018_n4_0 校准数据完成
+13:40:26 | INFO    | fhd.collect_risk | [N4] open_crossing_300018_n4_1 校准数据完成
+13:41:00 | INFO    | fhd.collect_risk | [N4] single_obstacle_300004_n4_0 校准数据完成
+13:41:33 | INFO    | fhd.collect_risk | [N4] single_obstacle_300004_n4_1 校准数据完成
+13:42:02 | INFO    | fhd.collect_risk | [N4] single_obstacle_300007_n4_0 校准数据完成
+13:42:35 | INFO    | fhd.collect_risk | [N4] single_obstacle_300007_n4_1 校准数据完成
+13:43:03 | INFO    | fhd.collect_risk | [N4] open_crossing_300015_n4_0 校准数据完成
+13:43:30 | INFO    | fhd.collect_risk | [N4] open_crossing_300015_n4_1 校准数据完成
+13:44:58 | INFO    | fhd.collect_risk | [N4] single_obstacle_300001_n4_0 校准数据完成
+13:46:32 | INFO    | fhd.collect_risk | [N4] single_obstacle_300001_n4_1 校准数据完成
+13:46:33 | INFO    | fhd.collect_risk | [N4] traces 保存：336 runs

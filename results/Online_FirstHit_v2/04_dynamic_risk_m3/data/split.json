@@ -1,0 +1,130 @@
+{
+  "2": {
+    "calib": [
+      "open_crossing_300000_pair02_11",
+      "open_crossing_300000_pair02_18",
+      "open_crossing_300000_pair02_21",
+      "open_crossing_300000_pair11_18",
+      "open_crossing_300000_pair11_21",
+      "open_crossing_300000_pair18_21",
+      "open_crossing_300003_pair02_22",
+      "open_crossing_300003_pair11_22",
+      "open_crossing_300003_pair17_22",
+      "open_crossing_300006_pair03_07",
+      "open_crossing_300006_pair03_18",
+      "open_crossing_300006_pair07_17",
+      "open_crossing_300006_pair07_18",
+      "open_crossing_300006_pair17_18"
+    ],
+    "val": [
+      "open_crossing_300015_pair03_15",
+      "open_crossing_300015_pair03_18"
+    ],
+    "test": [
+      "open_crossing_300009_pair02_04",
+      "open_crossing_300009_pair02_07",
+      "open_crossing_300009_pair02_13",
+      "open_crossing_300009_pair04_13",
+      "open_crossing_300009_pair07_13",
+      "open_crossing_300012_pair03_18",
+      "open_crossing_300012_pair03_22",
+      "open_crossing_300012_pair18_22"
+    ],
+    "maps": {
+      "calib": [
+        "open_crossing_300000",
+        "open_crossing_300003",
+        "open_crossing_300006"
+      ],
+      "val": [
+        "open_crossing_300015"
+      ],
+      "test": [
+        "open_crossing_300009",
+        "open_crossing_300012"
+      ]
+    },
+    "ratios_requested": [
+      0.5,
+      0.2,
+      0.3
+    ],
+    "seed": 20261107,
+    "counts": {
+      "calib": 14,
+      "val": 2,
+      "test": 8
+    },
+    "ratios_actual": {
+      "calib": 0.5833333333333334,
+      "val": 0.08333333333333333,
+      "test": 0.3333333333333333
+    },
+    "duplicate_geometry_across_splits": [],
+    "split_hash": "db85a664ef42e424"
+  },
+  "4": {
+    "calib": [
+      "open_crossing_300006_n4_0",
+      "open_crossing_300006_n4_1",
+      "open_crossing_300009_n4_0",
+      "open_crossing_300009_n4_1",
+      "open_crossing_300018_n4_0",
+      "open_crossing_300018_n4_1",
+      "single_obstacle_300004_n4_0",
+      "single_obstacle_300004_n4_1",
+      "single_obstacle_300007_n4_0",
+      "single_obstacle_300007_n4_1"
+    ],
+    "val": [
+      "open_crossing_300015_n4_0",
+      "open_crossing_300015_n4_1",
+      "single_obstacle_300001_n4_0",
+      "single_obstacle_300001_n4_1"
+    ],
+    "test": [
+      "open_crossing_300000_n4_0",
+      "open_crossing_300000_n4_1",
+      "open_crossing_300003_n4_0",
+      "open_crossing_300003_n4_1",
+      "open_crossing_300012_n4_0",
+      "open_crossing_300012_n4_1"
+    ],
+    "maps": {
+      "calib": [
+        "open_crossing_300006",
+        "open_crossing_300009",
+        "open_crossing_300018",
+        "single_obstacle_300004",
+        "single_obstacle_300007"
+      ],
+      "val": [
+        "open_crossing_300015",
+        "single_obstacle_300001"
+      ],
+      "test": [
+        "open_crossing_300000",
+        "open_crossing_300003",
+        "open_crossing_300012"
+      ]
+    },
+    "ratios_requested": [
+      0.5,
+      0.2,
+      0.3
+    ],
+    "seed": 20261109,
+    "counts": {
+      "calib": 10,
+      "val": 4,
+      "test": 6
+    },
+    "ratios_actual": {
+      "calib": 0.5,
+      "val": 0.2,
+      "test": 0.3
+    },
+    "duplicate_geometry_across_splits": [],
+    "split_hash": "ef575db0cb6e2105"
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "stage": "phase1_mpc_benchmark_v2",
+  "d_safe": 0.35,
+  "horizon_steps": 96,
+  "horizon_waypoints": 32,
+  "dt_s": 0.4,
+  "ps": [
+    0.0,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "n_mc": 30,
+  "seed0": 20270101,
+  "n2_tasks": 24,
+  "n4_tasks": 20,
+  "mpc": {
+    "dt_ctrl": 0.1,
+    "dt_dyn": 0.05,
+    "dt_slot": 0.4,
+    "horizon": 18,
+    "v_max": 1.5,
+    "a_max": 2.0,
+    "a_brake": 2.0,
+    "pause_mode": "fixed",
+    "pause_fixed_s": 0.4,
+    "collision": "continuous per dt_dyn substep"
+  },
+  "plans": [
+    "orig",
+    "w2plus"
+  ],
+  "w2plus": {
+    "lam_T": 0.05,
+    "max_evals": 300,
+    "restarts": 2
+  },
+  "base_config": {
+    "seed": 20261103,
+    "device": "auto",
+    "dtype": "float32",
+    "world": {
+      "width_m": 10.0,
+      "height_m": 10.0,
+      "grid_size": 64,
+      "robot_radius_m": 0.15,
+      "safety_margin_m": 0.05,
+      "clearance_margin_m": 0.03
+    },
+    "trajectory": {
+      "horizon": 32,
+      "dt_s": 0.4,
+      "max_speed_mps": 1.5,
+      "max_accel_mps2": 2.0
+    },
+    "execution": {
+      "horizon_steps": 96,
+      "pause_probability": 0.1,
+      "independent_agents": true,
+      "start_progress": 0,
+      "terminal_occupancy": true
+    },
+    "risk": {
+      "soft_collision_temperature_m": 0.025,
+      "soft_collision_kernel": "logistic",
+      "smoothstep_support_m": 0.05,
+      "probability_target": 0.05,
+      "hard_check": true,
+      "dtype_dp_validation": "float64",
+      "dtype_training": "float32",
+      "gate_beta": 0.25,
+      "gate_offset_c": 0.5,
+      "eps_num": 1e-12
+    },
+    "wait": {
+      "max_wait_per_point": 4.0,
+      "max_total_wait": 8.0,
+      "optimizer": "adam",
+      "lr": 0.1
+    },
+    "guidance": {
+      "lambda_R": 1.0,
+      "lambda_T": 0.05,
+      "lambda_S": 10.0,
+      "lambda_K": 1.0,
+      "lambda_G": 0.5,
+      "lambda_W": 0.01,
+      "lambda_tail_s": 2.0,
+      "grad_clip_norm": 1.0,
+      "endpoint_grad_mask": true
+    },
+    "diffusion": {
+      "horizon": 32,
+      "training_steps": 40000,
+      "smoke_steps": 600,
+      "batch_size": 96,
+      "grad_accum_steps": 1,
+      "lr": 0.0002,
+      "weight_decay": 0.0,
+      "beta_schedule": "cosine",
+      "prediction_type": "epsilon",
+      "ddim_sampling_steps": 40,
+      "ema_decay": 0.999,
+      "unet_channels": [
+        64,
+        128,
+        256
+      ],
+      "map_feature_dim": 128,
+      "cond_feature_dim": 128,
+      "time_feature_dim": 128,
+      "checkpoint_every": 2000,
+      "val_every": 1000,
+      "sample_every": 2000
+    },
+    "dataset": {
+      "astar_resolution": 256,
+      "train_maps": 200,
+      "train_tasks_per_map": 100,
+      "val_maps": 40,
+      "val_tasks_per_map": 50,
+      "test_maps": 50,
+      "test_tasks_per_map": 50,
+      "max_attempts_per_task": 40,
+      "simplify_tolerance_m": 0.08,
+      "min_path_length_m": 3.0,
+      "min_start_goal_dist_m": 3.5
+    },
+    "benchmark": {
+      "scale": 0.2,
+      "tasks_per_cell": 5,
+      "robot_counts": [
+        2,
+        4,
+        6
+      ],
+      "pause_probabilities": [
+        0.0,
+        0.05,
+        0.1,
+        0.2
+      ],
+      "execution_repeats": 30,
+      "mc_samples_risk_validation": 10000
+    },
+    "_config_path": "D:\\paper2\\configs\\base.yaml"
+  }
+}

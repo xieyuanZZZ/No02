@@ -1,0 +1,65 @@
+13:32:56 | INFO    | fhd.m1m2_v2 | ==============================================================================
+13:32:56 | INFO    | fhd.m1m2_v2 | M0/M1/M2 无泄漏对照（阶段二）
+13:32:56 | INFO    | fhd.m1m2_v2 | ==============================================================================
+13:32:56 | INFO    | fhd.m1m2_v2 | 切分：{2: {'calib': 14, 'val': 2, 'test': 8}, 4: {'calib': 10, 'val': 4, 'test': 6}}
+13:33:01 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300000_pair02_11 完成
+13:33:06 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300000_pair02_18 完成
+13:33:11 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300000_pair02_21 完成
+13:33:14 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300000_pair11_18 完成
+13:33:18 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300000_pair11_21 完成
+13:33:23 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300000_pair18_21 完成
+13:33:28 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300003_pair02_22 完成
+13:33:32 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300003_pair11_22 完成
+13:33:37 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300003_pair17_22 完成
+13:33:42 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300006_pair03_07 完成
+13:33:47 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300006_pair03_18 完成
+13:33:52 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300006_pair07_17 完成
+13:33:57 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300006_pair07_18 完成
+13:34:02 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300006_pair17_18 完成
+13:34:06 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300015_pair03_15 完成
+13:34:10 | INFO    | fhd.m1m2_v2 | [N2] 校准 open_crossing_300015_pair03_18 完成
+13:34:10 | INFO    | fhd.m1m2_v2 | [N2] 时长模型 alpha=1e-04 R2=0.980 train RMSE=0.028 val RMSE=0.026 覆盖=1.00
+13:34:26 | INFO    | fhd.m1m2_v2 | [N4] 校准 open_crossing_300006_n4_0 完成
+13:34:36 | INFO    | fhd.m1m2_v2 | [N4] 校准 open_crossing_300006_n4_1 完成
+13:34:46 | INFO    | fhd.m1m2_v2 | [N4] 校准 open_crossing_300009_n4_0 完成
+13:34:55 | INFO    | fhd.m1m2_v2 | [N4] 校准 open_crossing_300009_n4_1 完成
+13:35:11 | INFO    | fhd.m1m2_v2 | [N4] 校准 open_crossing_300018_n4_0 完成
+13:35:20 | INFO    | fhd.m1m2_v2 | [N4] 校准 open_crossing_300018_n4_1 完成
+13:35:38 | INFO    | fhd.m1m2_v2 | [N4] 校准 single_obstacle_300004_n4_0 完成
+13:36:12 | INFO    | fhd.m1m2_v2 | [N4] 校准 single_obstacle_300004_n4_1 完成
+13:36:31 | INFO    | fhd.m1m2_v2 | [N4] 校准 single_obstacle_300007_n4_0 完成
+13:36:47 | INFO    | fhd.m1m2_v2 | [N4] 校准 single_obstacle_300007_n4_1 完成
+13:36:55 | INFO    | fhd.m1m2_v2 | [N4] 校准 open_crossing_300015_n4_0 完成
+13:37:03 | INFO    | fhd.m1m2_v2 | [N4] 校准 open_crossing_300015_n4_1 完成
+13:37:19 | INFO    | fhd.m1m2_v2 | [N4] 校准 single_obstacle_300001_n4_0 完成
+13:37:34 | INFO    | fhd.m1m2_v2 | [N4] 校准 single_obstacle_300001_n4_1 完成
+13:37:34 | INFO    | fhd.m1m2_v2 | [N4] 时长模型 alpha=1e-02 R2=0.967 train RMSE=0.042 val RMSE=0.034 覆盖=1.00
+13:37:42 | INFO    | fhd.m1m2_v2 | [N2] 冻结预测 open_crossing_300009_pair02_04
+13:37:50 | INFO    | fhd.m1m2_v2 | [N2] 冻结预测 open_crossing_300009_pair02_07
+13:37:57 | INFO    | fhd.m1m2_v2 | [N2] 冻结预测 open_crossing_300009_pair02_13
+13:38:04 | INFO    | fhd.m1m2_v2 | [N2] 冻结预测 open_crossing_300009_pair04_13
+13:38:09 | INFO    | fhd.m1m2_v2 | [N2] 冻结预测 open_crossing_300009_pair07_13
+13:38:18 | INFO    | fhd.m1m2_v2 | [N2] 冻结预测 open_crossing_300012_pair03_18
+13:38:26 | INFO    | fhd.m1m2_v2 | [N2] 冻结预测 open_crossing_300012_pair03_22
+13:38:34 | INFO    | fhd.m1m2_v2 | [N2] 冻结预测 open_crossing_300012_pair18_22
+13:38:47 | INFO    | fhd.m1m2_v2 | [N4] 冻结预测 open_crossing_300000_n4_0
+13:39:03 | INFO    | fhd.m1m2_v2 | [N4] 冻结预测 open_crossing_300000_n4_1
+13:39:24 | INFO    | fhd.m1m2_v2 | [N4] 冻结预测 open_crossing_300003_n4_0
+13:39:36 | INFO    | fhd.m1m2_v2 | [N4] 冻结预测 open_crossing_300003_n4_1
+13:39:55 | INFO    | fhd.m1m2_v2 | [N4] 冻结预测 open_crossing_300012_n4_0
+13:40:18 | INFO    | fhd.m1m2_v2 | [N4] 冻结预测 open_crossing_300012_n4_1
+13:40:18 | INFO    | fhd.m1m2_v2 | 预测冻结 SHA256=845f279bd87169fb（163.3s）
+13:41:39 | INFO    | fhd.m1m2_v2 | [N2] 真值 open_crossing_300009_pair02_04 完成
+13:43:01 | INFO    | fhd.m1m2_v2 | [N2] 真值 open_crossing_300009_pair02_07 完成
+13:44:19 | INFO    | fhd.m1m2_v2 | [N2] 真值 open_crossing_300009_pair02_13 完成
+13:45:39 | INFO    | fhd.m1m2_v2 | [N2] 真值 open_crossing_300009_pair04_13 完成
+13:46:55 | INFO    | fhd.m1m2_v2 | [N2] 真值 open_crossing_300009_pair07_13 完成
+13:48:05 | INFO    | fhd.m1m2_v2 | [N2] 真值 open_crossing_300012_pair03_18 完成
+13:49:08 | INFO    | fhd.m1m2_v2 | [N2] 真值 open_crossing_300012_pair03_22 完成
+13:50:16 | INFO    | fhd.m1m2_v2 | [N2] 真值 open_crossing_300012_pair18_22 完成
+13:52:43 | INFO    | fhd.m1m2_v2 | [N4] 真值 open_crossing_300000_n4_0 完成
+13:55:04 | INFO    | fhd.m1m2_v2 | [N4] 真值 open_crossing_300000_n4_1 完成
+13:58:00 | INFO    | fhd.m1m2_v2 | [N4] 真值 open_crossing_300003_n4_0 完成
+14:00:54 | INFO    | fhd.m1m2_v2 | [N4] 真值 open_crossing_300003_n4_1 完成
+14:03:52 | INFO    | fhd.m1m2_v2 | [N4] 真值 open_crossing_300012_n4_0 完成
+14:06:46 | INFO    | fhd.m1m2_v2 | [N4] 真值 open_crossing_300012_n4_1 完成

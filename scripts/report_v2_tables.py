@@ -44,7 +44,7 @@ def phase1_table(s: dict) -> str:
 
 
 def paired_table(s: dict) -> str:
-    lines = ["| 组 | p | 任务数 | W2+ − 原始（D2 碰撞率） | 95% 区间 |",
+    lines = ["| 组 | p | 任务数 | W2+ - 原始（D2 碰撞率） | 95% 区间 |",
              "|---|---:|---:|---:|---|"]
     for g in ("N2", "N4"):
         for p, v in s["paired_w2plus_minus_orig"][g].items():
@@ -137,30 +137,27 @@ def main() -> int:
     ap.add_argument("--phase1", default="results/Online_FirstHit_v2/02_mpc_benchmark")
     ap.add_argument("--baselines", default="results/Online_FirstHit_v2/03_risk_baselines")
     ap.add_argument("--m3", default="results/Online_FirstHit_v2/04_dynamic_risk_m3")
+    ap.add_argument("--out", default=None)
     args = ap.parse_args()
     p1 = _load(Path(args.phase1) / "summary.json")
     m12 = _load(Path(args.baselines) / "summary.json")
     m3 = _load(Path(args.m3) / "summary.json")
-    print("## 阶段一：D1/D2 分组结果\n")
-    print(phase1_table(p1))
-    print("\n## 阶段一：W2+ 配对差\n")
-    print(paired_table(p1))
-    print("\n## M0/M1/M2（无泄漏）\n")
-    print(m1m2_table(m12))
-    print()
-    print(m1m2_groups(m12))
-    print("\n## M0–M3 冻结盲测\n")
-    print(m3_table(m3))
-    print()
-    print(m3_groups(m3))
-    print("\n## 任务级 bootstrap\n")
-    print(m3_bootstrap(m3))
-    print("\n## M3 消融\n")
-    print(m3_ablation(m3))
-    print("\n## Top-K / 团队 / 开销\n")
-    print(json.dumps({"top1": m3["top1_hit_rate"], "top3": m3["top3_hit_rate"],
-                      "team": m3["team"], "runtime": m3["runtime"]},
-                     ensure_ascii=False, indent=2))
+    lines = ["## 阶段一：D1/D2 分组结果\n", phase1_table(p1),
+             "\n## 阶段一：W2+ 配对差\n", paired_table(p1),
+             "\n## M0/M1/M2（无泄漏）\n", m1m2_table(m12), "\n", m1m2_groups(m12),
+             "\n## M0-M3 冻结盲测\n", m3_table(m3), "\n", m3_groups(m3),
+             "\n## 任务级 bootstrap\n", m3_bootstrap(m3),
+             "\n## M3 消融\n", m3_ablation(m3),
+             "\n## Top-K / 团队 / 开销\n",
+             json.dumps({"top1": m3["top1_hit_rate"], "top3": m3["top3_hit_rate"],
+                         "team": m3["team"], "runtime": m3["runtime"]},
+                        ensure_ascii=False, indent=2)]
+    text = "\n".join(lines)
+    if args.out:
+        Path(args.out).write_text(text, encoding="utf-8")
+        print(f"写出：{args.out}")
+    else:
+        print(text)
     return 0
 
 

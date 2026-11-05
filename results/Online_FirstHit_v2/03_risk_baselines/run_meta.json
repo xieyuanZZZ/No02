@@ -1,0 +1,10 @@
+{
+  "command": "scripts\\m1_time_corrected_risk.py --out results\\Online_FirstHit_v2\\03_risk_baselines --n-mc 30 --n-draws 24 --ps 0,0.05,0.1,0.2",
+  "generated_at": "2026-11-05T14:06:47+0800",
+  "ratios_requested": [
+    0.5,
+    0.2,
+    0.3
+  ],
+  "total_s": 1752.1224385000532
+}

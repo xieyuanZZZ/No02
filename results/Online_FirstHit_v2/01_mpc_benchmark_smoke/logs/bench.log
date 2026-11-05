@@ -1,0 +1,19 @@
+13:23:52 | INFO    | fhd.mpc_bench_v2 | ==============================================================================
+13:23:52 | INFO    | fhd.mpc_bench_v2 | 阶段一 MPC 动力学执行基准 v2
+13:23:52 | INFO    | fhd.mpc_bench_v2 | ==============================================================================
+13:24:06 | INFO    | fhd.mpc_bench_v2 | [N2] open_crossing_300000_pair02_11 完成：2 plan × 3 p × 6 MC
+13:24:21 | INFO    | fhd.mpc_bench_v2 | [N2] open_crossing_300000_pair02_18 完成：2 plan × 3 p × 6 MC
+13:24:36 | INFO    | fhd.mpc_bench_v2 | [N2] open_crossing_300000_pair02_21 完成：2 plan × 3 p × 6 MC
+13:24:49 | INFO    | fhd.mpc_bench_v2 | [N2] open_crossing_300000_pair11_18 完成：2 plan × 3 p × 6 MC
+13:25:03 | INFO    | fhd.mpc_bench_v2 | [N2] open_crossing_300000_pair11_21 完成：2 plan × 3 p × 6 MC
+13:25:20 | INFO    | fhd.mpc_bench_v2 | [N2] open_crossing_300000_pair18_21 完成：2 plan × 3 p × 6 MC
+13:25:38 | INFO    | fhd.mpc_bench_v2 | [N2] open_crossing_300003_pair02_22 完成：2 plan × 3 p × 6 MC
+13:25:58 | INFO    | fhd.mpc_bench_v2 | [N2] open_crossing_300003_pair11_22 完成：2 plan × 3 p × 6 MC
+13:26:35 | INFO    | fhd.mpc_bench_v2 | [N4] open_crossing_300000_n4_0 完成：2 plan × 3 p × 6 MC
+13:27:13 | INFO    | fhd.mpc_bench_v2 | [N4] open_crossing_300000_n4_1 完成：2 plan × 3 p × 6 MC
+13:27:59 | INFO    | fhd.mpc_bench_v2 | [N4] open_crossing_300003_n4_0 完成：2 plan × 3 p × 6 MC
+13:28:31 | INFO    | fhd.mpc_bench_v2 | [N4] open_crossing_300003_n4_1 完成：2 plan × 3 p × 6 MC
+13:29:32 | INFO    | fhd.mpc_bench_v2 | [N4] open_crossing_300006_n4_0 完成：2 plan × 3 p × 6 MC
+13:30:08 | INFO    | fhd.mpc_bench_v2 | [N4] open_crossing_300006_n4_1 完成：2 plan × 3 p × 6 MC
+13:30:49 | INFO    | fhd.mpc_bench_v2 | [N4] open_crossing_300009_n4_0 完成：2 plan × 3 p × 6 MC
+13:31:25 | INFO    | fhd.mpc_bench_v2 | [N4] open_crossing_300009_n4_1 完成：2 plan × 3 p × 6 MC
