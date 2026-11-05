@@ -1,0 +1,72 @@
+{
+  "command": "scripts\\online_temporal_benchmark.py --out results\\Online_Temporal_v2\\03_full_n4 --n4-tasks 20 --n-mc 10 --ps 0,0.05,0.1,0.2",
+  "config": {
+    "stage": "online_temporal_coordination",
+    "seed": 20281101,
+    "execution": {
+      "dt_ctrl": 0.1,
+      "dt_slot": 0.4,
+      "horizon_steps": 96,
+      "d_safe": 0.35,
+      "pause_mode": "fixed",
+      "pause_fixed_s": 0.4
+    },
+    "coordinator": {
+      "lookahead_m": 2.0,
+      "hold_slots": 1,
+      "cooldown_s": 1.2,
+      "max_online_waits": 6,
+      "decision_budget_s": 0.4,
+      "conflict_margin_m": 0.15,
+      "predict_dt": 0.1,
+      "simple_horizon_s": 3.0,
+      "stop_before_conflict_m": 0.1,
+      "eta_tie_s": 0.1,
+      "conflict_memory_s": 3.0,
+      "firsthit_horizon_s": 3.2,
+      "lambda_time": 0.005,
+      "min_risk_reduction": 0.02,
+      "min_baseline_risk": 0.02,
+      "max_candidates_per_robot": 2
+    },
+    "offline_w2plus": {
+      "lam_T": 0.05,
+      "max_evals": 300,
+      "restarts": 2
+    },
+    "experiment": {
+      "n4_tasks": 8,
+      "ps": [
+        0.0,
+        0.05,
+        0.1,
+        0.2
+      ],
+      "n_mc": 30,
+      "seed0": 20281115,
+      "methods": [
+        "raw_wait",
+        "offline_w2plus",
+        "simple_online_fixed",
+        "firsthit_online",
+        "offline_plus_firsthit"
+      ],
+      "diagnostic_orig": true
+    },
+    "notes": {
+      "A": "离线 W2+，执行期不看实时状态、不重新优化",
+      "B": "原始等待 + 简单在线冲突预测/固定优先级让行",
+      "C": "原始等待 + 当前状态条件化 First-Hit 有限搜索",
+      "fairness": "A/B/C 共用冻结路径、MPC 参数、预生成外部暂停事件表、d_safe、时域"
+    }
+  },
+  "seed0": 20281115,
+  "n_mc": 10,
+  "ps": [
+    0.0,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "generated_at": "2026-11-05T22:49:12+0800"
+}
