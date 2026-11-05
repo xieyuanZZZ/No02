@@ -1,0 +1,44 @@
+# 阶段一（P0-v2）：MPC、执行时序、连续碰撞与可信基准的固定参数
+# 所有实验必须从本文件 + configs/base.yaml 读取，不允许在脚本里散落硬编码。
+stage: phase1_mpc_benchmark_v2
+seed: 20270101
+
+mpc:
+  dt_ctrl: 0.1
+  dt_dyn: 0.05
+  dt_slot: 0.4
+  horizon: 18
+  v_max: 1.5
+  a_max: 2.0
+  a_brake: 2.0
+  osqp_eps: 1.0e-4
+  osqp_max_iter: 4000
+  stop_speed_threshold: 0.03
+  stop_distance_tolerance: 0.02
+  creep_speed_mps: 0.12
+
+collision:
+  mode: continuous            # continuous | legacy_4point（仅兼容旧结果）
+  d_safe_m: 0.35
+  static_obstacles: evaluated_if_map_available
+
+execution:
+  horizon_steps: 96
+  pause_mode: fixed
+  pause_fixed_s: 0.4
+  event_semantics: pre_generated_per_slot
+
+benchmark:
+  smoke:
+    n2_tasks: 8
+    n4_tasks: 8
+    n_mc: 6
+    ps: [0.0, 0.1, 0.2]
+  formal:
+    n2_tasks: 24
+    n4_tasks: 20
+    n_mc: 30
+    ps: [0.0, 0.05, 0.1, 0.2]
+  paired_seeds: true
+  wilson_ci: true
+  task_bootstrap: true

@@ -44,3 +44,7 @@ Thumbs.db
 # pytest ��ʱĿ¼
 pytest-of-*/
 .pytest_tmp/
+
+# 阶段二校准原始事件（体积大，可由 collect_execution_risk_data.py 重建）
+results/**/data/events.jsonl
+results/**/data/traces_*.npz

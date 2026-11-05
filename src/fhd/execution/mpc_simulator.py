@@ -1,15 +1,20 @@
-"""多机器人 MPC 动力学执行模拟器（D2 模型，修复版）。
+"""多机器人 MPC 动力学执行模拟器（D2 模型，阶段一 v2）。
 
 与理想离散模拟器（D1）的区别：
   * 机器人有速度/加速度/制动能力，暂停需要减速过程；
-  * 位置连续，碰撞按**连续相对运动**判据（含子步插值）计算；
+  * 位置连续，碰撞按**每个动力学子步区间的连续相对运动**判据计算
+    （`geometry.continuous_collision`），不是 4 点离散采样；
   * 暂停事件在时隙边界以概率 p 触发，暂停期间不重复触发（冷却）。
 
-修复要点（对应实施安排 §3.3 / §3.4 / §3.5）：
-  1. **每对机器人分别记录**是否碰撞、首次碰撞时刻、最小距离（N=4 共 6 对）；
-  2. 即使 `record=False` 也**在线累计**跟踪误差、速度、加速度、进度；
-  3. 暂停事件序列**预先按种子生成**，与调度方法无关，保证公平；
-  4. 记录请求 / 接受 / 制动开始 / 停稳 / 恢复的时间。
+统计口径（阶段一 §1.4）：
+  * `mean_solve_ms` 由**全程所有 MPC 调用**汇总，并给 P50/P95/P99、
+    失败率、不可行次数；`record=False` 只影响轨迹是否保存，不改变统计；
+  * `completion_time` 区分真实完成时间与超时截断的观测时域；
+  * `pair_collision`（逐对）、`team_collision`（全队任意一对）、
+    `safe_completion`（无碰撞且全部到达）、`timeout`、`infeasible_stop`、
+    `constraint_violation` 分开报告；两两风险之和不是全队碰撞概率；
+  * 静态障碍：能按 map_id 载入地图时，用机器人圆盘沿**实际轨迹扫掠**
+    检查障碍碰撞与最小净空；载入不到时显式标 `not_evaluated`。
 
 D1 与 D2 是不同的随机执行模型，二者差异不能解释为某个调度算法更好。
 """
@@ -19,11 +24,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import numpy as np
+import torch
 
 from fhd.control.linear_mpc import MPCParams
 from fhd.dynamics.double_integrator import DoubleIntegrator, DoubleIntegratorParams
 from fhd.dynamics.trajectory_timing import TimeParameterizedPath, TimingParams
 from fhd.execution.mpc_executor import SingleRobotExecutor
+from fhd.geometry.continuous_collision import first_breach_alpha, relative_min_distance
+from fhd.geometry.primitives import Obstacles, segment_obstacle_distance
 
 
 @dataclass
@@ -39,7 +47,9 @@ class MPCSimConfig:
     pause_mode: str = "fixed"        # fixed | exponential
     pause_mean_s: float = 0.4
     pause_fixed_s: float = 0.4
-    n_sub_collision: int = 4         # 每个控制步的碰撞子采样数
+    n_sub_collision: int | None = None   # 兼容旧参数；None = 连续检测（正式评测）
+    robot_radius: float = 0.15
+    clearance_margin: float = 0.03
 
 
 @dataclass
@@ -50,6 +60,9 @@ class SimResult:
     first_collision_pair: tuple | None
     all_arrived: bool
     completion_time: float
+    time_censored: bool = False
+    timeout: bool = False
+    safe_completion: bool = False
     # 每对
     pair_collision: np.ndarray = None
     pair_first_time: np.ndarray = None
@@ -58,23 +71,39 @@ class SimResult:
     # 事件
     pause_requests: int = 0
     pause_accepted: int = 0
+    pause_rejected: int = 0
     pause_events: list = field(default_factory=list)
     # 时间分解
     extra_brake_time: float = 0.0
     actual_wait_time: float = 0.0
+    random_hold_time: float = 0.0
     infeasible_stops: int = 0
     # 跟踪
     tracking_rmse: float = 0.0
     tracking_max: float = 0.0
+    lateral_error_max: float = 0.0
     max_speed: float = 0.0
     max_accel: float = 0.0
     mean_solve_ms: float = 0.0
+    solve_stats: dict = field(default_factory=dict)
     mpc_failures: int = 0
     constraint_violations: int = 0
+    # 航点/段账本
+    waypoint_stats: list | None = None
+    segment_times: list | None = None
+    n_steps_executed: int = 0
+    # 静态障碍
+    static_obstacle_status: str = "not_evaluated"
+    static_obstacle_meta: dict = field(default_factory=dict)
+    obstacle_collision: bool | None = None
+    min_obstacle_clearance: float | None = None
     # 可选全轨迹
     trajectories: np.ndarray | None = None
     modes: np.ndarray | None = None
-    segment_times: list | None = None          # 每台机器人每段的实测通行时间
+    s_trace: np.ndarray | None = None
+    v_trace: np.ndarray | None = None
+    robot_events: list | None = None
+    event_log: list | None = None
 
 
 def make_pause_events(seed: int, pause_p: float, n_robots: int, n_slots: int,
@@ -97,11 +126,32 @@ def make_pause_events(seed: int, pause_p: float, n_robots: int, n_slots: int,
     return events
 
 
+def _percentiles(times: list[float]) -> dict:
+    t = np.asarray(times, dtype=np.float64)
+    if t.size == 0:
+        return {"n_solves": 0, "mean_ms": 0.0, "p50_ms": 0.0, "p95_ms": 0.0,
+                "p99_ms": 0.0, "max_ms": 0.0}
+    return {
+        "n_solves": int(t.size),
+        "mean_ms": float(t.mean() * 1e3),
+        "p50_ms": float(np.percentile(t, 50) * 1e3),
+        "p95_ms": float(np.percentile(t, 95) * 1e3),
+        "p99_ms": float(np.percentile(t, 99) * 1e3),
+        "max_ms": float(t.max() * 1e3),
+    }
+
+
 def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
                  cfg: MPCSimConfig, seed: int = 0, record: bool = True,
-                 events: list | None = None) -> SimResult:
+                 events: list | None = None,
+                 obstacles: Obstacles | None = None,
+                 obstacle_meta: dict | None = None) -> SimResult:
     """paths_m: [N,H,2]（米制）；wait_slots: [N,H-1]（时隙）。"""
+    paths_m = np.asarray(paths_m, dtype=np.float64)
+    wait_slots = np.asarray(wait_slots, dtype=np.float64)
     n, H, _ = paths_m.shape
+    if wait_slots.shape != (n, H - 1):
+        raise ValueError(f"wait_slots 形状应为 {(n, H - 1)}，实际 {wait_slots.shape}")
     pairs = [(i, j) for i in range(n) for j in range(i + 1, n)]
     n_pairs = len(pairs)
     di = DoubleIntegrator(DoubleIntegratorParams(
@@ -130,16 +180,30 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
     n_ctrl = int(np.ceil(T_total / cfg.dt_ctrl))
     traj = np.zeros((n_ctrl, n, 2)) if record else None
     mode_rec = np.zeros((n_ctrl, n), dtype=np.int8) if record else None
+    s_rec = np.zeros((n_ctrl, n)) if record else None
+    v_rec = np.zeros((n_ctrl, n)) if record else None
 
     pair_coll = np.zeros(n_pairs, dtype=bool)
     pair_first = np.full(n_pairs, np.nan)
     pair_min = np.full(n_pairs, np.inf)
-
     collision = False
-    first_t, first_pair = None, None
-    prev_pos = np.stack([e.x[:2] for e in execs])
+
+    # 初始时刻 t=0 的重叠也必须检测
+    pos0 = np.stack([e.x[:2] for e in execs])
+    for pi, (i, j) in enumerate(pairs):
+        d0 = float(np.linalg.norm(pos0[i] - pos0[j]))
+        pair_min[pi] = min(pair_min[pi], d0)
+        if d0 < cfg.d_safe:
+            pair_coll[pi] = True
+            pair_first[pi] = 0.0
+
+    prev_pos = pos0
     k_end = 0
     accepted_events = []
+    event_log: list = []
+    sub_dt = float(cfg.dt_dyn)
+    n_sub = max(int(round(cfg.dt_ctrl / sub_dt)), 1)
+    min_clear = np.inf
 
     for k in range(n_ctrl):
         t = k * cfg.dt_ctrl
@@ -154,27 +218,39 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
                 accepted_events.append((t, i, reqs[i], bool(ok)))
             execs[i].step()
 
+        # 逐步收集子步位置（用于连续碰撞与静态障碍扫掠）
         cur_pos = np.stack([e.x[:2] for e in execs])
         if record:
             traj[k] = cur_pos
             mode_rec[k] = np.array([{"NORMAL": 0, "BRAKE_DWELL": 1, "BRAKE_PAUSE": 2,
-                                     "HOLD": 3}[e.mode] for e in execs])
-        for sub in range(cfg.n_sub_collision):
-            a = prev_pos + (cur_pos - prev_pos) * (sub / cfg.n_sub_collision)
-            ts = t - cfg.dt_ctrl + sub * cfg.dt_ctrl / cfg.n_sub_collision
-            for pi, (i, j) in enumerate(pairs):
-                dij = float(np.linalg.norm(a[i] - a[j]))
-                if dij < pair_min[pi]:
-                    pair_min[pi] = dij
-                if dij < cfg.d_safe:
-                    if not pair_coll[pi]:
+                                     "HOLD": 3, "CREEP_DWELL": 4}[e.mode] for e in execs])
+            s_rec[k] = [e.s_act for e in execs]
+            v_rec[k] = [float(np.linalg.norm(e.x[2:])) for e in execs]
+        # 每个执行器的子步位置必须同长且时间一致
+        for j in range(n_sub):
+            t_edge = t + (j + 1) * sub_dt
+            cur_sub = np.stack([e.sub_positions[j] for e in execs])
+            for pi, (i, jj) in enumerate(pairs):
+                r0 = prev_pos[i] - prev_pos[jj]
+                dr = (cur_sub[i] - prev_pos[i]) - (cur_sub[jj] - prev_pos[jj])
+                d, _ = relative_min_distance(r0, dr)
+                if d < pair_min[pi]:
+                    pair_min[pi] = d
+                if not pair_coll[pi]:
+                    a_hit = first_breach_alpha(r0, dr, cfg.d_safe)
+                    if a_hit is not None:
+                        th = t_edge - sub_dt + a_hit * sub_dt
                         pair_coll[pi] = True
-                        pair_first[pi] = ts
-                    if not collision:
-                        collision = True
-                        first_t = ts
-                        first_pair = (i, j)
-        prev_pos = cur_pos
+                        pair_first[pi] = float(th)
+            if obstacles is not None:
+                a = torch.tensor(prev_pos, dtype=torch.float64)
+                b = torch.tensor(cur_sub, dtype=torch.float64)
+                dist = segment_obstacle_distance(a, b, obstacles).numpy()
+                clear = float(np.min(dist)) - (cfg.robot_radius + cfg.clearance_margin)
+                if clear < min_clear:
+                    min_clear = clear
+            prev_pos = cur_sub
+
         k_end = k + 1
         if all(e.done for e in execs):
             break
@@ -182,24 +258,101 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
     if record and k_end > 0:
         traj = traj[:k_end]
         mode_rec = mode_rec[:k_end]
-    comp = max(e.t for e in execs)
+        s_rec = s_rec[:k_end]
+        v_rec = v_rec[:k_end]
+
+    for e in execs:
+        if not e.done:
+            e.mark_censored(T_total)
+
+    # 全队首次碰撞 = 各对首次事件中的最小值（含 t=0 初始重叠）
+    collision = bool(pair_coll.any())
+    first_t, first_pair = None, None
+    if collision:
+        finite = np.isfinite(pair_first)
+        if finite.any():
+            idx = int(np.argmin(np.where(finite, pair_first, np.inf)))
+            first_t = float(pair_first[idx])
+            first_pair = pairs[idx]
+
+    all_done = all(e.done for e in execs)
+    if all_done:
+        finishes = [e.finish_time for e in execs if e.finish_time is not None]
+        comp = float(max(finishes)) if finishes else float(k_end * cfg.dt_ctrl)
+        censored = False
+    else:
+        comp = float(T_total)
+        censored = True
+
+    # 求解时间：全程所有 MPC 调用，而不是每台机器人最后一次
+    all_times = []
+    for e in execs:
+        all_times.extend(e.mpc.stats.solve_times)
+    solve_pct = _percentiles(all_times)
+    status_counts: dict[str, int] = {}
+    for e in execs:
+        for status, count in e.mpc.stats.status_counts.items():
+            status_counts[status] = status_counts.get(status, 0) + int(count)
+    solve_stats = {
+        **solve_pct,
+        "statuses": status_counts,
+        "failed": int(sum(e.mpc.stats.n_failed for e in execs)),
+        "infeasible": int(sum(e.mpc.stats.n_infeasible for e in execs)),
+        "inaccurate": int(sum(e.mpc.stats.n_inaccurate for e in execs)),
+        "fallback": int(sum(e.mpc.stats.n_fallback for e in execs)),
+        "fallback_infeasible": int(sum(e.mpc.stats.n_fallback_infeasible for e in execs)),
+        "projections": int(sum(e.mpc.stats.n_projection for e in execs)),
+        "calls": int(sum(e.mpc.solve_count for e in execs)),
+        "failure_rate": float(sum(e.mpc.stats.n_failed for e in execs)
+                              / max(sum(e.mpc.solve_count for e in execs), 1)),
+    }
+
+    obstacle_collision = None
+    min_clear_value = None
+    if obstacles is not None:
+        obstacle_collision = bool(min_clear < 0.0)
+        min_clear_value = float(min_clear)
+        status = "evaluated"
+    else:
+        obstacle_collision = None
+        status = "not_evaluated"
+    meta = dict(obstacle_meta or {})
+    meta.setdefault("status", status)
+
     return SimResult(
-        collision=collision, first_collision_time=first_t, first_collision_pair=first_pair,
-        all_arrived=bool(all(e.done for e in execs)), completion_time=float(comp),
+        collision=bool(collision), first_collision_time=first_t,
+        first_collision_pair=first_pair,
+        all_arrived=bool(all_done), completion_time=comp,
+        time_censored=bool(censored),
+        timeout=bool(not all_done),
+        safe_completion=bool(all_done and not collision),
         pair_collision=pair_coll, pair_first_time=pair_first,
         pair_min_distance=pair_min, pairs=pairs,
         pause_requests=int(sum(e.pause_requests for e in execs)),
         pause_accepted=int(sum(e.pause_count for e in execs)),
+        pause_rejected=int(sum(e.pause_rejected for e in execs)),
         pause_events=accepted_events,
         extra_brake_time=float(sum(e.extra_brake_time for e in execs)),
         actual_wait_time=float(sum(e.actual_wait_time for e in execs)),
+        random_hold_time=float(sum(e.random_hold_time for e in execs)),
         infeasible_stops=int(sum(e.infeasible_stops for e in execs)),
         tracking_rmse=float(np.mean([e.tracking_rmse for e in execs])),
         tracking_max=float(np.max([e.err_max for e in execs])),
+        lateral_error_max=float(np.max([e.lateral_error_max for e in execs])),
         max_speed=float(np.max([e.speed_max for e in execs])),
         max_accel=float(np.max([e.accel_max for e in execs])),
-        mean_solve_ms=float(np.mean([1000 * e.mpc.last_solve_time for e in execs])),
-        mpc_failures=int(sum(e.mpc.fail_count for e in execs)),
+        mean_solve_ms=float(solve_pct["mean_ms"]),
+        solve_stats=solve_stats,
+        mpc_failures=int(sum(e.solver_failures for e in execs)),
         constraint_violations=int(sum(e.constraint_violations for e in execs)),
-        trajectories=traj, modes=mode_rec,
-        segment_times=[e.segment_stats() for e in execs])
+        waypoint_stats=[e.waypoint_stats() for e in execs],
+        segment_times=[e.segment_stats() for e in execs],
+        n_steps_executed=int(k_end),
+        static_obstacle_status=status,
+        static_obstacle_meta=meta,
+        obstacle_collision=obstacle_collision,
+        min_obstacle_clearance=min_clear_value,
+        trajectories=traj, modes=mode_rec, s_trace=s_rec, v_trace=v_rec,
+        robot_events=[e.rec.events for e in execs] if record else None,
+        event_log=[{"t": float(a[0]), "robot": int(a[1]), "requested_s": float(a[2]),
+                    "accepted": bool(a[3])} for a in accepted_events] if record else None)
