@@ -1,0 +1,13 @@
+﻿No02 freeze backup
+==================
+Repo: https://github.com/xieyuanZZZ/No02
+Frozen branch: experiment/online-temporal-evaluation-v2
+Frozen commit: 7019d54208c0892a1132a9fddd69af421ef8aa38
+Frozen tag: freeze-online-temporal-evaluation-v2-20261105
+Tag object: bbfc44d81ffce74f666bc99156f67a2a810e06b8
+Freeze time: 2026-11-05T23:20:49+08:00
+Backup root: D:\No02_freezes\No02_online_temporal_v2_20261105
+Git history: repo_git_all.bundle (all refs)
+Worktree: worktree/ (excludes .git, .venv, .pytest_cache, torchinductor_xuan, pytest-of-xuan, __pycache__, .mypy_cache, node_modules)
+Contents: code, configs, data, Diffusion checkpoints under results/, all CSV/JSON, figures, docs
+Restore: see RESTORE_TEST/report.txt and docs/external_baselines/00_freeze_report.md
