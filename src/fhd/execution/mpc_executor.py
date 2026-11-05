@@ -87,6 +87,14 @@ class SingleRobotExecutor:
         self._hold_start_t = 0.0
         self._dwell_idx = None
         self._hold_kind = None
+        self._hold_source = None
+        self.last_stop_reject_reason = None
+        self.pause_source_counts = {"random": 0, "online": 0}
+        self.pause_reject_reasons: dict[str, int] = {}
+        self.random_pause_count = 0
+        self.online_pause_count = 0
+        self.online_wait_time = 0.0
+        self.last_online_stop_t = -1e9
         self._s_prev = self.s_ref
         self._step_index = 0
         self.dwell_done = np.zeros(self.path.n_wp, dtype=bool)
@@ -150,44 +158,141 @@ class SingleRobotExecutor:
         return None
 
     # ------------------------------------------------------------------ #
-    def request_pause(self, duration_s: float) -> bool:
-        """外部请求暂停：只在 NORMAL 且未结束时接受。"""
+    def _reject_stop(self, source: str, reason: str, s_now: float,
+                     duration_s: float, **details) -> bool:
+        self.pause_rejected += 1
+        self.pause_reject_reasons[reason] = self.pause_reject_reasons.get(reason, 0) + 1
+        self.last_stop_reject_reason = reason
+        self.rec.pause_rejected.append((self.t, s_now, float(duration_s), reason))
+        self.rec.log(self.t, "pause_rejected", s=s_now, duration=float(duration_s),
+                     mode=self.mode, source=source, reason=reason, **details)
+        return False
+
+    def _request_stop(self, s_target: float, duration_s: float, source: str,
+                      reason: str, margin: float = 0.05) -> bool:
+        """统一停车命令：检查目标点是否在前方且确实刹得住。
+
+        合同：`available = (s_target-s_act) - v²/(2a_brake) - v·dt_ctrl`
+        必须 >= margin；理论刹车距离不作为闭环保证，接受后仍由仿真检验。
+        """
         self.pause_requests += 1
         s_now = float(self.s_act)
-        if self.done or self.mode != "NORMAL":
-            self.pause_rejected += 1
-            self.rec.pause_rejected.append((self.t, s_now, float(duration_s), self.mode))
-            self.rec.log(self.t, "pause_rejected", s=s_now, duration=float(duration_s),
-                         mode=self.mode)
-            return False
         v_now = float(np.linalg.norm(self.x[2:]))
-        # 已经逼近计划停车点：此时再接受随机暂停会让"先刹停再重启"与
-        # 计划等待重叠，物理上多出一次不必要的制动。明确拒绝并记录。
-        k_next = self._next_dwell(s_now)
-        if k_next is not None:
-            dist_next = float(self.path.s_wp[k_next] - s_now)
-            if -1e-6 <= dist_next < (DoubleIntegrator.brake_distance(v_now, self.di.p.a_brake) + 0.15):
-                self.pause_rejected += 1
-                self.rec.pause_rejected.append((self.t, s_now, float(duration_s), "planned_stop_imminent"))
-                self.rec.log(self.t, "pause_rejected", s=s_now, duration=float(duration_s),
-                             mode=self.mode, reason="planned_stop_imminent", wp=int(k_next))
-                return False
+        if self.done:
+            return self._reject_stop(source, "already_done", s_now, duration_s,
+                                     target_s=float(s_target))
+        if self.mode != "NORMAL":
+            return self._reject_stop(source, f"mode_{self.mode}", s_now, duration_s,
+                                     target_s=float(s_target))
+        if s_target < s_now - 1e-6:
+            return self._reject_stop(source, "target_behind", s_now, duration_s,
+                                     target_s=float(s_target))
+        if s_target > self.path.length + 1e-9:
+            return self._reject_stop(source, "target_beyond_path", s_now, duration_s,
+                                     target_s=float(s_target))
+        brake = DoubleIntegrator.brake_distance(v_now, self.di.p.a_brake)
+        lead = v_now * self.dt
+        available = float(s_target) - s_now - brake - lead
+        if available < margin:
+            return self._reject_stop(source, "cannot_stop", s_now, duration_s,
+                                     target_s=float(s_target), brake_distance=brake,
+                                     lead_distance=lead, available=available)
         self.mode = "BRAKE_PAUSE"
         self._hold_kind = "pause"
+        self._hold_source = source
         self._dwell_idx = None
         self._brake_start_t = self.t
         self._brake_start_s = s_now
         self._brake_start_v = v_now
-        brake = DoubleIntegrator.brake_distance(v_now, self.di.p.a_brake)
-        self.target_s = min(s_now + brake, self.path.length)
+        self.target_s = float(s_target)
         self.pause_remaining = float(max(duration_s, 0.0))
         self.rec.pause_requested.append((self.t, s_now, float(duration_s)))
         self.rec.pause_accepted.append((self.t, s_now, float(duration_s)))
         self._pause_wp = self._last_arrived_wp()
-        self.rec.log(self.t, "pause_accepted", s=s_now, duration=float(duration_s),
-                     brake_distance=brake, wp=self._pause_wp)
+        self.pause_source_counts[source] = self.pause_source_counts.get(source, 0) + 1
         self.pause_count += 1
+        if source == "online":
+            self.online_pause_count += 1
+            self.last_online_stop_t = self.t
+        else:
+            self.random_pause_count += 1
+        self.rec.log(self.t, "pause_accepted", s=s_now, duration=float(duration_s),
+                     brake_distance=brake, lead_distance=lead, target_s=float(s_target),
+                     source=source, reason=reason, wp=self._pause_wp)
         return True
+
+    def request_pause(self, duration_s: float) -> bool:
+        """随机暂停请求（仿真环境专用）：按预测停车点自动取目标。"""
+        s_now = float(self.s_act)
+        v_now = float(np.linalg.norm(self.x[2:]))
+        if self.mode == "NORMAL":
+            # 已经逼近计划停车点：随机暂停与计划等待重叠，明确拒绝
+            k_next = self._next_dwell(s_now)
+            if k_next is not None:
+                dist_next = float(self.path.s_wp[k_next] - s_now)
+                if -1e-6 <= dist_next < (DoubleIntegrator.brake_distance(
+                        v_now, self.di.p.a_brake) + 0.15):
+                    self.pause_requests += 1
+                    return self._reject_stop("random", "planned_stop_imminent",
+                                             s_now, duration_s, wp=int(k_next))
+        brake = DoubleIntegrator.brake_distance(v_now, self.di.p.a_brake)
+        target = min(s_now + brake + v_now * self.dt + 0.05, self.path.length)
+        return self._request_stop(target, duration_s, source="random",
+                                  reason="random_pause", margin=0.0)
+
+    def request_stop_at(self, s_target: float, duration_s: float,
+                        source: str = "online", reason: str = "online_stop",
+                        margin: float = 0.05) -> bool:
+        """在线协调的指定目标停车命令（目标必须是未越过的未来位置）。"""
+        return self._request_stop(float(s_target), float(duration_s), source,
+                                  reason, margin=margin)
+
+    def feasible_stop_candidates(self, lookahead_m: float = 2.0,
+                                 margin: float = 0.05) -> list[dict]:
+        """返回当前可安全停下的未来航点（尚未越过、非计划等待点、非终点）。"""
+        if self.done or self.mode != "NORMAL":
+            return []
+        s_now = float(self.s_act)
+        v_now = float(np.linalg.norm(self.x[2:]))
+        brake = DoubleIntegrator.brake_distance(v_now, self.di.p.a_brake)
+        lead = v_now * self.dt
+        next_dwell = self._next_dwell(s_now)
+        out = []
+        for k in range(self.path.n_wp - 1):
+            if self.path.dwell[k] > 1e-9:
+                continue
+            if next_dwell is not None and k >= int(next_dwell):
+                break
+            dist = float(self.path.s_wp[k] - s_now)
+            if dist <= 0.01:
+                continue
+            if dist > lookahead_m:
+                break
+            available = dist - brake - lead
+            if available >= margin:
+                out.append({"wp": int(k), "s": float(self.path.s_wp[k]),
+                            "dist": dist, "brake_distance": brake,
+                            "lead_distance": lead, "available": available})
+        return out
+
+    def observation(self) -> dict:
+        v = self.x[2:]
+        hold_remaining = (max(self.hold_until - self.t, 0.0)
+                          if self.mode == "HOLD" else 0.0)
+        return {
+            "x": float(self.x[0]), "y": float(self.x[1]),
+            "vx": float(v[0]), "vy": float(v[1]),
+            "speed": float(np.linalg.norm(v)),
+            "s": float(self.s_act), "s_ref": float(self.s_ref),
+            "mode": str(self.mode), "hold_remaining": float(hold_remaining),
+            "pause_remaining": float(self.pause_remaining)
+            if self.mode == "HOLD" else 0.0,
+            "hold_kind": self._hold_kind, "hold_source": self._hold_source,
+            "online_wait_time": float(self.online_wait_time),
+            "last_online_stop_t": float(self.last_online_stop_t),
+            "length": float(self.path.length),
+            "stop_candidates": self.feasible_stop_candidates(),
+        }
 
     def _last_arrived_wp(self) -> int:
         idx = [k for k in range(self.path.n_wp) if np.isfinite(self.wp_arrival[k])]
@@ -297,7 +402,8 @@ class SingleRobotExecutor:
         else:
             self.hold_until = t + float(self.pause_remaining)
             self.rec.log(t, "hold_start", kind="pause", s=self.s_act,
-                         duration=float(self.pause_remaining))
+                         duration=float(self.pause_remaining),
+                         source=self._hold_source or "random")
         self.mode = "HOLD"
         self._hold_start_t = t
         self.rec.hold_start.append((t, self.s_act))
@@ -345,11 +451,17 @@ class SingleRobotExecutor:
                     self.wp_depart[k] = t0
                     self.rec.dwell_done.append((k, t0, held))
                 else:
-                    self.random_hold_time += held
-                    k = int(getattr(self, "_pause_wp", -1))
-                    if 0 <= k < self.path.n_wp:
-                        self.wp_random_hold[k] += held
+                    source = self._hold_source or "random"
+                    if source == "online":
+                        self.online_wait_time += held
+                    else:
+                        self.random_hold_time += held
+                        k = int(getattr(self, "_pause_wp", -1))
+                        if 0 <= k < self.path.n_wp:
+                            self.wp_random_hold[k] += held
+                    self.rec.log(t0, "pause_hold_done", source=source, held=held)
                 self._hold_kind = None
+                self._hold_source = None
                 self._dwell_idx = None
                 self.mode = "NORMAL"
                 self.s_ref = max(self.s_ref, self.s_act)

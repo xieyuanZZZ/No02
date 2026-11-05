@@ -21,6 +21,7 @@ D1 与 D2 是不同的随机执行模型，二者差异不能解释为某个调�
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -29,6 +30,7 @@ import torch
 from fhd.control.linear_mpc import MPCParams
 from fhd.dynamics.double_integrator import DoubleIntegrator, DoubleIntegratorParams
 from fhd.dynamics.trajectory_timing import TimeParameterizedPath, TimingParams
+from fhd.execution.coordinator import build_observation
 from fhd.execution.mpc_executor import SingleRobotExecutor
 from fhd.geometry.continuous_collision import first_breach_alpha, relative_min_distance
 from fhd.geometry.primitives import Obstacles, segment_obstacle_distance
@@ -97,6 +99,16 @@ class SimResult:
     static_obstacle_meta: dict = field(default_factory=dict)
     obstacle_collision: bool | None = None
     min_obstacle_clearance: float | None = None
+    # 在线协调
+    coordinator_name: str | None = None
+    coordinator_stats: dict = field(default_factory=dict)
+    coordinator_log: list | None = None
+    online_requests: int = 0
+    online_accepted: int = 0
+    online_rejected: int = 0
+    online_wait_time: float = 0.0
+    controller_failed: bool = False
+    degraded_control: int = 0
     # 可选全轨迹
     trajectories: np.ndarray | None = None
     modes: np.ndarray | None = None
@@ -145,7 +157,8 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
                  cfg: MPCSimConfig, seed: int = 0, record: bool = True,
                  events: list | None = None,
                  obstacles: Obstacles | None = None,
-                 obstacle_meta: dict | None = None) -> SimResult:
+                 obstacle_meta: dict | None = None,
+                 coordinator=None) -> SimResult:
     """paths_m: [N,H,2]（米制）；wait_slots: [N,H-1]（时隙）。"""
     paths_m = np.asarray(paths_m, dtype=np.float64)
     wait_slots = np.asarray(wait_slots, dtype=np.float64)
@@ -204,6 +217,11 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
     sub_dt = float(cfg.dt_dyn)
     n_sub = max(int(round(cfg.dt_ctrl / sub_dt)), 1)
     min_clear = np.inf
+    decision_times_ms = []
+    coordinator_log = []
+    coordinator_errors = 0
+    online_accepted_n = 0
+    online_rejected_n = 0
 
     for k in range(n_ctrl):
         t = k * cfg.dt_ctrl
@@ -212,10 +230,57 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
         if abs(t / cfg.dt_slot - slot) < 1e-9 and slot in by_slot:
             for (i, d) in by_slot[slot]:
                 reqs[i] = d
+        # 1) 外部随机暂停事件（先注入；协调器只能看到注入后的真实状态）
         for i in range(n):
             if i in reqs:
                 ok = execs[i].request_pause(reqs[i])
                 accepted_events.append((t, i, reqs[i], bool(ok)))
+        # 2) 在线协调决策（看不到随机事件表，只拿 Observation）
+        if coordinator is not None and abs(t / cfg.dt_slot - slot) < 1e-9:
+            try:
+                obs = build_observation(execs, t, cfg.d_safe, cfg.dt_slot,
+                                        T_total, float(pause_p),
+                                        {"horizon_steps": cfg.horizon_steps})
+                coordinator.observe(obs)
+                td = time.perf_counter()
+                actions = coordinator.decide(obs)
+                dt_ms = (time.perf_counter() - td) * 1e3
+                decision_times_ms.append(dt_ms)
+                act_log = []
+                for a in actions:
+                    if a.kind != "stop":
+                        online_rejected_n += 1
+                        act_log.append({"robot": a.robot, "kind": a.kind,
+                                        "accepted": False, "reason": "unsupported_kind"})
+                        continue
+                    ok = execs[a.robot].request_stop_at(
+                        a.s_target, a.duration_s, source="online",
+                        reason=a.reason)
+                    online_accepted_n += int(ok)
+                    online_rejected_n += int(not ok)
+                    if hasattr(coordinator, "on_result"):
+                        coordinator.on_result(a, bool(ok))
+                    act_log.append({
+                        "robot": int(a.robot), "kind": a.kind,
+                        "s_target": float(a.s_target), "wp": a.candidate_wp,
+                        "duration_s": float(a.duration_s), "accepted": bool(ok),
+                        "reject_reason": execs[a.robot].last_stop_reject_reason
+                        if not ok else None,
+                        "reason": a.reason,
+                        "risk_before": a.risk_before, "risk_after": a.risk_after,
+                    })
+                if record:
+                    coordinator_log.append({
+                        "t": float(t), "runtime_ms": float(dt_ms),
+                        "actions": act_log,
+                        "diagnostics": dict(getattr(coordinator, "last_diagnostics", {})),
+                    })
+            except Exception as e:  # 协调器失败不能静默改变物理时间
+                coordinator_errors += 1
+                if record:
+                    coordinator_log.append({"t": float(t), "error": f"{type(e).__name__}:{e}"})
+        # 3) 所有机器人推进一个控制周期
+        for i in range(n):
             execs[i].step()
 
         # 逐步收集子步位置（用于连续碰撞与静态障碍扫掠）
@@ -319,6 +384,26 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
     meta = dict(obstacle_meta or {})
     meta.setdefault("status", status)
 
+    if decision_times_ms:
+        arr = np.asarray(decision_times_ms, dtype=np.float64)
+        coord_stats = {
+            "n_decisions": int(arr.size),
+            "mean_ms": float(arr.mean()),
+            "p50_ms": float(np.percentile(arr, 50)),
+            "p95_ms": float(np.percentile(arr, 95)),
+            "p99_ms": float(np.percentile(arr, 99)),
+            "max_ms": float(arr.max()),
+            "over_budget": int((arr > 400.0).sum()),
+            "errors": int(coordinator_errors),
+        }
+    else:
+        coord_stats = {"n_decisions": 0, "mean_ms": 0.0, "p50_ms": 0.0,
+                       "p95_ms": 0.0, "p99_ms": 0.0, "max_ms": 0.0,
+                       "over_budget": 0, "errors": int(coordinator_errors)}
+    controller_failed = any(
+        ev.get("type") == "unsafe_state" for e in execs for ev in e.rec.events)
+    degraded_control = int(sum(e.solver_failures for e in execs))
+
     return SimResult(
         collision=bool(collision), first_collision_time=first_t,
         first_collision_pair=first_pair,
@@ -355,4 +440,14 @@ def simulate_mpc(paths_m: np.ndarray, wait_slots: np.ndarray, pause_p: float,
         trajectories=traj, modes=mode_rec, s_trace=s_rec, v_trace=v_rec,
         robot_events=[e.rec.events for e in execs] if record else None,
         event_log=[{"t": float(a[0]), "robot": int(a[1]), "requested_s": float(a[2]),
-                    "accepted": bool(a[3])} for a in accepted_events] if record else None)
+                    "accepted": bool(a[3])} for a in accepted_events] if record else None,
+        coordinator_name=(getattr(coordinator, "name", None)
+                          if coordinator is not None else None),
+        coordinator_stats=coord_stats,
+        coordinator_log=coordinator_log if record else None,
+        online_requests=int(online_accepted_n + online_rejected_n),
+        online_accepted=int(online_accepted_n),
+        online_rejected=int(online_rejected_n),
+        online_wait_time=float(sum(e.online_wait_time for e in execs)),
+        controller_failed=bool(controller_failed),
+        degraded_control=int(degraded_control))
