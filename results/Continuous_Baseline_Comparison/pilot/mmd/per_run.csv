@@ -1,0 +1,2 @@
+method,n_agents,collision,safe_completion,all_arrived,min_pair_distance,duration_s,max_speed
+mmd_native,3,True,False,False,0.03206977833486344,3.0,0.5683021354825964

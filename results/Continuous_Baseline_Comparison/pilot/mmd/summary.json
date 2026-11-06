@@ -1,0 +1,10 @@
+{
+  "method": "mmd_native",
+  "n_agents": 3,
+  "collision": true,
+  "safe_completion": false,
+  "all_arrived": false,
+  "min_pair_distance": 0.03206977833486344,
+  "duration_s": 3.0,
+  "max_speed": 0.5683021354825964
+}
