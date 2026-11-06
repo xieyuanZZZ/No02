@@ -29,14 +29,17 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
     fails = 0
     solve_ms = []
     completion = None
+    valid_end = 0
 
-    def target_for(i):
+    def target_for(i, paused=False):
+        if paused:
+            return pos[i]
         k = min(idx[i], h - 1)
         # look a few points ahead so the optimizer does not stop at a waypoint
         k2 = min(k + 2, h - 1)
         return paths[i, k2]
 
-    def solve(x):
+    def solve(x, paused_now):
         opti = ca.Opti()
         X = opti.variable(4 * n, horizon + 1)
         U = opti.variable(2 * n, horizon)
@@ -46,11 +49,19 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
                 p = X[4 * i:4 * i + 2, k]
                 v = X[4 * i + 2:4 * i + 4, k]
                 a = U[2 * i:2 * i + 2, k]
-                p2 = p + v * dt + 0.5 * a * dt * dt
+                # Semi-implicit Euler, identical to the execution loop below.
                 v2 = v + a * dt
+                p2 = p + v2 * dt
                 opti.subject_to(X[4 * i:4 * i + 4, k + 1] == ca.vertcat(p2, v2))
                 opti.subject_to(ca.sumsqr(v2) <= vmax * vmax)
                 opti.subject_to(ca.sumsqr(a) <= amax * amax)
+                if k == 0 and paused_now[i]:
+                    sp = float(np.linalg.norm(vel[i]))
+                    if sp > 1e-9:
+                        brake = -vel[i] / sp * min(amax, sp / dt)
+                    else:
+                        brake = np.zeros(2)
+                    opti.subject_to(a == ca.DM(brake))
             for i in range(n):
                 for j in range(i + 1, n):
                     pi = X[4 * i:4 * i + 2, k]
@@ -65,7 +76,7 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
             for i in range(n):
                 p = X[4 * i:4 * i + 2, k]
                 v = X[4 * i + 2:4 * i + 4, k]
-                pref = ca.DM(target_for(i))
+                pref = ca.DM(target_for(i, paused_now[i]))
                 cost += q_pos * ca.sumsqr(p - pref) + 0.1 * ca.sumsqr(v)
                 if k < horizon:
                     cost += r_u * ca.sumsqr(U[2 * i:2 * i + 2, k])
@@ -85,39 +96,67 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
                 pause_until[int(rid)] = t + float(dur)
         traj[s] = pos
         vel_t[s] = vel
+        valid_end = s + 1
         if s == steps:
             break
+        paused_now = t < pause_until - 1e-9
         x = np.concatenate([np.concatenate([pos[i], vel[i]]) for i in range(n)])
         t0 = time.perf_counter()
-        u, ok = solve(x)
+        u, ok = solve(x, paused_now)
         solve_ms.append((time.perf_counter() - t0) * 1e3)
         if not ok:
             fails += 1
-            u[:] = 0.0
+            for i in range(n):
+                if paused_now[i]:
+                    sp = np.linalg.norm(vel[i])
+                    u[i] = -vel[i] / sp * min(amax, sp / dt) if sp > 1e-9 else 0.0
+                else:
+                    u[i] = 0.0
         for i in range(n):
-            if t < pause_until[i] - 1e-9:
-                u[i] = 0.0
+            # semi-implicit Euler, same as the optimizer prediction
             vel[i] += np.clip(u[i], -amax, amax) * dt
             sp = np.linalg.norm(vel[i])
             if sp > vmax:
                 vel[i] *= vmax / sp
             pos[i] += vel[i] * dt
             if t >= pause_until[i] - 1e-9:
-                nearest = int(np.argmin(np.linalg.norm(paths[i] - pos[i], axis=1)))
-                idx[i] = max(idx[i], min(nearest + 1, h))
-                while idx[i] < h and np.linalg.norm(pos[i] - paths[i, idx[i]]) < 0.15:
-                    idx[i] += 1
-        if completion is None and (idx >= h).all():
-            completion = float(s * dt)
+                # monotone projection onto the next path segments; never jump globally
+                best = int(idx[i])
+                best_d = np.linalg.norm(pos[i] - paths[i, min(best, h - 1)])
+                for k in range(max(0, int(idx[i]) - 1), h - 1):
+                    a = paths[i, k]
+                    b = paths[i, k + 1]
+                    ab = b - a
+                    den = float(ab @ ab)
+                    if den < 1e-12:
+                        continue
+                    frac = float(np.clip((pos[i] - a) @ ab / den, 0.0, 1.0))
+                    q = a + frac * ab
+                    d = float(np.linalg.norm(pos[i] - q))
+                    if d < best_d - 1e-9:
+                        best_d = d
+                        best = k + 1
+                idx[i] = max(int(idx[i]), min(best, h))
+        # actual terminal condition, not just waypoint index
+        goal_err = np.linalg.norm(pos - paths[:, -1, :], axis=1)
+        if completion is None and (goal_err < 0.25).all() and (np.linalg.norm(vel, axis=1) < 0.25).all():
+            completion = float((s + 1) * dt)
             break
-    d = np.linalg.norm(traj[:, :, None, :] - traj[:, None, :, :], axis=-1)
+    # continuous-ish sweep between 0.1 s samples; do not include zero padding
+    tr = traj[:valid_end]
+    pair_min = np.full((n * (n - 1)) // 2, np.inf)
     iu = np.triu_indices(n, 1)
-    pair_min = d[:, iu[0], iu[1]].min(axis=0) if n > 1 else np.array([])
-    done = (idx >= h).all()
+    for k in range(max(0, len(tr) - 1)):
+        for sub in range(11):
+            a = sub / 10.0
+            p = tr[k] * (1 - a) + tr[k + 1] * a
+            dd = np.linalg.norm(p[:, None, :] - p[None, :, :], axis=-1)
+            pair_min = np.minimum(pair_min, dd[iu])
+    done = bool((np.linalg.norm(tr[-1] - paths[:, -1, :], axis=1) < 0.25).all())
     completion = float(completion if completion is not None else steps * dt)
-    return {"traj": traj, "vel": vel_t, "pair_min": pair_min,
+    return {"traj": tr, "vel": vel_t[:valid_end], "pair_min": pair_min,
             "collision": bool((pair_min < d_safe).any()),
-            "all_arrived": bool(done), "completion_s": completion,
+            "all_arrived": done, "completion_s": completion,
             "timeout": bool(not done), "fails": int(fails),
             "solve_p95_ms": float(np.percentile(solve_ms, 95)) if solve_ms else 0.0,
             "solve_mean_ms": float(np.mean(solve_ms)) if solve_ms else 0.0}

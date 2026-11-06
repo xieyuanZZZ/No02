@@ -85,10 +85,12 @@ class OruCoordinator(Coordinator):
         self.bridge = OruJavaBridge(c.get("java_exe", DEFAULT_JAVA),
                                     c.get("classpath", DEFAULT_CP))
         self.bridge.init(self.paths)
-        self.hold_s = float(c.get("oru_hold_s", 0.8))
+        self.hold_s = float(c.get("oru_hold_s", 0.4))
         self._last_cp = {}
         self._last_t = {}
         self.errors = 0
+        self.late_inside = 0
+        self.no_candidate = 0
         self.last_error = None
 
     def _path_index(self, s: float, i: int) -> int:
@@ -118,35 +120,41 @@ class OruCoordinator(Coordinator):
                 continue
             idx = self._path_index(rb.s, i)
             if cp <= idx:
-                # ORU says do not pass the current critical point; issue a
-                # legal immediate stop just ahead rather than an instant freeze.
-                s_target = min(rb.s + max(0.05, rb.speed * self.dt_slot + 0.05),
-                               rb.length)
-            else:
-                limit = float(self.s_wp[i, min(cp, self.paths.shape[1] - 1)]) - 0.10
-                brake = rb.speed * rb.speed / 4.0 + rb.speed * self.dt_slot + 0.05
-                cands = [float(self.s_wp[i, k]) for k in range(cp)
-                         if float(self.s_wp[i, k]) - rb.s >= brake
-                         and float(self.s_wp[i, k]) < limit]
-                if cands:
-                    s_target = max(cands)  # latest point from which CP is safely stoppable
-                else:
-                    s_target = max(rb.s + 0.05, limit - 0.05)
+                # Do not fabricate a feasible stop after the CP is passed.
+                self.late_inside += 1
+                continue
+            limit = float(self.s_wp[i, min(cp, self.paths.shape[1] - 1)]) - 0.10
+            brake = rb.speed * rb.speed / 4.0 + rb.speed * self.dt_slot + 0.05
+            cands = [float(self.s_wp[i, k]) for k in range(cp)
+                     if float(self.s_wp[i, k]) - rb.s >= brake
+                     and float(self.s_wp[i, k]) < limit]
+            if not cands:
+                self.no_candidate += 1
+                continue
+            s_target = max(cands)
             if s_target >= rb.length - 1e-6:
                 s_target = rb.length - 1e-4
             if obs.t - self._last_t.get(i, -1e9) < 0.5:
                 continue
             self._last_cp[i] = cp
-            self._last_t[i] = obs.t
             actions.append(Action(
                 robot=i, kind="stop", s_target=s_target,
                 duration_s=self.hold_s,
                 candidate_wp=min(cp, self.paths.shape[1] - 1),
                 reason=f"ORU_cp_{cp}_idx_{idx}"))
         self.last_diagnostics = {"cps": cps, "actions": len(actions),
-                                 "errors": self.errors}
+                                 "errors": self.errors,
+                                 "late_inside": self.late_inside,
+                                 "no_candidate": self.no_candidate}
         self.last_decisions = actions
         return actions
+
+    def on_result(self, action: Action, accepted: bool) -> None:
+        # Only accepted commands suppress the next command; rejected ones must
+        # be retried on the next 0.4 s cycle.
+        if accepted and action.kind == "stop":
+            self._last_t[action.robot] = float(
+                self.last_observation.t if self.last_observation else 0.0)
 
     def close(self):
         self.bridge.close()

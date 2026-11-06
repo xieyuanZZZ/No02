@@ -51,9 +51,15 @@ def run_orca(paths: np.ndarray, events=(), dt: float = 0.1,
         vel[k, i] = r[4:6]
         target[k, i] = int(r[6])
         paused[k, i] = bool(r[7])
-    d = np.linalg.norm(traj[:, :, None, :] - traj[:, None, :, :], axis=-1)
     iu = np.triu_indices(n, 1)
-    pair_min = d[:, iu[0], iu[1]].min(axis=0) if n > 1 else np.array([])
+    pair_min = np.full(len(iu[0]), np.inf)
+    for k in range(steps):
+        for sub in range(6):
+            a = sub / 5.0
+            p = traj[k] * (1.0 - a) + traj[k + 1] * a
+            dd = np.linalg.norm(p[:, None, :] - p[None, :, :], axis=-1)
+            if len(iu[0]):
+                pair_min = np.minimum(pair_min, dd[iu])
     pair_coll = (pair_min < 0.35)
     finished = (target >= h).all(axis=1)
     if finished.any():
@@ -79,6 +85,14 @@ def path_deviation(traj: np.ndarray, paths: np.ndarray) -> float:
     for i in range(paths.shape[0]):
         a = traj[:, i, :]
         r = paths[i]
-        d = np.linalg.norm(a[:, None, :] - r[None, :, :], axis=-1)
-        vals.append(float(d.min(axis=1).mean()))
+        best = np.full(len(a), np.inf)
+        for k in range(len(r) - 1):
+            ab = r[k + 1] - r[k]
+            den = float(ab @ ab)
+            if den < 1e-12:
+                continue
+            u = np.clip(((a - r[k]) @ ab) / den, 0.0, 1.0)
+            q = r[k] + u[:, None] * ab[None, :]
+            best = np.minimum(best, np.linalg.norm(a - q, axis=1))
+        vals.append(float(best.mean()))
     return float(np.mean(vals))

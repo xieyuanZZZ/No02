@@ -1,60 +1,42 @@
 # 04 闭环验证：Coordination ORU + No02 MPC
 
 **日期**：2026-11-06  
-**方法**：ORU 原生 trajectory envelope/critical section/precedence 机制 + No02 冻结 MPC 执行器  
 **结果**：`results/Continuous_Baseline_Comparison/pilot/oru/`
 
-## 1. 实现
+## 修复内容
 
-- `src/fhd/adapters/coordination_oru_adapter.py`
-- `third_party`：`D:\No02_external_repos\coordination_oru`（GPL-3.0，commit `7332cde...`）
-- Java bridge：`No02OruBridge`，JSON-lines 协议；每个 0.4 s 接收机器人实际状态
-  `(x,y,vx,vy,path_index)`，返回 ORU 选择的 critical point。
-- ORU 的原始 Java 协调器运行在独立进程；Python 只做状态输入/停车目标转换。
-- 停车目标优先选 **critical point 之前、按当前速度可刹停的最晚可行航点**；
-  目标交给冻结 `request_stop_at()` 检查，拒绝原因进入统计。
-- ORU 的 critical point 是“不得越过”的路径索引，不是瞬时速度指令。
+- 取消固定 3 s 等待；在线每 0.4 s 重新读取 ORU critical point，等待时长 0.4 s；
+- 停车目标改为 critical point 之前、按当前速度可刹停的最晚可行航点；
+- 若 critical point 已到达/越过，不伪造停车，计入 `late_inside`；
+- 若无可行停车点，不伪造目标，计入 `no_candidate`；
+- 执行器拒绝不再抑制下一次命令：`_last_t` 只在 `on_result(accepted=True)` 更新；
+- Java bridge 保留 ORU 原 trajectory envelope/critical section/precedence。
 
-**没有**修改 First-Hit、W2+、联合方法、MPC、Diffusion、路径和旧结果。
+## 实际结果
 
-## 2. 闭环配置
+4 个 N4 任务、p=0/0.1/0.2、每格 5 seeds：
 
-- 4 个 N4 任务（`open_crossing_300000`/`300003` 各 2 个）；
-- p = 0 / 0.1 / 0.2；每格 5 seeds；
-- 每格 20 个配对 run，共 120 条执行（Ours + ORU）；
-- 同路径、同基线等待、同随机事件表、同 `d_safe=0.35`、同 MPC 参数；
-- ORU 适配器 hold = 3.0 s（等待 ORU 释放 critical point；不是 ORU 参数）。
-
-## 3. 实际结果
-
-| 方法 | p | 机器人间碰撞 | 安全完成 | Makespan | 在线等待 | 在线 P95 |
+| 方法 | p | 碰撞 | 安全完成 | Makespan | 主动在线等待 | P95 |
 |---|---:|---:|---:|---:|---:|---:|
-| Ours（冻结） | 0 | 0.00 | 1.00 | 18.40 s | 0.00 s | 6.7 ms |
-| Ours（冻结） | 0.1 | 0.00 | 1.00 | 21.13 s | 0.48 s | 16.2 ms |
-| Ours（冻结） | 0.2 | 0.05 | 0.95 | 24.10 s | 1.18 s | 20.4 ms |
-| Coordination ORU | 0 | 0.55 | 0.45 | 26.48 s | 21.15 s | 91.9 ms |
-| Coordination ORU | 0.1 | 0.80 | 0.20 | 28.99 s | 22.65 s | 91.3 ms |
-| Coordination ORU | 0.2 | 0.60 | 0.40 | 33.19 s | 26.25 s | 91.4 ms |
+| Ours（冻结） | 0 | 0.00 | 1.00 | 18.40 s | 0.00 s | 6.3 ms |
+| Ours（冻结） | 0.1 | 0.00 | 1.00 | 21.13 s | 0.48 s | 15.0 ms |
+| Ours（冻结） | 0.2 | 0.05 | 0.95 | 24.10 s | 1.18 s | 20.7 ms |
+| ORU | 0 | 0.75 | 0.25 | 17.84 s | 1.56 s | 94.9 ms |
+| ORU | 0.1 | 0.80 | 0.20 | 20.57 s | 1.42 s | 94.9 ms |
+| ORU | 0.2 | 0.55 | 0.45 | 23.71 s | 1.64 s | 94.2 ms |
 
-- 所有 run 均无 MPC 失败/超时；ORU 侧有少量 `cannot_stop` 拒绝，已计入日志；
-- ORU 在线 P95 约 92 ms，低于 400 ms 周期；
-- Ours 在线 P95 6.7–20.4 ms。
+ORU 的主动等待只有 1.4–1.6 s（不再靠固定 3 s 拖时间），但仍大量碰撞；
+这不是 ORU 原算法结论，而是当前适配的失败。
 
-## 4. 如何解释
+## 诊断
 
-- ORU 的 critical point 是高层“某机器人应在冲突区前停车”的决策；映射到
-  No02 的离散航点停车接口时，**丢失了 ORU 原生 RK4 tracker 的连续减速/速度跟踪**。
-  因此这组 ORU 数字是“ORU 高层协调 + No02 低层停车接口”的适配结果，
-  不是 ORU 原生控制器的最好成绩。
-- ORU 在 p=0 也出现 55% 碰撞，说明当前映射仍有明显问题（它等待很久但未完全
-  消除冲突），不能据此宣称“ORU 本身不安全”。
-- Ours 的优势是**在线决策快、等待少**；但这是 4 任务/5 seeds 的 pilot，
-  不能作为论文最终结论。
+- ORU critical point 是高层“不得越过”索引；No02 冻结执行器只有离散航点停车接口，
+  没有 ORU 原生连续减速/速度跟踪；
+- 即使选择 CP 前最晚可刹停航点，ORU 仍可能在机器人已接近冲突区时才更新 CP，
+  `late_inside`/`no_candidate` 会记录这些不可行情况；
+- 因此当前 ORU 仍是“高层协调 + 低层停车”的近似，**未 VERIFIED**，不能进入正式表。
 
-## 5. 结论与下一步
+## 下一步
 
-- ORU 已真正接入 No02 MPC 并产生闭环动作/碰撞/等待数据；
-- 但 ORU 适配器仍需改进：需要把 critical point 映射到**连续速度剖面**，
-  或让 ORU 的低层 tracker 与 No02 MPC 共用状态，而不是只在航点停车；
-- 在修正 ORU 适配前，不把这张表作为“Ours 优于 ORU”的论文证据；
-- ORCA、MPC-CBF、MMD 尚未完成同等闭环适配。
+在 ORU Java bridge 中输出 continuous critical-section entry/exit 与建议速度上限，
+由外部专用执行封装做连续制动/保持/释放；不能修改冻结 `request_stop_at`。

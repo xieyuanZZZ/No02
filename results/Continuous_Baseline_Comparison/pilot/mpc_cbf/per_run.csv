@@ -1,3 +1,3 @@
 method,group,task_id,p,seed,collision,safe_completion,all_arrived,timeout,completion_s,fails,solve_mean_ms,solve_p95_ms,min_pair_distance
-mpc_cbf,N2,open_crossing_300000_pair02_11,0.1,20281401,True,False,True,False,7.5,0,20.837701305649,23.344074928900227,0.0
-mpc_cbf,N4,open_crossing_300000_n4_0,0.1,20281401,True,False,True,False,9.9,0,53.74942199094221,59.91658501443453,0.0
+mpc_cbf,N2,open_crossing_300000_pair02_11,0.1,20281401,False,False,False,True,19.3,0,19.72396165636788,24.581840005703267,2.680581956665586
+mpc_cbf,N4,open_crossing_300000_n4_0,0.1,20281401,False,False,False,True,19.0,0,52.6944831540612,60.47704007942229,0.5093502416927095

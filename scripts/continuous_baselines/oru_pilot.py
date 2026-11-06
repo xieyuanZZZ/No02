@@ -75,7 +75,7 @@ def main() -> int:
                         paths, w2, 0.35, dt_slot, 3.2, p, risk_model=risk,
                         config={"hold_slots": 1, "lookahead_m": 2.0})),
                     ("coordination_oru", w0, OruCoordinator(
-                        paths, w0, 0.35, dt_slot, 3.0, p, {"oru_hold_s": 3.0})),
+                        paths, w0, 0.35, dt_slot, 3.0, p, {"oru_hold_s": 0.4})),
                 ]
                 for name, wait, co in variants:
                     try:
