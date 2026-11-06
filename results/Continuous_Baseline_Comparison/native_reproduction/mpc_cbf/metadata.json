@@ -1,0 +1,12 @@
+{
+  "method": "MPC-CBF",
+  "upstream": "https://github.com/Vrushabh27/mpc-cbf",
+  "commit": "62bdf68c0fc35254677e595f34fcf53c82872aca",
+  "license": "MIT",
+  "environment": "Windows Python 3.12 venv; casadi/cvxopt/do-mpc; pinned numpy<2, scipy 1.13.1, pandas<3 for compatibility",
+  "official_entry": "main.py, scenario=intersection, n=2 differential-drive agents",
+  "status": "success_after_compat_patch",
+  "compatibility_patch": "NumPy 2.x np.cross no longer accepts 2D vectors; pinned numpy<2. Matplotlib 3.x Line2D.set_data rejects scalars; patched main.py visualization only to pass [scalar] lists. Controller/model code unchanged.",
+  "output": "official_stdout.txt (IPOPT solves), agents_animation.mp4",
+  "limitation": "Upstream is a 2-agent differential-drive MPC-CBF controller, not a 4-agent double-integrator implementation. It cannot be plugged into No02 MPC as-is without a new multi-agent CBF formulation."
+}

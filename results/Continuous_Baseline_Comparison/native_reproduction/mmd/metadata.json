@@ -1,0 +1,24 @@
+{
+  "method": "MMD (Multi-Robot Motion Planning with Diffusion Models)",
+  "upstream": "https://github.com/yoraish/mmd",
+  "commit": "abe00192a8be1b0222a4eab1ac59f60e7e648df7",
+  "local_engine": "/home/xuan/delay_robust_mmd_guidance (359a54d6408995025768091263c370709b49b975), delay-robust branch",
+  "license": "MIT",
+  "environment": "WSL2, conda env mmd, Python, CUDA RTX 4070, LD_LIBRARY_PATH nvrtc_fix",
+  "command": "cd mmd/scripts/inference && python inference_multi_agent.py",
+  "official_example": "3 agents, EnvEmptyNoWait2D, single_tile, XECBS + MPDEnsemble",
+  "status": "success",
+  "outputs": [
+    "mmd_infer.out",
+    "2026-11-06-14-25-22/.../results.txt",
+    "2026-11-06-14-25-22/.../mmd_single_trial.gif"
+  ],
+  "observed": {
+    "success": true,
+    "num_collisions_in_solution": 0,
+    "planning_time_s": 9.608782291412354,
+    "data_adherence": 0.9010416666666666,
+    "path_length_per_agent": 1.6394563913345337
+  },
+  "limitation": "Official MMD example uses its own environment and 3 agents; No02 fixed 32-waypoint diffusion paths differ. For Experiment B it must generate paths from the same maps/start-goals, not silently reuse its own example."
+}

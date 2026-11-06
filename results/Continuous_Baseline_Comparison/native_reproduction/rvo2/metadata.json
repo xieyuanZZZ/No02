@@ -1,0 +1,13 @@
+{
+  "method": "ORCA / RVO2",
+  "upstream": "https://github.com/snape/RVO2",
+  "commit": "6b4eb00a93a9f3abf723235ff006d6aad3e2f212",
+  "license": "Apache-2.0",
+  "environment": "WSL2 Ubuntu 22.04, g++ 11.4, CMake 3.31.6 (RVO2 requires >=3.26)",
+  "build_command": "/tmp/cmake-3.31.6-linux-x86_64/bin/cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && /tmp/cmake-3.31.6-linux-x86_64/bin/cmake --build build -j4",
+  "official_example_command": "./build/examples/Circle",
+  "official_example": "RVO2 Circle example (dynamic agents around a circle)",
+  "status": "success",
+  "output": "rvo_circle.out (time + per-agent positions, 3547 lines)",
+  "notes": "No No02 adaptation yet; raw RVO2 preferred velocities/agent radius still native."
+}

@@ -1,0 +1,199 @@
+MovieWriter ffmpeg unavailable; using Pillow instead.
+Starts: [tensor([0.8000, 0.0000], device='cuda:0'), tensor([-0.4000,  0.6928], device='cuda:0'), tensor([-0.4000, -0.6928], device='cuda:0')]
+Goals: [tensor([-8.0000e-01,  9.7972e-17], device='cuda:0'), tensor([ 0.4000, -0.6928], device='cuda:0'), tensor([0.4000, 0.6928], device='cuda:0')]
+Creating reference agent stuff.
+################################################################################################
+Initializing Planner with Models -- ['EnvEmptyNoWait2D-RobotPlanarDisk']
+Algorithm -- mmd
+
+---------------Loading data
+Precomputing the SDF grid and gradients took: 0.639 sec
+TrajectoryDataset
+n_trajs: 10000
+trajectory_dim: (64, 4)
+
+[ models/temporal ] Channel dimensions: [(4, 32), (32, 64), (64, 128)]
+start_state_pos: tensor([0.5000, 0.9000], device='cuda:0')
+goal_state_pos: tensor([-0.5000,  0.9000], device='cuda:0')
+start_state_pos: tensor([0.5000, 0.9000], device='cuda:0')
+goal_state_pos: tensor([-0.5000,  0.9000], device='cuda:0')
+################################################################################################
+Initializing Planner with Models -- ['EnvEmptyNoWait2D-RobotPlanarDisk']
+Algorithm -- mmd
+
+---------------Loading data
+Precomputing the SDF grid and gradients took: 0.557 sec
+TrajectoryDataset
+n_trajs: 10000
+trajectory_dim: (64, 4)
+
+[ models/temporal ] Channel dimensions: [(4, 32), (32, 64), (64, 128)]
+start_state_pos: tensor([0.8000, 0.0000], device='cuda:0')
+goal_state_pos: tensor([-8.0000e-01,  9.7972e-17], device='cuda:0')
+start_state_pos: tensor([0.8000, 0.0000], device='cuda:0')
+goal_state_pos: tensor([-8.0000e-01,  9.7972e-17], device='cuda:0')
+################################################################################################
+Initializing Planner with Models -- ['EnvEmptyNoWait2D-RobotPlanarDisk']
+Algorithm -- mmd
+
+---------------Loading data
+Precomputing the SDF grid and gradients took: 0.562 sec
+TrajectoryDataset
+n_trajs: 10000
+trajectory_dim: (64, 4)
+
+[ models/temporal ] Channel dimensions: [(4, 32), (32, 64), (64, 128)]
+start_state_pos: tensor([-0.4000,  0.6928], device='cuda:0')
+goal_state_pos: tensor([ 0.4000, -0.6928], device='cuda:0')
+start_state_pos: tensor([-0.4000,  0.6928], device='cuda:0')
+goal_state_pos: tensor([ 0.4000, -0.6928], device='cuda:0')
+################################################################################################
+Initializing Planner with Models -- ['EnvEmptyNoWait2D-RobotPlanarDisk']
+Algorithm -- mmd
+
+---------------Loading data
+Precomputing the SDF grid and gradients took: 0.501 sec
+TrajectoryDataset
+n_trajs: 10000
+trajectory_dim: (64, 4)
+
+[ models/temporal ] Channel dimensions: [(4, 32), (32, 64), (64, 128)]
+start_state_pos: tensor([-0.4000, -0.6928], device='cuda:0')
+goal_state_pos: tensor([0.4000, 0.6928], device='cuda:0')
+start_state_pos: tensor([-0.4000, -0.6928], device='cuda:0')
+goal_state_pos: tensor([0.4000, 0.6928], device='cuda:0')
+Planners creation time: 8.812232494354248
+
+
+
+
+
+Planning with 0 constraints.
+==============
+Got #constraints: 0
+Constraints split to tasks: dict_keys([]), with num constraints: []
+[96m Using random noise in p_sample_loop. Steps (negative attempts to recon. t=0) [25, -1] [0m
+t_model_sampling: 2.400 sec
+success: 1
+percentage free trajs: 100.00
+percentage collision intensity: 0.00
+cost smoothness: 0.0690, 0.0012
+cost path length: 2.5739, 0.0972
+cost best: 2.406
+variance waypoint: 0.0167
+
+--------------------------------------
+
+Planning with 1 constraints.
+==============
+Got #constraints: 1
+Constraints split to tasks: dict_keys([0]), with num constraints: [1]
+[96m Using random noise in p_sample_loop. Steps (negative attempts to recon. t=0) [25, -1] [0m
+t_model_sampling: 2.608 sec
+success: 1
+percentage free trajs: 100.00
+percentage collision intensity: 0.00
+cost smoothness: 0.0874, 0.0028
+cost path length: 2.8108, 0.0769
+cost best: 2.653
+variance waypoint: 0.1691
+
+--------------------------------------
+
+Planning with 1 constraints.
+==============
+Got #constraints: 1
+Constraints split to tasks: dict_keys([0]), with num constraints: [1]
+[96m Using random noise in p_sample_loop. Steps (negative attempts to recon. t=0) [25, -1] [0m
+t_model_sampling: 2.522 sec
+success: 1
+percentage free trajs: 100.00
+percentage collision intensity: 0.00
+cost smoothness: 0.0838, 0.0019
+cost path length: 2.9661, 0.1146
+cost best: 2.745
+variance waypoint: 0.1726
+
+--------------------------------------
+
+Root creation time: 7.80s
+[91mAdding constraint for agent 1. Before: 0 [0m
+[92mAfter: 1 [0m
+Planning with 2 constraints.
+==============
+Got #constraints: 2
+Constraints split to tasks: dict_keys([0]), with num constraints: [2]
+[96m Using warm start path in p_sample_loop. Steps (negative attempts to recon. t=0) [3, -1] [0m
+t_model_sampling: 0.750 sec
+success: 1
+percentage free trajs: 100.00
+percentage collision intensity: 0.00
+cost smoothness: 0.0587, 0.0031
+cost path length: 2.8090, 0.1428
+cost best: 2.566
+variance waypoint: 0.3245
+
+--------------------------------------
+
+New state cost num conflicts: tensor(4.9437, device='cuda:0') 0 
+
+
+
+
+[91mAdding constraint for agent 2. Before: 0 [0m
+[92mAfter: 1 [0m
+Planning with 2 constraints.
+==============
+Got #constraints: 2
+Constraints split to tasks: dict_keys([0]), with num constraints: [2]
+[96m Using warm start path in p_sample_loop. Steps (negative attempts to recon. t=0) [3, -1] [0m
+t_model_sampling: 0.702 sec
+success: 1
+percentage free trajs: 100.00
+percentage collision intensity: 0.00
+cost smoothness: 0.0650, 0.0058
+cost path length: 2.5670, 0.1691
+cost best: 2.332
+variance waypoint: 0.2106
+
+--------------------------------------
+
+New state cost num conflicts: tensor(4.9018, device='cuda:0') 0 
+
+
+
+
+No conflicts found in CT node. GOAL.
+[92m Planning times: 9.608782291412354 [0m
+Precomputing the SDF grid and gradients took: 0.587 sec
+Precomputing the SDF grid and gradients took: 0.613 sec
+Precomputing the SDF grid and gradients took: 0.627 sec
+[92m 
+        Trial Config Summary:
+            Method: XECBS
+            Num Agents: 3
+            Instance: test
+            Stagger Start Time: 0
+            Single Agent Planner: MPDEnsemble
+        Planning Problem:
+            start_state_pos_l: [[0.800000011920929, 0.0], [-0.4000000059604645, 0.6928203105926514], [-0.4000000059604645, -0.6928203105926514]]
+            goal_state_pos_l: [[-0.800000011920929, 9.797174158936853e-17], [0.4000000059604645, -0.6928203105926514], [0.4000000059604645, 0.6928203105926514]]
+            global_model_ids: [['EnvEmptyNoWait2D-RobotPlanarDisk']]
+            agent_skeleton_l: [[[0, 0]], [[0, 0]], [[0, 0]]]
+        Trial Results:
+            success_status: TrialSuccessStatus.SUCCESS  
+            num_collisions_in_solution: 0
+            data_adherence: 0.9010416666666666
+            planning_time: 9.608782291412354
+            path_length_per_agent: 1.6394563913345337
+            mean_path_acceleration_per_agent: 0.0009367805614601821
+            num_ct_expansions: 1
+         [0m
+Results dir: file:///home/xuan/delay_robust_mmd/mmd/scripts/inference/results/2026-11-06-14-25-22/instance_name___test/num_agents___3/planner___XECBS/single_agent_planner___MPDEnsemble/0
+Saving image to: file:///home/xuan/delay_robust_mmd/mmd/scripts/inference/results/2026-11-06-14-25-22/instance_name___test/num_agents___3/planner___XECBS/single_agent_planner___MPDEnsemble/0/mmd_single_trial.gif.png
+Rendering paths and saving to: file:///home/xuan/delay_robust_mmd/mmd/scripts/inference/results/2026-11-06-14-25-22/instance_name___test/num_agents___3/planner___XECBS/single_agent_planner___MPDEnsemble/0/mmd_single_trial.gif
+Creating animation...
+...finished Creating animation
+Saving video......
+0 / 640 / 641 / 642 / 643 / 644 / 645 / 646 / 647 / 648 / 649 / 6410 / 6411 / 6412 / 6413 / 6414 / 6415 / 6416 / 6417 / 6418 / 6419 / 6420 / 6421 / 6422 / 6423 / 6424 / 6425 / 6426 / 6427 / 6428 / 6429 / 6430 / 6431 / 6432 / 6433 / 6434 / 6435 / 6436 / 6437 / 6438 / 6439 / 6440 / 6441 / 6442 / 6443 / 6444 / 6445 / 6446 / 6447 / 6448 / 6449 / 6450 / 6451 / 6452 / 6453 / 6454 / 6455 / 6456 / 6457 / 6458 / 6459 / 6460 / 6461 / 6462 / 6463 / 64...finished Saving video...
+[92m OK. [0m

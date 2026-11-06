@@ -1,0 +1,18 @@
+{
+  "method": "Coordination ORU",
+  "upstream": "https://github.com/FedericoPecora/coordination_oru",
+  "commit": "7332cdeee220129c44aa3318e4812966fc85f261",
+  "license": "GPL-3.0",
+  "environment": "WSL2 Ubuntu 22.04, OpenJDK 11, Gradle 6.4.1 wrapper, headless AWT",
+  "status": "success_with_build_patch",
+  "official_example": "TestTrajectoryEnvelopeCoordinatorThreeRobots (DemoLauncher)",
+  "build_patch": [
+    "Removed only RViz/rosjava visualization dependencies (retired jcenter com.springsource artifacts blocked compile).",
+    "Added commons-lang:commons-lang:2.6 for core ArrayUtils (missing after removing rosjava transitives).",
+    "Temporarily kept only the selected official example under tests/ so unrelated RViz examples do not fail compilation; all core sources untouched."
+  ],
+  "run_command": "./gradlew_lf run -Pdemo=TestTrajectoryEnvelopeCoordinatorThreeRobots",
+  "run_note": "Official example intentionally starts three infinite mission-dispatch threads; the 120 s run was stopped by timeout after repeated missions, not by a crash.",
+  "outputs": ["co_build4.log", "co_run2.log"],
+  "observed": "Three robots placed, missions dispatched, critical sections/dependencies updated, trajectories tracked and reparked; no Java exception in 1,776 log lines."
+}
