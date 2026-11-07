@@ -1,0 +1,37 @@
+{
+  "stage": "mpc_cbf_pilot",
+  "runs": [
+    {
+      "method": "mpc_cbf",
+      "group": "N2",
+      "task_id": "open_crossing_300000_pair02_11",
+      "p": 0.1,
+      "seed": 20281401,
+      "collision": false,
+      "safe_completion": true,
+      "all_arrived": true,
+      "timeout": false,
+      "completion_s": 19.3,
+      "fails": 0,
+      "solve_mean_ms": 19.89851865695471,
+      "solve_p95_ms": 25.210560066625465,
+      "min_pair_distance": 2.680581956665586
+    },
+    {
+      "method": "mpc_cbf",
+      "group": "N4",
+      "task_id": "open_crossing_300000_n4_0",
+      "p": 0.1,
+      "seed": 20281401,
+      "collision": false,
+      "safe_completion": true,
+      "all_arrived": true,
+      "timeout": false,
+      "completion_s": 19.0,
+      "fails": 0,
+      "solve_mean_ms": 52.24054263365504,
+      "solve_p95_ms": 59.924759960267686,
+      "min_pair_distance": 0.5093502416927095
+    }
+  ]
+}

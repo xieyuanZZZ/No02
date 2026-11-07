@@ -1,0 +1,12 @@
+{
+  "method": "mmd_native",
+  "n_agents": 3,
+  "duration_s": 5.0,
+  "dt_mmd": 0.078125,
+  "collision_at_010": false,
+  "collision_at_035": true,
+  "all_arrived": true,
+  "min_pair_distance": 0.13255651245782119,
+  "goal_error_max": 0.013217211343044719,
+  "max_speed": 1.0233267438860225
+}

@@ -89,16 +89,15 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
         except Exception:
             return np.zeros((n, 2)), False
 
-    for s in range(steps + 1):
-        t = s * dt
+    positions = [pos.copy()]
+    velocities = [vel.copy()]
+    times = [0.0]
+    completed = False
+    for step in range(steps):
+        t = step * dt
         for slot, rid, dur in evs:
             if abs(slot * 0.4 - t) < 1e-9:
                 pause_until[int(rid)] = t + float(dur)
-        traj[s] = pos
-        vel_t[s] = vel
-        valid_end = s + 1
-        if s == steps:
-            break
         paused_now = t < pause_until - 1e-9
         x = np.concatenate([np.concatenate([pos[i], vel[i]]) for i in range(n)])
         t0 = time.perf_counter()
@@ -137,13 +136,17 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
                         best_d = d
                         best = k + 1
                 idx[i] = max(int(idx[i]), min(best, h))
-        # actual terminal condition, not just waypoint index
+        positions.append(pos.copy())
+        velocities.append(vel.copy())
+        times.append((step + 1) * dt)
         goal_err = np.linalg.norm(pos - paths[:, -1, :], axis=1)
-        if completion is None and (goal_err < 0.25).all() and (np.linalg.norm(vel, axis=1) < 0.25).all():
-            completion = float((s + 1) * dt)
+        if (goal_err < 0.25).all() and (np.linalg.norm(vel, axis=1) < 0.25).all():
+            completed = True
+            completion = float(times[-1])
             break
-    # continuous-ish sweep between 0.1 s samples; do not include zero padding
-    tr = traj[:valid_end]
+    tr = np.stack(positions)
+    vel_tr = np.stack(velocities)
+    assert len(tr) == len(vel_tr) == len(times) > 0
     pair_min = np.full((n * (n - 1)) // 2, np.inf)
     iu = np.triu_indices(n, 1)
     for k in range(max(0, len(tr) - 1)):
@@ -152,9 +155,9 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
             p = tr[k] * (1 - a) + tr[k + 1] * a
             dd = np.linalg.norm(p[:, None, :] - p[None, :, :], axis=-1)
             pair_min = np.minimum(pair_min, dd[iu])
-    done = bool((np.linalg.norm(tr[-1] - paths[:, -1, :], axis=1) < 0.25).all())
-    completion = float(completion if completion is not None else steps * dt)
-    return {"traj": tr, "vel": vel_t[:valid_end], "pair_min": pair_min,
+    done = bool(completed and (np.linalg.norm(tr[-1] - paths[:, -1, :], axis=1) < 0.25).all())
+    completion = float(times[-1]) if completed else float(steps * dt)
+    return {"traj": tr, "vel": vel_tr, "pair_min": pair_min,
             "collision": bool((pair_min < d_safe).any()),
             "all_arrived": done, "completion_s": completion,
             "timeout": bool(not done), "fails": int(fails),

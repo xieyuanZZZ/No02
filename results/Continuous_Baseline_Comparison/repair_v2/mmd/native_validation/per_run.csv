@@ -1,0 +1,2 @@
+method,n_agents,duration_s,dt_mmd,collision_at_010,collision_at_035,all_arrived,min_pair_distance,goal_error_max,max_speed
+mmd_native,3,5.0,0.078125,False,True,True,0.13255651245782119,0.013217211343044719,1.0233267438860225

@@ -1,0 +1,3 @@
+method,group,task_id,p,seed,collision,safe_completion,all_arrived,timeout,completion_s,fails,solve_mean_ms,solve_p95_ms,min_pair_distance
+mpc_cbf,N2,open_crossing_300000_pair02_11,0.1,20281401,False,True,True,False,19.3,0,19.89851865695471,25.210560066625465,2.680581956665586
+mpc_cbf,N4,open_crossing_300000_n4_0,0.1,20281401,False,True,True,False,19.0,0,52.24054263365504,59.924759960267686,0.5093502416927095
