@@ -1,0 +1,66 @@
+{
+ "tasks": 6,
+ "all_clearance_ok": true,
+ "items": [
+  {
+   "task_id": "A1_open_orthogonal",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "A2_open_diagonal",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    11.313708498984763,
+    11.313708498984761,
+    11.313708498984763,
+    11.313708498984763
+   ]
+  },
+  {
+   "task_id": "B1_block_below_above",
+   "min_clearance": 1.2000000000000002,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "B2_block_cross",
+   "min_clearance": 2.2,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "C1_corridor_4way",
+   "min_clearance": 0.28000000000000025,
+   "path_lengths": [
+    11.207264237638922,
+    11.207264237638917,
+    11.207264237638922,
+    11.207264237638919
+   ]
+  },
+  {
+   "task_id": "C2_corridor_pair",
+   "min_clearance": 0.28000000000000025,
+   "path_lengths": [
+    11.95632756220098,
+    11.956327562200983,
+    11.956327562200983,
+    11.95632756220098
+   ]
+  }
+ ]
+}
