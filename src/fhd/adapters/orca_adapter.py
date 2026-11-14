@@ -1,4 +1,4 @@
-"""ORCA/RVO2 adapter: official RVO2 core + acceleration-limited velocity tracking.
+﻿"""ORCA/RVO2 adapter: official RVO2 core + acceleration-limited velocity tracking.
 
 The official RVO2 library computes the ORCA safe velocity; this module does not
 teleport agents. A separate step integrates the actual double-integrator state
@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 
-EXE = r"D:\No02_external_repos\orca_runner.exe"
+EXE = str(Path(__file__).resolve().parents[3] / "third_party" / "orca_runner.exe")
 
 
 def run_orca(paths: np.ndarray, events=(), dt: float = 0.1,
