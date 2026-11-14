@@ -49,6 +49,9 @@ def main():
     risk = FirstHitRisk.from_config(base)
     jsonl = out / "per_run.jsonl"
     rows = []
+    if jsonl.exists():
+        rows = [json.loads(x) for x in jsonl.read_text(encoding="utf-8").splitlines() if x.strip()]
+    done = {(r.get("method"), r.get("task_id"), r.get("p"), r.get("seed")) for r in rows}
     for ti, task in enumerate([t for t in m["tasks"] if t["scene"] != "narrow"]):
         paths = np.asarray(task["paths"], float)
         n = len(paths)
@@ -57,6 +60,8 @@ def main():
             for k in range(args.n_deterministic if p == 0 else args.n_delay):
                 seed = 20281701 + ti * 100 + k
                 for method in ("ours_frozen", "orca_rvo2", "mpc_cbf"):
+                    if (method, task["task_id"], p, seed) in done:
+                        continue
                     cfg = MPCSimConfig(d_safe=0.35, horizon_steps=T)
                     events = make_pause_events(seed, p, n, T, cfg)
                     t0 = time.perf_counter()
