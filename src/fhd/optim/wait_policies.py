@@ -231,7 +231,9 @@ def policy_w3_optimize(w0, mask, budget, risk_model, paths, pause_p, time_steps,
 # --------------------------------------------------------------------------- #
 def policy_w2plus(w0, mask, budget, risk_model, paths, pause_p, time_steps,
                   lam_T: float = 0.05, max_evals: int = 800, restarts: int = 3,
-                  allow_two_move: bool = True, seed: int = 0) -> WaitResult:
+                  allow_two_move: bool = True, seed: int = 0,
+                  require_p0: bool = True, p0_weight: float = 1.0,
+                  initial_stagger: bool = False) -> WaitResult:
     """W2+：与 W3 **完全相同的等待变量与约束**，但用整数坐标下降（无梯度）。
 
     搜索：
@@ -255,7 +257,15 @@ def policy_w2plus(w0, mask, budget, risk_model, paths, pause_p, time_steps,
         nonlocal dp_evals
         dp_evals += 1
         hard_p, hard_finish = _eval_hard(risk_model, paths, w, pause_p, time_steps)
-        return hard_p + lam_T * (hard_finish - base_finish), hard_p, hard_finish
+        # Optional relaxation for scenes whose w0 already violates p=0 hard
+        # feasibility: keep optimizing but penalize the p=0 residual instead of
+        # rejecting every start (the frozen default remains require_p0=True).
+        penalty = 0.0
+        if not require_p0:
+            h0, _ = _eval_hard(risk_model, paths, w, zero, time_steps)
+            penalty = p0_weight * h0
+        return (hard_p + penalty + lam_T * (hard_finish - base_finish),
+                hard_p, hard_finish)
 
     def p0_ok(w):
         nonlocal dp_evals
@@ -292,6 +302,12 @@ def policy_w2plus(w0, mask, budget, risk_model, paths, pause_p, time_steps,
         noise = torch.randint(0, 3, (n, h1), generator=gen).to(w0.dtype)
         w2 = w2 + noise * mask
         starts.append(repair(w2))
+    if initial_stagger:
+        ws = w0.clone()
+        for i in range(n):
+            if mask[i, 0] > 0:
+                ws[i, 0] = max(ws[i, 0], float(i))
+        starts.append(repair(ws))
 
     best = None
     history: list[dict] = []
@@ -300,7 +316,7 @@ def policy_w2plus(w0, mask, budget, risk_model, paths, pause_p, time_steps,
             continue
         cur = start.clone()
         cur_j, cur_hard, cur_fin = evaluate(cur)
-        if not p0_ok(cur):
+        if require_p0 and not p0_ok(cur):
             continue
         evals_this = 0
         improved = True
@@ -322,7 +338,7 @@ def policy_w2plus(w0, mask, budget, risk_model, paths, pause_p, time_steps,
                         continue
                     evals_this += 1
                     j, hp, fin = evaluate(cand)
-                    if j < cur_j - 1e-9 and p0_ok(cand):
+                    if j < cur_j - 1e-9 and (not require_p0 or p0_ok(cand)):
                         cur, cur_j, cur_hard, cur_fin = cand, j, hp, fin
                         improved = True
             # 双变量邻域（一次 +1 两个位置），缓解坐标下降的局部最优
@@ -342,7 +358,7 @@ def policy_w2plus(w0, mask, budget, risk_model, paths, pause_p, time_steps,
                             continue
                         evals_this += 1
                         j, hp, fin = evaluate(cand)
-                        if j < cur_j - 1e-9 and p0_ok(cand):
+                        if j < cur_j - 1e-9 and (not require_p0 or p0_ok(cand)):
                             cur, cur_j, cur_hard, cur_fin = cand, j, hp, fin
                             improved = True
             history.append({"restart": si, "sweep": sweep, "J": cur_j,

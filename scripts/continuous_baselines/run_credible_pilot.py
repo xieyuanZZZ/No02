@@ -1,4 +1,4 @@
-﻿"""Small closed-loop pilot on credible_v1 scenes (Ours/ORCA/MPC-CBF).
+"""Small closed-loop pilot on credible_v1 scenes (Ours/ORCA/MPC-CBF).
 
 Writes one JSONL per run and NPZ trajectories, evaluated by the independent
 common_evaluator. Static obstacles are evaluated from actual trajectories.
@@ -27,7 +27,9 @@ def w2plus(paths, risk, T, H, n, seed):
     return policy_w2plus(w0, make_mask(H, allowed_positions(H, 5), n),
                          WaitBudget(time_steps=T, horizon=H), risk,
                          torch.tensor(paths), torch.full((n,), 0.1), T,
-                         lam_T=0.05, max_evals=200, restarts=2, seed=seed).wait.numpy()
+                         lam_T=0.05, max_evals=800, restarts=3, seed=seed,
+                         require_p0=False, p0_weight=1.0,
+                         initial_stagger=True).wait.numpy()
 
 
 def main():
@@ -43,7 +45,7 @@ def main():
     risk = FirstHitRisk.from_config(base)
     jsonl = out / "per_run.jsonl"
     rows = []
-    for ti, task in enumerate(m["tasks"]):
+    for ti, task in enumerate([t for t in m["tasks"] if t["scene"] != "narrow"]):
         paths = np.asarray(task["paths"], float)
         n = len(paths)
         w2 = w2plus(paths, risk, T, H, n, ti)

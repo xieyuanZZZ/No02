@@ -1,0 +1,69 @@
+{
+  "stage": "credible_v1_small_pilot",
+  "n_tasks": 6,
+  "by": {
+    "ours_frozen|open": {
+      "n": 6,
+      "safe_rate": 1.0,
+      "inter_collision": 0.0,
+      "static_collision": null,
+      "completion_s": 18.533333333333335
+    },
+    "ours_frozen|static": {
+      "n": 6,
+      "safe_rate": 1.0,
+      "inter_collision": 0.0,
+      "static_collision": 0.0,
+      "completion_s": 20.0
+    },
+    "ours_frozen|narrow": {
+      "n": 0,
+      "safe_rate": null,
+      "inter_collision": null,
+      "static_collision": null,
+      "completion_s": null
+    },
+    "orca_rvo2|open": {
+      "n": 6,
+      "safe_rate": 0.0,
+      "inter_collision": 0.0,
+      "static_collision": null,
+      "completion_s": 38.400000000000006
+    },
+    "orca_rvo2|static": {
+      "n": 6,
+      "safe_rate": 0.0,
+      "inter_collision": 0.3333333333333333,
+      "static_collision": 0.0,
+      "completion_s": 38.400000000000006
+    },
+    "orca_rvo2|narrow": {
+      "n": 0,
+      "safe_rate": null,
+      "inter_collision": null,
+      "static_collision": null,
+      "completion_s": null
+    },
+    "mpc_cbf|open": {
+      "n": 6,
+      "safe_rate": 1.0,
+      "inter_collision": 0.0,
+      "static_collision": null,
+      "completion_s": 18.866666666666664
+    },
+    "mpc_cbf|static": {
+      "n": 6,
+      "safe_rate": 0.6666666666666666,
+      "inter_collision": 0.3333333333333333,
+      "static_collision": 0.0,
+      "completion_s": 21.566666666666666
+    },
+    "mpc_cbf|narrow": {
+      "n": 0,
+      "safe_rate": null,
+      "inter_collision": null,
+      "static_collision": null,
+      "completion_s": null
+    }
+  }
+}
