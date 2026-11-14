@@ -1,0 +1,47 @@
+{
+  "stage": "ab_5seed_actual_arrival",
+  "by": {
+    "ours_frozen|open": {
+      "n": 20,
+      "safe_rate": 1.0,
+      "collision": 0.0,
+      "static_collision": null,
+      "completion_s": 20.904999999999998
+    },
+    "ours_frozen|static": {
+      "n": 20,
+      "safe_rate": 1.0,
+      "collision": 0.0,
+      "static_collision": 0.0,
+      "completion_s": 21.585
+    },
+    "orca_rvo2|open": {
+      "n": 20,
+      "safe_rate": 1.0,
+      "collision": 0.0,
+      "static_collision": null,
+      "completion_s": 17.62
+    },
+    "orca_rvo2|static": {
+      "n": 20,
+      "safe_rate": 0.95,
+      "collision": 0.05,
+      "static_collision": 0.0,
+      "completion_s": 17.250000000000004
+    },
+    "mpc_cbf|open": {
+      "n": 20,
+      "safe_rate": 1.0,
+      "collision": 0.0,
+      "static_collision": null,
+      "completion_s": 20.110000000000003
+    },
+    "mpc_cbf|static": {
+      "n": 20,
+      "safe_rate": 1.0,
+      "collision": 0.0,
+      "static_collision": 0.0,
+      "completion_s": 22.159999999999997
+    }
+  }
+}

@@ -36,7 +36,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--manifest", default=str(ROOT / "results/Continuous_Baseline_Comparison/credible_v1/task_manifest.json"))
     ap.add_argument("--out", default=str(ROOT / "results/Continuous_Baseline_Comparison/credible_v1/small_pilot"))
+    ap.add_argument("--ps", default="0,0.1")
+    ap.add_argument("--n-delay", type=int, default=2)
     args = ap.parse_args()
+    ps = [float(x) for x in args.ps.split(",") if x.strip()]
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
     (out / "raw").mkdir(exist_ok=True)
     m = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
@@ -49,8 +52,8 @@ def main():
         paths = np.asarray(task["paths"], float)
         n = len(paths)
         w2 = w2plus(paths, risk, T, H, n, ti)
-        for p in (0.0, 0.1):
-            for k in range(1 if p == 0 else 2):
+        for p in ps:
+            for k in range(1 if p == 0 else args.n_delay):
                 seed = 20281701 + ti * 100 + k
                 for method in ("ours_frozen", "orca_rvo2", "mpc_cbf"):
                     cfg = MPCSimConfig(d_safe=0.35, horizon_steps=T)
@@ -70,12 +73,14 @@ def main():
                             info = {"compute_ms": float(r.coordinator_stats.get("p95_ms", 0.0)),
                                     "solver_fail": 0}
                         elif method == "orca_rvo2":
-                            r = run_orca(paths, events, steps=int(T * 0.4 / 0.1))
+                            r = run_orca(paths, events, steps=int(T * 0.4 / 0.1),
+                                         rects=task["rects"], circles=task["circles"])
                             times = np.arange(len(r["traj"])) * 0.1
                             pos, vel = r["traj"], r["vel"]
                             info = {"compute_ms": 0.0, "solver_fail": 0}
                         else:
-                            r = run_mpc_cbf(paths, events, steps=int(T * 0.4 / 0.1))
+                            r = run_mpc_cbf(paths, events, steps=int(T * 0.4 / 0.1),
+                                            rects=task["rects"], circles=task["circles"])
                             times = np.arange(len(r["traj"])) * 0.1
                             pos, vel = r["traj"], r["vel"]
                             info = {"compute_ms": float(r["solve_p95_ms"]),

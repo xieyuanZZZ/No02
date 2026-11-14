@@ -16,7 +16,9 @@ import numpy as np
 def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
                 steps: int = 384, vmax: float = 1.5, amax: float = 2.0,
                 d_safe: float = 0.35, gamma: float = 0.1, horizon: int = 4,
-                q_pos: float = 10.0, r_u: float = 1.0) -> dict:
+                q_pos: float = 10.0, r_u: float = 1.0,
+                rects=(), circles=(), robot_radius: float = 0.15,
+                clearance: float = 0.03) -> dict:
     paths = np.asarray(paths, dtype=float)
     n, h, _ = paths.shape
     evs = list(events)
@@ -71,6 +73,17 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
                     hk = ca.sumsqr(pi - pj) - d_safe * d_safe
                     hk2 = ca.sumsqr(pi2 - pj2) - d_safe * d_safe
                     opti.subject_to(hk2 >= (1.0 - gamma) * hk)
+            for i in range(n):
+                p = X[4 * i:4 * i + 2, k]
+                margin = robot_radius + clearance
+                for r in rects:
+                    x1, y1, x2, y2 = r
+                    dx = ca.fmax(ca.fmax(x1 - p[0], 0), p[0] - x2)
+                    dy = ca.fmax(ca.fmax(y1 - p[1], 0), p[1] - y2)
+                    opti.subject_to(dx * dx + dy * dy >= margin * margin)
+                for c in circles:
+                    opti.subject_to(ca.sumsqr(p - ca.DM([c[0], c[1]]))
+                                    >= (c[2] + margin) ** 2)
         cost = 0
         for k in range(horizon + 1):
             for i in range(n):

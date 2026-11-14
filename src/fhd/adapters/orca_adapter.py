@@ -1,4 +1,4 @@
-﻿"""ORCA/RVO2 adapter: official RVO2 core + acceleration-limited velocity tracking.
+"""ORCA/RVO2 adapter: official RVO2 core + acceleration-limited velocity tracking.
 
 The official RVO2 library computes the ORCA safe velocity; this module does not
 teleport agents. A separate step integrates the actual double-integrator state
@@ -19,7 +19,8 @@ EXE = str(Path(__file__).resolve().parents[3] / "third_party" / "orca_runner.exe
 def run_orca(paths: np.ndarray, events=(), dt: float = 0.1,
              steps: int = 960, vmax: float = 1.5, amax: float = 2.0,
              radius: float = 0.175, neighbor: float = 3.0,
-             horizon: float = 2.0, exe: str = EXE) -> dict:
+             horizon: float = 2.0, exe: str = EXE,
+             rects=(), circles=()) -> dict:
     paths = np.asarray(paths, dtype=float)
     n, h, _ = paths.shape
     with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
@@ -30,6 +31,19 @@ def run_orca(paths: np.ndarray, events=(), dt: float = 0.1,
         f.write(str(len(evs)) + "\n")
         for slot, rid, dur in evs:
             f.write(f"{slot * 0.4:.6f} {int(rid)} {float(dur):.6f}\n")
+        polys = []
+        for r in rects:
+            x1, y1, x2, y2 = r
+            polys.append([(x1, y1), (x2, y1), (x2, y2), (x1, y2)])
+        for c in circles:
+            cx, cy, rr = c
+            polys.append([(cx + rr * np.cos(a), cy + rr * np.sin(a))
+                          for a in np.linspace(0, 2 * np.pi, 12, endpoint=False)])
+        f.write(f"{len(polys)}\n")
+        for poly in polys:
+            f.write(f"{len(poly)}\n")
+            for x, y in poly:
+                f.write(f"{x:.9f} {y:.9f}\n")
         path = f.name
     try:
         proc = subprocess.run([exe, path], capture_output=True, text=True,

@@ -31,10 +31,22 @@ int main(int argc, char** argv) {
     struct Ev { double t; int id; double dur; };
     std::vector<Ev> evs(ne);
     for (int k = 0; k < ne; ++k) f >> evs[k].t >> evs[k].id >> evs[k].dur;
+    int nobs; f >> nobs;
+    std::vector<std::vector<RVO::Vector2>> obstacles(nobs);
+    for (int o = 0; o < nobs; ++o) {
+        int nv; f >> nv;
+        obstacles[o].resize(nv);
+        for (int k = 0; k < nv; ++k) {
+            double x, y; f >> x >> y;
+            obstacles[o][k] = RVO::Vector2((float)x, (float)y);
+        }
+    }
 
     RVO::RVOSimulator sim;
     sim.setTimeStep((float)dt);
     sim.setAgentDefaults((float)neighbor, 10, (float)horizon, (float)horizon, (float)radius, (float)vmax);
+    for (const auto& poly : obstacles) sim.addObstacle(poly);
+    if (!obstacles.empty()) sim.processObstacles();
     std::vector<size_t> ids;
     std::vector<int> target(n, 1);
     std::vector<double> pause_until(n, -1.0);
