@@ -38,6 +38,7 @@ def main():
     ap.add_argument("--out", default=str(ROOT / "results/Continuous_Baseline_Comparison/credible_v1/small_pilot"))
     ap.add_argument("--ps", default="0,0.1")
     ap.add_argument("--n-delay", type=int, default=2)
+    ap.add_argument("--n-deterministic", type=int, default=1)
     args = ap.parse_args()
     ps = [float(x) for x in args.ps.split(",") if x.strip()]
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
@@ -53,7 +54,7 @@ def main():
         n = len(paths)
         w2 = w2plus(paths, risk, T, H, n, ti)
         for p in ps:
-            for k in range(1 if p == 0 else args.n_delay):
+            for k in range(args.n_deterministic if p == 0 else args.n_delay):
                 seed = 20281701 + ti * 100 + k
                 for method in ("ours_frozen", "orca_rvo2", "mpc_cbf"):
                     cfg = MPCSimConfig(d_safe=0.35, horizon_steps=T)

@@ -1,0 +1,40 @@
+{
+  "method": "Ours-W2plus-relaxed-v1",
+  "frozen_from_commit": "a807ec1dd854871f82a6cbfa8b0217ca7873fc4b",
+  "task_manifest": "../../task_manifest.json",
+  "task_manifest_sha256": "CE0A5191DABB70483BF325092769D80B08D60BC5850C0AFE5472CA92E74B1B9E",
+  "per_run_sha256": "BAB7509DFA21BC33380BE948BA23C4791547D7A15A98251188941CB71C29F46F",
+  "w2plus": {
+    "require_p0": false,
+    "p0_weight": 1.0,
+    "initial_stagger": true,
+    "lam_T": 0.05,
+    "max_evals": 800,
+    "restarts": 3
+  },
+  "first_hit": {
+    "horizon_s": 3.2,
+    "hold_slots": 1,
+    "d_safe": 0.35
+  },
+  "physics": {
+    "dt": 0.1,
+    "dt_slot": 0.4,
+    "vmax": 1.5,
+    "amax": 2.0,
+    "d_safe": 0.35
+  },
+  "protocol": {
+    "tasks": ["A1_open_orthogonal", "A2_open_diagonal", "B1_block_below_above", "B2_block_cross"],
+    "p": [0.0, 0.1, 0.2],
+    "seeds_per_condition": 5,
+    "methods": ["ours_frozen", "orca_rvo2", "mpc_cbf"],
+    "records": 180,
+    "completion": "first actual all-arrived state from saved NPZ, goal error<0.25 m and terminal speed<0.25 m/s"
+  },
+  "known_notes": [
+    "This is not the original frozen W2+ default; require_p0=False and initial_stagger=True are explicit experimental options.",
+    "ORCA is left as-is per instruction; its static-obstacle behaviour is not claimed as a solved baseline.",
+    "No narrow-corridor scene is included."
+  ]
+}
