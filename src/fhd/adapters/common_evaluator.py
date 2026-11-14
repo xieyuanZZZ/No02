@@ -25,8 +25,9 @@ def _seg_min_pair(a0, a1, b0, b1, n=21):
 
 
 def evaluate_run(times, positions, velocities, paths, *,
-                 rects=(), circles=(), d_safe=0.35, robot_radius=0.15,
-                 clearance=0.03, goal_tol=0.25, sprint_tol=0.25) -> dict:
+                 rects=(), circles=(), d_safe=0.35, contact_distance=0.30,
+                 robot_radius=0.15, clearance=0.03, goal_tol=0.25,
+                 sprint_tol=0.25) -> dict:
     times = np.asarray(times, float)
     pos = np.asarray(positions, float)
     vel = np.asarray(velocities, float)
@@ -63,9 +64,11 @@ def evaluate_run(times, positions, velocities, paths, *,
     end_speed = np.linalg.norm(vel[-1], axis=1)
     arrived = bool((goal_err < goal_tol).all() and (end_speed < sprint_tol).all())
     inter = bool((pair_min < d_safe).any())
+    contact = bool((pair_min < contact_distance).any())
     static = bool(static_min < 0.0) if (len(rects) or len(circles)) else None
     return {
         "inter_robot_violation": inter,
+        "inter_robot_contact": contact,
         "static_obstacle_violation": static,
         "static_status": "evaluated" if static is not None else "not_evaluated",
         "min_pair_distance": float(pair_min.min()) if len(pair_min) else None,
@@ -76,5 +79,6 @@ def evaluate_run(times, positions, velocities, paths, *,
         "goal_error_max": float(goal_err.max()),
         "end_speed_max": float(end_speed.max()),
         "safe_completion": bool(arrived and not inter and static is not True),
+        "contact_safe": bool(arrived and not contact and static is not True),
         "n_steps": len(times),
     }

@@ -75,11 +75,11 @@ def main():
     tasks = []
     # A: open crossings (two distinct geometries)
     tasks.append(task("A1_open_orthogonal", "open", [
-        [(1, 5), (9, 5)], [(9, 5), (1, 5)],
-        [(5, 1), (5, 9)], [(5, 9), (5, 1)]]))
+        [(1, 3), (9, 3)], [(9, 7), (1, 7)],
+        [(3, 1), (7, 8)], [(7, 1), (3, 8)]]))
     tasks.append(task("A2_open_diagonal", "open", [
-        [(1, 1), (9, 9)], [(9, 9), (1, 1)],
-        [(1, 9), (9, 1)], [(9, 1), (1, 9)]]))
+        [(1, 2), (9, 6)], [(9, 8), (1, 4)],
+        [(2, 9), (6, 1)], [(8, 9), (4, 1)]]))
     # B: static obstacles; paths run around a central block
     rects_b = [(4.2, 4.2, 5.8, 5.8)]
     tasks.append(task("B1_block_below_above", "static", [
@@ -89,7 +89,7 @@ def main():
         [(1, 2), (9, 2)], [(1, 8), (9, 8)],
         [(2, 1), (2, 9)], [(8, 9), (8, 1)]], rects_b))
     # C: narrow corridor (single-file); walls leave a 0.6 m channel
-    rects_c = [(4.7, 2.5, 4.72, 7.5), (5.28, 2.5, 5.30, 7.5)]
+    rects_c = [(4.65, 2.5, 4.68, 7.5), (5.32, 2.5, 5.35, 7.5)]
     tasks.append(task("C1_corridor_4way", "narrow", [
         [(3.2, 0.3), (4.2, 1.4), (4.2, 2.0), (5.0, 2.0), (5.0, 8.0), (5.8, 8.6), (6.8, 9.7)],
         [(6.8, 9.7), (5.8, 8.6), (5.0, 8.0), (5.0, 2.0), (4.2, 2.0), (4.2, 1.4), (3.2, 0.3)],

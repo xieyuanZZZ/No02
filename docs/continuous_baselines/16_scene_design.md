@@ -1,4 +1,4 @@
-# 16 credible_v1 场景设计
+﻿# 16 credible_v1 场景设计
 
 **目录**：`results/Continuous_Baseline_Comparison/credible_v1/`
 
@@ -6,11 +6,11 @@
 
 | 任务 | 类型 | 几何 |
 |---|---|---|
-| `A1_open_orthogonal` | 开阔交叉 | 四个方向正交，中心交叉 |
+| `A1_open_orthogonal` | 开阔交叉 | 非共线四路斜交叉，中心留空 |
 | `A2_open_diagonal` | 开阔交叉 | 两条对角线对向交叉 |
 | `B1_block_below_above` | 静态障碍 | 中央 1.6×1.6 矩形；上下左右绕行 |
 | `B2_block_cross` | 静态障碍 | 同上，路径更靠外侧 |
-| `C1_corridor_4way` | 狭窄走廊 | 0.56 m 宽走廊；四机器人从四角汇入单通道 |
+| `C1_corridor_4way` | 狭窄走廊 | 0.70 m 宽走廊；四机器人从四角汇入单通道 |
 | `C2_corridor_pair` | 狭窄走廊 | 0.56 m 宽走廊；两对机器人对向 |
 
 - 地图 10×10 m；
