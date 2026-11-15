@@ -1,0 +1,40 @@
+{
+  "stage": "maze_v1_small_pilot",
+  "n_tasks": 1,
+  "n_runs_per_method": 6,
+  "by": {
+    "ours_frozen": {
+      "n": 6,
+      "safe_rate": 0.0,
+      "inter_collision": 1.0,
+      "static_collision": 0.0,
+      "all_arrived": 0.3333333333333333,
+      "completion_mean_s": 37.46666666666667,
+      "solver_fail": 0
+    },
+    "orca_rvo2": {
+      "n": 6,
+      "safe_rate": 0.0,
+      "inter_collision": 0.8333333333333334,
+      "static_collision": 0.3333333333333333,
+      "all_arrived": 0.8333333333333334,
+      "completion_mean_s": 38.4,
+      "solver_fail": 0
+    },
+    "mpc_cbf": {
+      "n": 6,
+      "safe_rate": 0.0,
+      "inter_collision": 0.5,
+      "static_collision": 1.0,
+      "all_arrived": 0.0,
+      "completion_mean_s": 38.4,
+      "solver_fail": 1776
+    }
+  },
+  "notes": [
+    "Curved 64-point reference paths through five rectangular obstacles.",
+    "All methods fail the safety criterion in this deliberately difficult maze.",
+    "Ours W2+ produced waits [0,0,12,0] but hard risk remained 5.06; no safe solution.",
+    "MPC-CBF static hard constraints are frequently infeasible (1776 solver failures)."
+  ]
+}

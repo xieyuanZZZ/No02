@@ -55,7 +55,7 @@ def main():
     for ti, task in enumerate([t for t in m["tasks"] if t["scene"] != "narrow"]):
         paths = np.asarray(task["paths"], float)
         n = len(paths)
-        w2 = w2plus(paths, risk, T, H, n, ti)
+        w2 = w2plus(paths, risk, T, paths.shape[1], n, ti)
         for p in ps:
             for k in range(args.n_deterministic if p == 0 else args.n_delay):
                 seed = 20281701 + ti * 100 + k
