@@ -1,11 +1,12 @@
-from pathlib import Path
+﻿from pathlib import Path
 import json
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-SRC = Path(r"D:\paper2\_v3_medium1")
+import os
+SRC = Path(os.environ.get("V3_SRC", r"D:\paper2\_v3_medium1"))
 rows = [json.loads(x) for x in (SRC / "per_run.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
 rows = [r for r in rows if r.get("error") is None]
 methods = [("ours_frozen", "Ours"), ("orca_rvo2", "ORCA"), ("mpc_cbf", "MPC-CBF")]

@@ -1,5 +1,6 @@
-"""Generate 4 representative v3 animations and summary charts."""
+﻿"""Generate 4 representative v3 animations and summary charts."""
 from pathlib import Path
+import os
 import json
 import numpy as np
 import matplotlib
@@ -9,7 +10,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.animation import FuncAnimation, PillowWriter
 
 ROOT = Path(__file__).resolve().parents[2]
-RES = Path(r"D:\paper2\_v3_medium1")
+RES = Path(os.environ.get("V3_SRC", r"D:\paper2\_v3_medium1"))
 MAN = ROOT / "results/Continuous_Baseline_Comparison/credible_v3/task_manifest.json"
 OUT = Path(r"D:\paper2\_figs"); OUT.mkdir(parents=True, exist_ok=True)
 tasks = json.loads(MAN.read_text(encoding="utf-8"))["tasks"]
