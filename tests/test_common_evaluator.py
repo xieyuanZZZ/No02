@@ -34,3 +34,21 @@ def test_static_obstacle_and_arrival():
     assert r["static_status"] == "evaluated"
     assert r["all_arrived"] is True
     assert r["safe_completion"] is False
+
+
+def test_last_interval_collision_is_detected():
+    pos = np.array([[[0., 0.], [1., 0.]], [[0., 0.], [1., 0.]],
+                    [[0.5, 0.], [0.5, 0.]]])
+    vel = np.zeros_like(pos)
+    paths = np.stack([[[0, 0], [0.5, 0]], [[1, 0], [0.5, 0]]])
+    r = evaluate_run(np.array([0., 1., 2.]), pos, vel, paths)
+    assert r["inter_robot_violation"] is True
+
+
+def test_length_mismatch_raises():
+    try:
+        evaluate_run(np.array([0., 1.]), np.zeros((2, 2, 2)),
+                     np.zeros((1, 2, 2)), np.zeros((2, 2, 2)))
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError")

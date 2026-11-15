@@ -18,7 +18,8 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
                 d_safe: float = 0.35, gamma: float = 0.1, horizon: int = 4,
                 q_pos: float = 10.0, r_u: float = 1.0,
                 rects=(), circles=(), robot_radius: float = 0.15,
-                clearance: float = 0.03) -> dict:
+                clearance: float = 0.03, soft_obstacles: bool = True,
+                slack_weight: float = 1e4) -> dict:
     paths = np.asarray(paths, dtype=float)
     n, h, _ = paths.shape
     evs = list(events)
@@ -45,6 +46,8 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
         opti = ca.Opti()
         X = opti.variable(4 * n, horizon + 1)
         U = opti.variable(2 * n, horizon)
+        slack = opti.variable()
+        opti.subject_to(slack >= 0)
         opti.subject_to(X[:, 0] == ca.DM(x.reshape(-1)))
         for k in range(horizon):
             for i in range(n):
@@ -80,10 +83,11 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
                     x1, y1, x2, y2 = r
                     dx = ca.fmax(ca.fmax(x1 - p[0], 0), p[0] - x2)
                     dy = ca.fmax(ca.fmax(y1 - p[1], 0), p[1] - y2)
-                    opti.subject_to(dx * dx + dy * dy >= margin * margin)
+                    h_obs = dx * dx + dy * dy - margin * margin
+                    opti.subject_to(h_obs + (slack if soft_obstacles else 0) >= 0)
                 for c in circles:
-                    opti.subject_to(ca.sumsqr(p - ca.DM([c[0], c[1]]))
-                                    >= (c[2] + margin) ** 2)
+                    h_obs = ca.sumsqr(p - ca.DM([c[0], c[1]])) - (c[2] + margin) ** 2
+                    opti.subject_to(h_obs + (slack if soft_obstacles else 0) >= 0)
         cost = 0
         for k in range(horizon + 1):
             for i in range(n):
@@ -93,6 +97,8 @@ def run_mpc_cbf(paths: np.ndarray, events=(), dt: float = 0.1,
                 cost += q_pos * ca.sumsqr(p - pref) + 0.1 * ca.sumsqr(v)
                 if k < horizon:
                     cost += r_u * ca.sumsqr(U[2 * i:2 * i + 2, k])
+        if soft_obstacles and (rects or circles):
+            cost += slack_weight * slack
         opti.minimize(cost)
         opti.solver("ipopt", {"print_time": False},
                     {"max_iter": 80, "print_level": 0, "sb": "yes"})

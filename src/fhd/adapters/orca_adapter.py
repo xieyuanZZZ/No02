@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 
 import numpy as np
@@ -45,11 +46,13 @@ def run_orca(paths: np.ndarray, events=(), dt: float = 0.1,
             for x, y in poly:
                 f.write(f"{x:.9f} {y:.9f}\n")
         path = f.name
+    t0 = time.perf_counter()
     try:
         proc = subprocess.run([exe, path], capture_output=True, text=True,
                               timeout=120)
     finally:
         Path(path).unlink(missing_ok=True)
+    elapsed_s = time.perf_counter() - t0
     if proc.returncode != 0:
         raise RuntimeError(f"ORCA runner failed: {proc.stderr[:500]}")
     rows = [ln.split(",") for ln in proc.stdout.strip().splitlines()[1:] if ln]
@@ -75,15 +78,19 @@ def run_orca(paths: np.ndarray, events=(), dt: float = 0.1,
             if len(iu[0]):
                 pair_min = np.minimum(pair_min, dd[iu])
     pair_coll = (pair_min < 0.35)
-    finished = (target >= h).all(axis=1)
-    if finished.any():
-        finish_step = int(np.argmax(finished))
+    speed = np.linalg.norm(vel, axis=-1)
+    # Actual-state arrival, independent of the C++ target index.  The runner
+    # keeps target=h after its 0.12 m acceptance radius; completion must be
+    # judged from positions and terminal speed.
+    goal_err = np.linalg.norm(traj - paths[:, -1, :][None, :, :], axis=2)
+    arrived = (goal_err < 0.25).all(axis=1) & (speed < 0.25).all(axis=1)
+    if arrived.any():
+        finish_step = int(np.argmax(arrived))
         completion = float(finish_step * dt)
         timeout = False
     else:
         completion = float(steps * dt)
         timeout = True
-    speed = np.linalg.norm(vel, axis=-1)
     return {
         "traj": traj, "vel": vel, "target": target, "paused": paused,
         "pair_min": pair_min, "collision": bool(pair_coll.any()),
@@ -91,6 +98,7 @@ def run_orca(paths: np.ndarray, events=(), dt: float = 0.1,
         "all_arrived": bool(not timeout),
         "max_speed": float(speed.max()), "steps": steps,
         "online_requests": int(paused.sum()),
+        "elapsed_s": float(elapsed_s),
     }
 
 
