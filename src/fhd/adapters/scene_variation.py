@@ -1,4 +1,4 @@
-"""Per-run scene jitter and A* reference-path regeneration.
+﻿"""Per-run scene jitter and A* reference-path regeneration.
 
 The base task is frozen; for each (task, p, seed) we may move start/goal,
 swap start/goal, and shift/resize obstacles. Paths are rebuilt with A* so the
@@ -102,6 +102,13 @@ def sample_variant(task, seed: int, jitter: float = 0.20, swap_p: float = 0.2):
         starts[i] = np.clip(starts[i], 0.4, 9.6)
         goals[i] = np.clip(goals[i], 0.4, 9.6)
     paths = [_resample(_astar(s, g, rects)) for s, g in zip(starts, goals)]
+    # Reject variants where two reference paths run alongside each other for
+    # many samples; only point-like crossings are acceptable.
+    for i in range(len(paths)):
+        for j in range(i + 1, len(paths)):
+            d = np.linalg.norm(paths[i][:, None, :] - paths[j][None, :, :], axis=-1)
+            if int((d.min(axis=1) < 0.35).sum()) > 12:
+                raise ValueError("paths overlap too much")
     if np.min(np.linalg.norm(starts[:, None] - starts[None], axis=-1)
               + np.eye(4) * 99) < 0.35:
         raise ValueError("jittered start collision")
@@ -116,7 +123,7 @@ def sample_variant(task, seed: int, jitter: float = 0.20, swap_p: float = 0.2):
     return out
 
 
-def sample_variant_retry(task, seed: int, tries: int = 20):
+def sample_variant_retry(task, seed: int, tries: int = 100):
     for k in range(tries):
         try:
             return sample_variant(task, seed + k * 7919)

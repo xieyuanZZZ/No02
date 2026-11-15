@@ -3,15 +3,16 @@
   "tasks": 12,
   "task_classes": {"open": 4, "static": 8},
   "robot_count": 4,
-  "task_manifest_sha256": "4EC9B68B415CF75FA69BF771878C26A6400411DDEC7DADD33C904CC434CCA8A7",
-  "scene_validation_sha256": "0B72B52FA6F0B0CDF1925BFEB08F5705980277B069E5B63019C9AD80616F13C9",
-  "path_planner": "A* 0.1 m grid; obstacle inflation 0.28 m; line-of-sight simplification; 64-point resample",
+  "task_manifest_sha256": "13F30AF594379209CE9E2EB059CD59ECE274DD804ECA0C7A045401223719952B",
+  "scene_validation_sha256": "B04ABCA51562CAA6DA11B00EF3C3B76A6B7001B1A2275F184A9C97C970AAC993",
+  "path_planner": "A* 0.1 m grid; obstacle inflation 0.28 m; 64-point resample; explicit detour paths for B4/B6/B8",
   "per_run_variation": {
     "start_goal_jitter_m": 0.20,
     "obstacle_center_jitter_m": 0.12,
     "obstacle_halfsize_jitter_m": 0.08,
     "start_goal_swap_probability": 0.2,
     "paths_rebuilt": true,
+    "overlap_filter": "reject if any pair of 64-point paths has more than 12 samples within 0.35 m",
     "variants_generated": 36,
     "variants_failed": 0
   },
@@ -22,8 +23,10 @@
                        "records": 2160},
   "status": "task set frozen; randomized 3-method experiment not started",
   "notes": [
-    "B3 obstacle moved away from the path; min clearance is now 0.60 m.",
-    "B5-B8 have 1-3 obstacles; B6-B8 paths include A* detours where a straight line is invalid.",
-    "The new run_credible_pilot.py --randomize flag regenerates geometry and paths per seed."
+    "B3 obstacle moved away from the path; min clearance is 0.60 m.",
+    "B4 is a four-lane zig-zag task with two blocks; paths are not the horizontal/vertical B1-B2 pattern.",
+    "B6 contains diagonal/detour paths; B8 is four nested L-shaped lanes around an L obstacle.",
+    "B4/B6/B8 paths are explicitly designed so they only meet at a few crossing points.",
+    "run_credible_pilot.py --randomize regenerates geometry and A* paths per seed; overlap-filtered."
   ]
 }
