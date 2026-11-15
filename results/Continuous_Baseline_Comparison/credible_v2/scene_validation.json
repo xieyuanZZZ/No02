@@ -1,0 +1,93 @@
+{
+ "tasks": 8,
+ "items": [
+  {
+   "task_id": "A1_open_orthogonal",
+   "scene": "open",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.062257748298551,
+    8.062257748298551
+   ]
+  },
+  {
+   "task_id": "A2_open_diagonal",
+   "scene": "open",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    8.944271909999157,
+    8.944271909999157,
+    8.944271909999157,
+    8.944271909999157
+   ]
+  },
+  {
+   "task_id": "A3_open_multi_cross",
+   "scene": "open",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    10.0,
+    10.0,
+    10.0,
+    9.999999999999998
+   ]
+  },
+  {
+   "task_id": "A4_open_asymmetric",
+   "scene": "open",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    10.0,
+    10.0,
+    10.0,
+    10.0
+   ]
+  },
+  {
+   "task_id": "B1_block_below_above",
+   "scene": "static",
+   "min_clearance": 1.2000000000000002,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "B2_block_cross",
+   "scene": "static",
+   "min_clearance": 2.2,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "B3_two_blocks",
+   "scene": "static",
+   "min_clearance": 0.20000000000000018,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.399999999999999,
+    8.399999999999999
+   ]
+  },
+  {
+   "task_id": "B4_staggered_blocks",
+   "scene": "static",
+   "min_clearance": 0.7999999999999998,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  }
+ ]
+}

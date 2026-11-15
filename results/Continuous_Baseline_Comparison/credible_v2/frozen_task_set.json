@@ -1,0 +1,20 @@
+{
+  "version": "credible_v2",
+  "frozen_at_commit": "55ca324",
+  "tasks": 8,
+  "task_classes": {"open": 4, "static": 4},
+  "robot_count": 4,
+  "physics": {"dt": 0.1, "dt_slot": 0.4, "vmax": 1.5, "amax": 2.0,
+              "d_safe": 0.35, "robot_radius": 0.15, "clearance": 0.03},
+  "task_manifest_sha256": "486F7305B301FA0C2833CD130C3F42C9EECDCE69E56F42F3F02E9955E087252E",
+  "scene_validation_sha256": "AEE8A0442B40C7594289CD4AA382970439A977E5EEEDC8B275C03985917A3483",
+  "ours_variant": "Ours-W2plus-relaxed-v1",
+  "ours_params": {"require_p0": false, "p0_weight": 1.0,
+                  "initial_stagger": true, "max_evals": 800,
+                  "restarts": 3, "lam_T": 0.05},
+  "p": [0.0, 0.1, 0.2],
+  "seeds_per_condition": 20,
+  "methods": ["ours_frozen", "orca_rvo2", "mpc_cbf"],
+  "planned_records": 1440,
+  "status": "task set frozen; no 1440-run experiment started yet"
+}
