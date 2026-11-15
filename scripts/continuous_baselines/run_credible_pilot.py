@@ -39,6 +39,8 @@ def main():
     ap.add_argument("--ps", default="0,0.1")
     ap.add_argument("--n-delay", type=int, default=2)
     ap.add_argument("--n-deterministic", type=int, default=1)
+    ap.add_argument("--randomize", action="store_true",
+                    help="jitter start/goal/obstacles and rebuild A* paths per seed")
     args = ap.parse_args()
     ps = [float(x) for x in args.ps.split(",") if x.strip()]
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
@@ -55,10 +57,26 @@ def main():
     for ti, task in enumerate([t for t in m["tasks"] if t["scene"] != "narrow"]):
         paths = np.asarray(task["paths"], float)
         n = len(paths)
-        w2 = w2plus(paths, risk, T, paths.shape[1], n, ti)
+        w2 = None if args.randomize else w2plus(paths, risk, T, paths.shape[1], n, ti)
         for p in ps:
             for k in range(args.n_deterministic if p == 0 else args.n_delay):
                 seed = 20281701 + ti * 100 + k
+                cur_task = task
+                paths_run = paths
+                w2_run = w2
+                if args.randomize:
+                    try:
+                        from fhd.adapters.scene_variation import sample_variant_retry
+                        cur_task = sample_variant_retry(task, seed)
+                        paths_run = np.asarray(cur_task["paths"], float)
+                        w2_run = w2plus(paths_run, risk, T, paths_run.shape[1], n, seed)
+                    except Exception as exc:
+                        rec = {"method": "all", "task_id": task["task_id"], "p": p,
+                               "seed": seed, "error": f"variant: {exc}",
+                               "safe_completion": False}
+                        with jsonl.open("a", encoding="utf-8") as fh:
+                            fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                        continue
                 for method in ("ours_frozen", "orca_rvo2", "mpc_cbf"):
                     if (method, task["task_id"], p, seed) in done:
                         continue
@@ -67,11 +85,11 @@ def main():
                     t0 = time.perf_counter()
                     try:
                         if method == "ours_frozen":
-                            co = OnlineFirstHitCoordinator(paths, w2, 0.35, 0.4, 3.2, p,
+                            co = OnlineFirstHitCoordinator(paths_run, w2_run, 0.35, 0.4, 3.2, p,
                                                            risk_model=risk,
                                                            config={"hold_slots": 1,
                                                                    "lookahead_m": 2.0})
-                            r = simulate_mpc(paths, w2, p, cfg, seed=seed, record=True,
+                            r = simulate_mpc(paths_run, w2_run, p, cfg, seed=seed, record=True,
                                              events=events, coordinator=co)
                             pos = np.asarray(r.trajectories)
                             times = np.arange(len(pos)) * 0.1
@@ -79,14 +97,14 @@ def main():
                             info = {"compute_ms": float(r.coordinator_stats.get("p95_ms", 0.0)),
                                     "solver_fail": 0}
                         elif method == "orca_rvo2":
-                            r = run_orca(paths, events, steps=int(T * 0.4 / 0.1),
-                                         rects=task["rects"], circles=task["circles"])
+                            r = run_orca(paths_run, events, steps=int(T * 0.4 / 0.1),
+                                         rects=cur_task["rects"], circles=cur_task["circles"])
                             times = np.arange(len(r["traj"])) * 0.1
                             pos, vel = r["traj"], r["vel"]
                             info = {"compute_ms": 0.0, "solver_fail": 0}
                         else:
-                            r = run_mpc_cbf(paths, events, steps=int(T * 0.4 / 0.1),
-                                            rects=task["rects"], circles=task["circles"])
+                            r = run_mpc_cbf(paths_run, events, steps=int(T * 0.4 / 0.1),
+                                            rects=cur_task["rects"], circles=cur_task["circles"])
                             times = np.arange(len(r["traj"])) * 0.1
                             pos, vel = r["traj"], r["vel"]
                             info = {"compute_ms": float(r["solve_p95_ms"]),
@@ -100,8 +118,8 @@ def main():
                         with jsonl.open("a", encoding="utf-8") as fh:
                             fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
                         continue
-                    ev = evaluate_run(times, pos, vel, paths,
-                                      rects=task["rects"], circles=task["circles"],
+                    ev = evaluate_run(times, pos, vel, paths_run,
+                                      rects=cur_task["rects"], circles=cur_task["circles"],
                                       d_safe=0.35, robot_radius=0.15, clearance=0.03)
                     rec = {"method": method, "task_id": task["task_id"],
                            "scene": task["scene"], "p": p, "seed": seed,
@@ -122,7 +140,7 @@ def main():
                         fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
                     np.savez_compressed(out / "raw" / f"{method}_{task['task_id']}_p{p}_s{seed}.npz",
                                         times=times, positions=pos, velocities=vel,
-                                        paths=paths)
+                                        paths=paths_run)
                     print(method, task["task_id"], p, seed, ev["safe_completion"], flush=True)
     with (out / "per_run.csv").open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)

@@ -1,0 +1,137 @@
+{
+ "tasks": 12,
+ "items": [
+  {
+   "task_id": "A1_open_orthogonal",
+   "scene": "open",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.062257748298551,
+    8.062257748298551
+   ]
+  },
+  {
+   "task_id": "A2_open_diagonal",
+   "scene": "open",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    8.944271909999157,
+    8.944271909999156,
+    8.944271909999156,
+    8.944271909999156
+   ]
+  },
+  {
+   "task_id": "A3_open_multi_cross",
+   "scene": "open",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    10.0,
+    10.0,
+    10.0,
+    9.999999999999998
+   ]
+  },
+  {
+   "task_id": "A4_open_asymmetric",
+   "scene": "open",
+   "min_clearance": Infinity,
+   "path_lengths": [
+    10.0,
+    10.0,
+    10.0,
+    10.0
+   ]
+  },
+  {
+   "task_id": "B1_block_below_above",
+   "scene": "static",
+   "min_clearance": 1.2000000000000002,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "B2_block_cross",
+   "scene": "static",
+   "min_clearance": 2.2,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "B3_two_blocks",
+   "scene": "static",
+   "min_clearance": 0.5999999999999996,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.4,
+    8.4
+   ]
+  },
+  {
+   "task_id": "B4_staggered_blocks",
+   "scene": "static",
+   "min_clearance": 0.7999999999999998,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "B5_center_pillar",
+   "scene": "static",
+   "min_clearance": 1.0,
+   "path_lengths": [
+    8.0,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "B6_two_blocks_detour",
+   "scene": "static",
+   "min_clearance": 0.28780221261599953,
+   "path_lengths": [
+    8.089449735566502,
+    8.0,
+    8.0,
+    8.0
+   ]
+  },
+  {
+   "task_id": "B7_three_blocks",
+   "scene": "static",
+   "min_clearance": 0.28625811727526934,
+   "path_lengths": [
+    8.389234855004036,
+    9.071212510505557,
+    9.491126388836946,
+    9.515737935089783
+   ]
+  },
+  {
+   "task_id": "B8_l_shape",
+   "scene": "static",
+   "min_clearance": 0.27351543227035,
+   "path_lengths": [
+    10.652149727289126,
+    11.331408008299654,
+    10.535691053001402,
+    10.535691053001404
+   ]
+  }
+ ]
+}
