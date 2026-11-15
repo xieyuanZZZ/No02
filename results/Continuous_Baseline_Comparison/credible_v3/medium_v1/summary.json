@@ -1,0 +1,47 @@
+{
+  "stage": "ab_5seed_actual_arrival",
+  "by": {
+    "ours_frozen|open": {
+      "n": 12,
+      "safe_rate": 0.6666666666666666,
+      "collision": 0.25,
+      "static_collision": null,
+      "completion_s": 31.808333333333337
+    },
+    "ours_frozen|static": {
+      "n": 24,
+      "safe_rate": 0.7083333333333334,
+      "collision": 0.125,
+      "static_collision": 0.0,
+      "completion_s": 34.2
+    },
+    "orca_rvo2|open": {
+      "n": 12,
+      "safe_rate": 1.0,
+      "collision": 0.0,
+      "static_collision": null,
+      "completion_s": 17.349999999999998
+    },
+    "orca_rvo2|static": {
+      "n": 24,
+      "safe_rate": 0.875,
+      "collision": 0.08333333333333333,
+      "static_collision": 0.041666666666666664,
+      "completion_s": 16.5375
+    },
+    "mpc_cbf|open": {
+      "n": 12,
+      "safe_rate": 0.9166666666666666,
+      "collision": 0.0,
+      "static_collision": null,
+      "completion_s": 27.083333333333332
+    },
+    "mpc_cbf|static": {
+      "n": 24,
+      "safe_rate": 0.7916666666666666,
+      "collision": 0.0,
+      "static_collision": 0.125,
+      "completion_s": 27.304166666666664
+    }
+  }
+}
